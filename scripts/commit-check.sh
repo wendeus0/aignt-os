@@ -95,11 +95,15 @@ if ! command -v uv >/dev/null 2>&1; then
 fi
 
 uv_run_args=(run --no-sync)
+flow_description="uv run --no-sync"
 
 if [[ "$SYNC_DEV" -eq 1 ]]; then
   uv sync --locked --extra dev
   uv_run_args=(run)
+  flow_description="uv sync --locked --extra dev + uv run"
 fi
+
+printf '%s\n' "Resolved local validation flow: $flow_description"
 
 if [[ "$SKIP_BRANCH_VALIDATION" -ne 1 ]]; then
   branch_args=(--base-ref "$BASE_REF")
