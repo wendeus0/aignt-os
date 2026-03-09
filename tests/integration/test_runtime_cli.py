@@ -66,6 +66,29 @@ def terminate_process(process: subprocess.Popen[str]) -> subprocess.CompletedPro
     )
 
 
+def wait_for_foreground_runtime_ready(
+    tmp_path: Path, process: subprocess.Popen[str], timeout_seconds: float = 5.0
+) -> None:
+    deadline = time.monotonic() + timeout_seconds
+
+    while time.monotonic() < deadline:
+        if process.poll() is not None:
+            stdout, stderr = process.communicate(timeout=5)
+            raise AssertionError(
+                "foreground runtime exited before becoming ready\n"
+                f"stdout: {stdout}\n"
+                f"stderr: {stderr}"
+            )
+
+        ready_result = invoke_runtime_command(tmp_path, "ready")
+        if ready_result.exit_code == 0:
+            return
+
+        time.sleep(0.05)
+
+    raise AssertionError("foreground runtime did not become ready before timeout")
+
+
 def test_runtime_start_initializes_single_resident_process_and_persists_state(
     tmp_path: Path,
 ) -> None:
@@ -199,7 +222,7 @@ def test_runtime_cli_exposes_foreground_command_for_container_entrypoint(
 def test_runtime_foreground_command_stays_alive_until_signaled(tmp_path: Path) -> None:
     process = spawn_runtime_foreground(tmp_path)
     try:
-        time.sleep(0.3)
+        wait_for_foreground_runtime_ready(tmp_path, process)
 
         assert process.poll() is None
 
@@ -223,7 +246,7 @@ def test_runtime_ready_reports_ready_for_running_foreground_runtime(
 ) -> None:
     process = spawn_runtime_foreground(tmp_path)
     try:
-        time.sleep(0.3)
+        wait_for_foreground_runtime_ready(tmp_path, process)
 
         ready_result = invoke_runtime_command(tmp_path, "ready")
 
@@ -238,7 +261,7 @@ def test_runtime_ready_fails_when_foreground_identity_token_is_adulterated(
 ) -> None:
     process = spawn_runtime_foreground(tmp_path)
     try:
-        time.sleep(0.3)
+        wait_for_foreground_runtime_ready(tmp_path, process)
 
         state_file = tmp_path / "runtime-state.json"
         persisted_state = json.loads(state_file.read_text(encoding="utf-8"))
