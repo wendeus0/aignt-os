@@ -81,6 +81,13 @@ Pare imediatamente e peça revisão quando:
 - Separe output bruto de output limpo.
 - Não use abstrações prematuras.
 
+## Execução local do Codex
+- Neste repositório, a operação do Codex deve ser **container-first** via `./scripts/dev-codex.sh`.
+- O serviço `codex-dev` existe só para desenvolvimento assistido; o serviço `aignt-os` continua sendo o container de runtime da aplicação e do AIgnt-Synapse-Flow, a engine própria de pipeline do AIgnt OS.
+- Não rode o Codex diretamente no host quando a tarefa exigir execução prática em container.
+- O fluxo padrão do Codex deve montar apenas o repositório em `/workspace` e usar a configuração versionada em `.codex/config.toml`.
+- Não monte `docker.sock`, não use `privileged` e não monte o `$HOME` do host no ambiente isolado do Codex.
+
 ## Agentes recomendados
 ### 1. repo-automation
 Responsável por:

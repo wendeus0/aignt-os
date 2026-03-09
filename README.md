@@ -195,3 +195,11 @@ Nenhuma feature avança para código sem `SPEC.md` aprovada e testes mínimos es
 - Hook local leve: `.githooks/pre-commit` roda `./scripts/commit-check.sh --hook-mode` para checks rápidos de repositório sem executar o preflight Docker real.
 - Preflight Docker operacional real: execute `./scripts/docker-preflight.sh` antes de iniciar a execução prática da feature ou da IA.
 - Runtime completo: execute `./scripts/docker-preflight.sh --full-runtime` apenas quando a mudança tocar boot, ciclo de vida, persistência ou integração.
+
+## Ambiente isolado do Codex
+
+- O runtime da aplicação continua no serviço `aignt-os` definido em `compose.yaml`.
+- O Codex roda isolado no serviço `codex-dev` definido em `compose.dev.yaml`, com apenas o repositório montado em `/workspace`.
+- Para subir o ambiente e abrir o Codex dentro do container de desenvolvimento, use `./scripts/dev-codex.sh`.
+- Para subir também o runtime existente junto com o ambiente de desenvolvimento, use `./scripts/dev-codex.sh --with-runtime`.
+- O launcher aplica o profile `container_aggressive` de `.codex/config.toml` apenas dentro desse ambiente isolado.
