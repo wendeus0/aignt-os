@@ -68,11 +68,8 @@ jobs:
       - name: Set up uv
         uses: astral-sh/setup-uv@v4
 
-      - name: Sync project dependencies
-        run: uv sync --locked --extra dev
-
       - name: Run repository operational checks
-        run: ./scripts/commit-check.sh --skip-branch-validation --skip-docker --skip-security --allow-main
+        run: ./scripts/commit-check.sh --sync-dev --skip-branch-validation --skip-docker --skip-security --allow-main
 
   security-review:
     runs-on: ubuntu-latest

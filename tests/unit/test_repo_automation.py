@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import os
 import subprocess
 from pathlib import Path
 
@@ -14,6 +15,20 @@ def run_script(*args: str) -> subprocess.CompletedProcess[str]:
         text=True,
         check=False,
     )
+
+
+def test_operational_ci_uses_real_pull_request_head_checkout() -> None:
+    workflow_text = (REPO_ROOT / ".github/workflows/operational-ci.yml").read_text(encoding="utf-8")
+
+    assert "ref: ${{ github.event.pull_request.head.sha }}" in workflow_text
+    assert 'branch_name="$AIGNT_HEAD_REF"' in workflow_text
+
+
+def test_operational_ci_repo_checks_use_sync_dev_commit_flow() -> None:
+    workflow_text = (REPO_ROOT / ".github/workflows/operational-ci.yml").read_text(encoding="utf-8")
+
+    assert "./scripts/commit-check.sh --sync-dev" in workflow_text
+    assert "uv sync --locked --extra dev" not in workflow_text
 
 
 def test_validate_branch_allows_current_branch_when_explicitly_permitted() -> None:
@@ -78,7 +93,9 @@ def test_docker_up_supports_dry_run() -> None:
     assert result.returncode == 0
     assert "docker compose" in result.stdout
     assert "up" in result.stdout
+    assert "--detach" in result.stdout
     assert "--build" in result.stdout
+    assert "health gate command" in result.stdout
 
 
 def test_docker_preflight_supports_dry_run() -> None:
@@ -97,6 +114,16 @@ def test_docker_preflight_full_runtime_supports_dry_run() -> None:
     assert result.returncode == 0
     assert "docker compose" in result.stdout
     assert "up command" in result.stdout
+    assert "docker-health.sh" in result.stdout
+
+
+def test_docker_health_supports_dry_run() -> None:
+    result = run_script("scripts/docker-health.sh", "--dry-run")
+
+    assert result.returncode == 0
+    assert "docker compose" in result.stdout
+    assert "inspect" in result.stdout
+    assert "runtime status" in result.stdout
 
 
 def test_docker_rebuild_lists_relevant_inputs() -> None:
@@ -130,3 +157,81 @@ def test_commit_check_hook_mode_skips_real_docker_preflight() -> None:
 
     assert result.returncode == 0
     assert "Light hook mode completed" in result.stdout
+
+
+def test_commit_check_uses_uv_run_no_sync_by_default(tmp_path: Path, monkeypatch) -> None:
+    uv_log = tmp_path / "uv.log"
+    uv_bin = tmp_path / "uv"
+    uv_bin.write_text(
+        '#!/usr/bin/env bash\nprintf \'%s\\n\' "$*" >> "$UV_LOG"\n',
+        encoding="utf-8",
+    )
+    uv_bin.chmod(0o755)
+
+    monkeypatch.setenv("PATH", f"{tmp_path}:{os.environ['PATH']}")
+    monkeypatch.setenv("UV_LOG", str(uv_log))
+
+    result = run_script(
+        "scripts/commit-check.sh",
+        "--allow-main",
+        "--skip-branch-validation",
+        "--skip-docker",
+        "--skip-security",
+    )
+
+    assert result.returncode == 0
+    assert "Resolved local validation flow: uv run --no-sync" in result.stdout
+
+    uv_calls = uv_log.read_text(encoding="utf-8").splitlines()
+    assert uv_calls == [
+        "run --no-sync ruff format --check .",
+        "run --no-sync ruff check .",
+        "run --no-sync mypy",
+        "run --no-sync pytest",
+    ]
+
+
+def test_commit_check_sync_dev_bootstraps_before_running_checks(
+    tmp_path: Path, monkeypatch
+) -> None:
+    uv_log = tmp_path / "uv.log"
+    uv_bin = tmp_path / "uv"
+    uv_bin.write_text(
+        '#!/usr/bin/env bash\nprintf \'%s\\n\' "$*" >> "$UV_LOG"\n',
+        encoding="utf-8",
+    )
+    uv_bin.chmod(0o755)
+
+    monkeypatch.setenv("PATH", f"{tmp_path}:{os.environ['PATH']}")
+    monkeypatch.setenv("UV_LOG", str(uv_log))
+
+    result = run_script(
+        "scripts/commit-check.sh",
+        "--sync-dev",
+        "--allow-main",
+        "--skip-branch-validation",
+        "--skip-docker",
+        "--skip-security",
+    )
+
+    assert result.returncode == 0
+    assert "Resolved local validation flow: uv sync --locked --extra dev + uv run" in result.stdout
+
+    uv_calls = uv_log.read_text(encoding="utf-8").splitlines()
+    assert uv_calls == [
+        "sync --locked --extra dev",
+        "run ruff format --check .",
+        "run ruff check .",
+        "run mypy",
+        "run pytest",
+    ]
+
+
+def test_compose_declares_runtime_healthcheck() -> None:
+    compose_text = (REPO_ROOT / "compose.yaml").read_text(encoding="utf-8")
+
+    assert "entrypoint:" in compose_text
+    assert "- /bin/sh" in compose_text
+    assert "- -lc" in compose_text
+    assert "healthcheck:" in compose_text
+    assert "aignt runtime status" in compose_text
