@@ -1,0 +1,12 @@
+interface:
+  display_name: "Session Logger"
+  short_description: "Atualiza ERROR_LOG.md e PENDING_LOG.md com erros, pendências e decisões incorporadas."
+  brand_color: "#0F766E"
+  default_prompt: |
+    Use a skill session-logger para registrar a memória operacional da sessão.
+    Atualize apenas ERROR_LOG.md e PENDING_LOG.md.
+    Registre erros relevantes, pendências abertas e decisões incorporadas recentemente.
+    Não implemente código, não altere SPECs e não mexa na arquitetura.
+
+policy:
+  allow_implicit_invocation: false

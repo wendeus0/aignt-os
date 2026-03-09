@@ -1,0 +1,12 @@
+interface:
+  display_name: "Technical Triage"
+  short_description: "Analisa o estado do projeto e recomenda o próximo passo lógico."
+  brand_color: "#7C2D12"
+  default_prompt: |
+    Use a skill technical-triage para analisar o estado atual do projeto
+    e recomendar o próximo passo mais lógico.
+    Considere débito técnico, baseline, pendências, erros e progresso da feature atual.
+    Não implemente código, não edite SPECs e não altere a arquitetura.
+
+policy:
+  allow_implicit_invocation: false
