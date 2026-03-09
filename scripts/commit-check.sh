@@ -14,6 +14,7 @@ FETCH=0
 BASE_REF="origin/main"
 BUILD_IMAGE=0
 FULL_RUNTIME=0
+HOOK_MODE=0
 
 export UV_CACHE_DIR="${UV_CACHE_DIR:-$ROOT_DIR/.cache/uv}"
 mkdir -p "$UV_CACHE_DIR"
@@ -22,6 +23,10 @@ while [[ $# -gt 0 ]]; do
   case "$1" in
     --allow-main)
       ALLOW_MAIN=1
+      shift
+      ;;
+    --hook-mode)
+      HOOK_MODE=1
       shift
       ;;
     --skip-branch-validation)
@@ -75,6 +80,10 @@ while [[ $# -gt 0 ]]; do
   esac
 done
 
+if [[ "$HOOK_MODE" -eq 1 ]]; then
+  SKIP_DOCKER=1
+fi
+
 if ! command -v uv >/dev/null 2>&1; then
   echo "uv is required to run repository checks." >&2
   exit 1
@@ -124,6 +133,10 @@ fi
 
 if [[ "$SKIP_SECURITY" -ne 1 ]]; then
   "$ROOT_DIR/scripts/security-gate.sh"
+fi
+
+if [[ "$HOOK_MODE" -eq 1 ]]; then
+  printf '%s\n' "Light hook mode completed. Real DOCKER_PREFLIGHT remains explicit via ./scripts/docker-preflight.sh before practical feature execution."
 fi
 
 printf '%s\n' "Repository operational checks completed."

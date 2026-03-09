@@ -75,6 +75,7 @@ No MVP, a implementação prática continua linear, mas o operador deve seguir p
 - isolamento: container da aplicação + containers dos agentes selecionados
 - `DOCKER_PREFLIGHT`: obrigatório antes da execução prática de uma feature
 - `DOCKER_PREFLIGHT` leve: padrão para CI e fluxo local, com compose/config + build sem `up`
+- hook local leve: checks rápidos de repositório; não equivale ao `DOCKER_PREFLIGHT` operacional real
 - preflight completo de runtime: reservado para workflow dedicado ou pedido explícito em tarefas de boot/ciclo de vida/persistência/integração
 - `repo-automation`: skill responsável pelo preflight operacional em Docker/container
 - `spec-editor`: só inicia após ambiente validado
@@ -101,6 +102,8 @@ O ciclo ideal é:
 6. rodar `SECURITY_REVIEW`
 7. gerar `REPORT`
 8. concluir `COMMIT`
+
+Checks locais de hook podem rodar antes do commit para feedback rápido, mas a execução prática da feature só pode começar após o `DOCKER_PREFLIGHT` operacional real.
 
 ## O que significa “memória semântica” neste momento
 No MVP, memória semântica não decide automaticamente qual agente usar.

@@ -44,6 +44,7 @@ DOCKER_PREFLIGHT → SPEC → TEST_RED → CODE_GREEN → REFACTOR → SECURITY_
 Dentro do macroestágio `SPEC`, o AIgnt-Synapse-Flow pode decompor a execução em `SPEC_DISCOVERY`, `SPEC_NORMALIZATION` e `SPEC_VALIDATION`.
 
 Por padrão, o `DOCKER_PREFLIGHT` do projeto é leve: valida `compose config` e build sem subir o container completo. O runtime completo fica para workflow dedicado de integração/runtime ou para execução explícita quando a feature tocar boot, ciclo de vida, persistência ou integração.
+Os hooks locais permanecem leves por padrão para feedback rápido de repositório e não substituem o `DOCKER_PREFLIGHT` operacional real antes do início prático da feature.
 
 ### Entregas obrigatórias
 
@@ -188,3 +189,9 @@ feature/f10-run-report-one-real-adapter
 ```
 
 Nenhuma feature avança para código sem `SPEC.md` aprovada e testes mínimos escritos.
+
+## Checks Locais vs. DOCKER_PREFLIGHT
+
+- Hook local leve: `.githooks/pre-commit` roda `./scripts/commit-check.sh --hook-mode` para checks rápidos de repositório sem executar o preflight Docker real.
+- Preflight Docker operacional real: execute `./scripts/docker-preflight.sh` antes de iniciar a execução prática da feature ou da IA.
+- Runtime completo: execute `./scripts/docker-preflight.sh --full-runtime` apenas quando a mudança tocar boot, ciclo de vida, persistência ou integração.

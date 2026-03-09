@@ -14,13 +14,30 @@ jobs:
   branch-validation:
     runs-on: ubuntu-latest
     steps:
+      - name: Checkout pull request head
+        if: github.event_name == 'pull_request'
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          ref: ${{ github.event.pull_request.head.sha }}
+
       - name: Checkout repository
+        if: github.event_name != 'pull_request'
         uses: actions/checkout@v4
         with:
           fetch-depth: 0
 
       - name: Validate branch alignment
-        run: ./scripts/validate-branch.sh --fetch --allow-main --base-ref origin/main
+        env:
+          AIGNT_EVENT_NAME: ${{ github.event_name }}
+          AIGNT_HEAD_REF: ${{ github.head_ref }}
+          AIGNT_REF_NAME: ${{ github.ref_name }}
+        run: |
+          branch_name="$AIGNT_REF_NAME"
+          if [[ "$AIGNT_EVENT_NAME" == "pull_request" ]]; then
+            branch_name="$AIGNT_HEAD_REF"
+          fi
+          ./scripts/validate-branch.sh --fetch --allow-main --base-ref origin/main --branch-name "$branch_name"
 
   docker-preflight:
     runs-on: ubuntu-latest

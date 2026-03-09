@@ -1,8 +1,7 @@
 from __future__ import annotations
 
-from pathlib import Path
 import subprocess
-
+from pathlib import Path
 
 REPO_ROOT = Path(__file__).resolve().parents[2]
 
@@ -28,6 +27,20 @@ def test_validate_branch_allows_current_branch_when_explicitly_permitted() -> No
 
     assert result.returncode == 0
     assert "aligned" in result.stdout
+
+
+def test_validate_branch_uses_explicit_branch_name_override() -> None:
+    result = run_script(
+        "scripts/validate-branch.sh",
+        "--base-ref",
+        "origin/main",
+        "--no-fetch",
+        "--branch-name",
+        "feature/test-branch",
+    )
+
+    assert result.returncode == 0
+    assert "feature/test-branch" in result.stdout
 
 
 def test_validate_commit_message_accepts_conventional_commit(tmp_path: Path) -> None:
@@ -100,3 +113,20 @@ def test_security_gate_accepts_current_operational_surface() -> None:
 
     assert result.returncode == 0
     assert "Security gate passed" in result.stdout
+
+
+def test_commit_check_hook_mode_skips_real_docker_preflight() -> None:
+    result = run_script(
+        "scripts/commit-check.sh",
+        "--hook-mode",
+        "--allow-main",
+        "--skip-branch-validation",
+        "--skip-format",
+        "--skip-lint",
+        "--skip-typecheck",
+        "--skip-tests",
+        "--skip-security",
+    )
+
+    assert result.returncode == 0
+    assert "Light hook mode completed" in result.stdout

@@ -5,7 +5,9 @@
 - `compose.yaml` foi preferido em vez de `docker-compose.yml` por ser o formato recomendado atual e suficiente para o MVP.
 - O rebuild local usa fingerprint de arquivos relevantes para evitar rebuild desnecessário sem depender de watcher residente.
 - Os hooks Git ficam em `.githooks/` e só são ativados por `scripts/install-git-hooks.sh` para manter o fluxo opt-in e auditável.
+- O hook local permanece leve e não executa o `DOCKER_PREFLIGHT` operacional real; esse preflight continua explícito via `scripts/docker-preflight.sh`.
 - A validação contra `main` usa `origin/main` quando disponível e cai para `main` local se a referência remota não estiver acessível.
+- Em `pull_request`, a validação contra `main` passou a usar o head SHA real da PR e o nome real da branch via workflow, evitando validação sobre merge ref/detached ref sintético.
 - Os scripts Docker exportam `DOCKER_CONFIG` para `.cache/docker/config` a fim de evitar dependência de escrita em `$HOME` e manter a operação reprodutível no workspace.
 
 ## Lacunas assumidas

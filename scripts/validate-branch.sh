@@ -5,11 +5,16 @@ ROOT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 BASE_REF="origin/main"
 FETCH=0
 ALLOW_MAIN=0
+BRANCH_NAME=""
 
 while [[ $# -gt 0 ]]; do
   case "$1" in
     --base-ref)
       BASE_REF="${2:?missing value for --base-ref}"
+      shift 2
+      ;;
+    --branch-name)
+      BRANCH_NAME="${2:?missing value for --branch-name}"
       shift 2
       ;;
     --fetch)
@@ -46,7 +51,7 @@ if ! git -C "$ROOT_DIR" rev-parse --verify "$BASE_REF" >/dev/null 2>&1; then
   fi
 fi
 
-current_branch="$(git -C "$ROOT_DIR" rev-parse --abbrev-ref HEAD)"
+current_branch="${BRANCH_NAME:-$(git -C "$ROOT_DIR" rev-parse --abbrev-ref HEAD)}"
 
 if [[ "$current_branch" == "main" && "$ALLOW_MAIN" -ne 1 ]]; then
   echo "Direct operational flow on 'main' is blocked. Use a feature branch." >&2
@@ -57,15 +62,15 @@ base_sha="$(git -C "$ROOT_DIR" rev-parse "$BASE_REF")"
 head_sha="$(git -C "$ROOT_DIR" rev-parse HEAD)"
 
 if [[ "$base_sha" == "$head_sha" ]]; then
-  printf '%s\n' "Branch aligned with $BASE_REF at $head_sha"
+  printf '%s\n' "Branch '$current_branch' aligned with $BASE_REF at $head_sha"
   exit 0
 fi
 
 read -r behind ahead < <(git -C "$ROOT_DIR" rev-list --left-right --count "$BASE_REF...HEAD")
 
 if ! git -C "$ROOT_DIR" merge-base --is-ancestor "$BASE_REF" HEAD; then
-  echo "Current branch is not aligned with $BASE_REF. behind=$behind ahead=$ahead" >&2
+  echo "Current branch '$current_branch' is not aligned with $BASE_REF. behind=$behind ahead=$ahead" >&2
   exit 1
 fi
 
-printf '%s\n' "Branch aligned with $BASE_REF. behind=$behind ahead=$ahead"
+printf '%s\n' "Branch '$current_branch' aligned with $BASE_REF. behind=$behind ahead=$ahead"
