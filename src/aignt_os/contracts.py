@@ -15,4 +15,3 @@ class CLIExecutionResult(BaseModel):
     stdout_raw: StrictStr
     stdout_clean: StrictStr
     success: StrictBool
-

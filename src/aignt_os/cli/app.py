@@ -2,7 +2,6 @@ import typer
 
 from aignt_os import __version__
 
-
 app = typer.Typer(help="AIgnt OS CLI")
 
 

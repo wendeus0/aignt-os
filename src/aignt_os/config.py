@@ -11,4 +11,3 @@ class AppSettings(BaseSettings):
 
     app_name: str = "AIgnt OS"
     environment: Literal["development", "test", "production"] = "development"
-

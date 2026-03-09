@@ -2,7 +2,6 @@ from importlib import import_module
 
 from typer.testing import CliRunner
 
-
 runner = CliRunner()
 
 
@@ -22,4 +21,3 @@ def test_cli_version_returns_success() -> None:
 
     assert result.exit_code == 0
     assert "0.1.0" in result.stdout
-

@@ -27,4 +27,3 @@ def test_settings_rejects_invalid_environment_value() -> None:
 
     with pytest.raises(ValidationError):
         config_module.AppSettings(environment="invalid")
-
