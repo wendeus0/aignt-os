@@ -1,0 +1,16 @@
+.git
+.github
+.cache
+.mypy_cache
+.pytest_cache
+.ruff_cache
+.venv
+__pycache__
+artifacts
+build
+dist
+docs
+features
+tests
+*.db
+*.pyc

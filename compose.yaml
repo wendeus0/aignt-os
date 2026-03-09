@@ -1,0 +1,19 @@
+services:
+  aignt-os:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      args:
+        APP_UID: ${AIGNT_OS_UID:-1000}
+        APP_GID: ${AIGNT_OS_GID:-1000}
+    image: aignt-os:dev
+    command: ["--help"]
+    environment:
+      AIGNT_OS_ENVIRONMENT: development
+    user: "${AIGNT_OS_UID:-1000}:${AIGNT_OS_GID:-1000}"
+    volumes:
+      - ./artifacts:/app/artifacts
+    working_dir: /app
+    init: true
+    stdin_open: true
+    tty: true
