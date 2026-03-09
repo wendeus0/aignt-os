@@ -7,7 +7,7 @@
 - O `DOCKER_PREFLIGHT` operacional real continua explícito e separado do hook leve, via `./scripts/docker-preflight.sh`.
 - A baseline operacional do repositório foi restaurada com correções mínimas de Ruff/import order/formatação nos arquivos apontados pela revisão.
 - O `commit-check.sh` passou a usar `uv run --no-sync` por padrão e reserva `--sync-dev` para bootstrap explícito de dependências dev.
-- A SPEC e o lifecycle do runtime passaram a exigir validação adicional de identidade do processo antes de `stop`.
+- A SPEC da feature e o lifecycle do runtime passaram a exigir validação adicional de identidade do processo antes de `stop`.
 - O estado do runtime passou a exigir escrita atômica, permissões restritas e tratamento seguro para corrupção/adulteração local.
 - O security-review final da feature considerou o escopo aprovado com ressalvas baixas e compatíveis com o MVP.
 
@@ -25,3 +25,10 @@
 - O hardening do runtime valida identidade do processo por marcador + token em `/proc/<pid>/cmdline`; isso continua Linux-first.
 - A validação do diretório configurável de estado permanece propositalmente básica no MVP e pode ser endurecida depois com âncora explícita no workspace.
 - O runtime persistente continua propositalmente restrito a processo único local, sem scheduler, distribuição ou recuperação avançada.
+
+## Itens que podem virar novas features ou ajustes futuros
+
+- Endurecimento adicional do path de estado para restringir explicitamente a uma raiz confiável do workspace.
+- Melhoria de portabilidade do runtime além de Linux, caso isso entre no escopo futuro.
+- Documentação operacional curta para bootstrap local (`--sync-dev`) e para o lifecycle do runtime persistente.
+- Limpeza operacional do repositório para remover debt de formatação fora do escopo desta feature.

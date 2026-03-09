@@ -50,6 +50,16 @@
 - Status: resolvido.
 - Observação futura: manter diferenciação explícita entre falha de sandbox e falha real do preflight.
 
+## 2026-03-09 - Check local bloqueado por DNS no sandbox
+
+- Contexto: execução inicial de checks operacionais locais.
+- Ação/comando relacionado: `./scripts/commit-check.sh --skip-branch-validation --skip-docker`
+- Erro observado: `uv` falhou ao baixar dependências com erro de DNS/resolução.
+- Causa identificada: restrição de rede no sandbox.
+- Ação tomada: reexecução fora do sandbox.
+- Status: resolvido.
+- Observação futura: manter cache local e usar elevação apenas quando necessário para distinguir ambiente de repositório.
+
 ## 2026-03-09 - Runtime stop aceitava risco de sinalizar PID arbitrário
 
 - Contexto: implementação inicial do runtime persistente mínimo.
