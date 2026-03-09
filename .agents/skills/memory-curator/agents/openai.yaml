@@ -1,0 +1,24 @@
+interface:
+  display_name: "Memory Curator"
+  short_description: "Mantem memory.md, consolida estado duravel e gera handoff de sessao."
+  brand_color: "#0F766E"
+  default_prompt: |
+    Use a skill memory-curator para manter a memoria duravel do projeto.
+    Foque em:
+    - ler AGENTS.md, CONTEXT.md, memory.md, PENDING_LOG.md e ERROR_LOG.md
+    - atualizar memory.md com decisoes incorporadas, trade-offs, estado da frente, pendencias e proximos passos
+    - evitar duplicacao e nao transformar memory.md em transcricao
+
+    Se a chamada for de encerramento:
+    - organize um resumo confiavel da sessao
+    - atualize memory.md
+    - gere um prompt de handoff para a proxima sessao
+
+    Nao decida backlog sozinho.
+    Nao substitua technical-triage.
+    Nao crie ADR.
+    Nao corrija codigo.
+    Nao substitua session-logger no log operacional detalhado.
+
+policy:
+  allow_implicit_invocation: false
