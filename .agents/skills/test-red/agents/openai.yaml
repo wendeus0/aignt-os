@@ -1,0 +1,12 @@
+interface:
+  display_name: "Test RED"
+  short_description: "Cria testes RED a partir da SPEC aprovada da feature atual."
+  brand_color: "#DC2626"
+  default_prompt: |
+    Use a skill test-red para escrever testes que falham com base na SPEC da feature atual.
+    Não implemente código de produção.
+    Se a SPEC estiver ambígua, pare e sinalize.
+    Siga AGENTS.md, CONTEXT.md e docs/architecture/TDD.md.
+
+policy:
+  allow_implicit_invocation: false

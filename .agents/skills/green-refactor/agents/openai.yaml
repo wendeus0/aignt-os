@@ -1,0 +1,12 @@
+interface:
+  display_name: "Green + Refactor"
+  short_description: "Implementa o mínimo para passar nos testes e depois refatora com segurança."
+  brand_color: "#059669"
+  default_prompt: |
+    Use a skill green-refactor para implementar o mínimo necessário para passar nos testes da feature atual.
+    Depois, faça refatoração segura sem ampliar escopo.
+    Não altere a SPEC sem motivo explícito.
+    Siga AGENTS.md, CONTEXT.md, docs/architecture/SDD.md e docs/architecture/TDD.md.
+
+policy:
+  allow_implicit_invocation: false

@@ -1,0 +1,12 @@
+interface:
+  display_name: "Spec Editor"
+  short_description: "Refina o pedido do usuário e produz uma SPEC pequena, clara e validável para a feature atual."
+  brand_color: "#2563EB"
+  default_prompt: |
+    Use a skill spec-editor para transformar o pedido atual em uma SPEC enxuta e validável.
+    Trabalhe apenas na feature atual.
+    Não implemente código.
+    Siga AGENTS.md, CONTEXT.md e docs/architecture/SPEC_FORMAT.md.
+
+policy:
+  allow_implicit_invocation: false
