@@ -119,6 +119,13 @@ Responsável por:
 - classificar a falha por tipo e indicar o próximo agent responsável
 Não implementa a correção, não decide backlog e não substitui `repo-automation`.
 
+### memory-curator
+Responsável por:
+- manter `memory.md` como memória durável e reaproveitável do projeto
+- consolidar decisões, trade-offs, estado da frente e próximos passos
+- gerar handoff de sessão quando explicitamente invocada para encerramento
+Não substitui `session-logger`, não decide backlog e não cria ADR.
+
 ### 2. spec-editor
 Responsável por:
 - melhorar o pedido do usuário
