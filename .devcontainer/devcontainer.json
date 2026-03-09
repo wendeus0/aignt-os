@@ -1,0 +1,23 @@
+{
+  "name": "aignt-os-codex-dev",
+  "dockerComposeFile": [
+    "../compose.yaml",
+    "../compose.dev.yaml"
+  ],
+  "service": "codex-dev",
+  "runServices": [
+    "codex-dev"
+  ],
+  "workspaceFolder": "/workspace",
+  "shutdownAction": "stopCompose",
+  "overrideCommand": false,
+  "remoteUser": "codex",
+  "postCreateCommand": "/bin/bash /workspace/.devcontainer/post-create.sh",
+  "customizations": {
+    "vscode": {
+      "settings": {
+        "terminal.integrated.defaultProfile.linux": "bash"
+      }
+    }
+  }
+}

@@ -1,0 +1,41 @@
+services:
+  codex-dev:
+    build:
+      context: .
+      dockerfile: .devcontainer/Dockerfile
+      args:
+        DEV_UID: ${AIGNT_DEV_UID:-1000}
+        DEV_GID: ${AIGNT_DEV_GID:-1000}
+    image: aignt-os-codex-dev:dev
+    command: ["sleep", "infinity"]
+    environment:
+      HOME: /home/codex
+      UV_CACHE_DIR: /home/codex/.cache/uv
+      XDG_CACHE_HOME: /home/codex/.cache
+      XDG_STATE_HOME: /home/codex/.local/state
+      XDG_DATA_HOME: /home/codex/.local/share
+    user: "${AIGNT_DEV_UID:-1000}:${AIGNT_DEV_GID:-1000}"
+    volumes:
+      - .:/workspace
+      - codex-home:/home/codex/.codex
+      - codex-cache:/home/codex/.cache
+      - codex-state:/home/codex/.local/state
+      - codex-data:/home/codex/.local/share
+    working_dir: /workspace
+    security_opt:
+      - no-new-privileges:true
+    cap_drop:
+      - ALL
+    read_only: true
+    init: true
+    stdin_open: true
+    tty: true
+    tmpfs:
+      - /tmp:size=268435456,mode=1777
+      - /run:size=16777216,mode=755
+
+volumes:
+  codex-home:
+  codex-cache:
+  codex-state:
+  codex-data:
