@@ -1,0 +1,19 @@
+interface:
+  display_name: "Security Review"
+  short_description: "Analisa riscos e mitigação em código, Docker, workflows, scripts, Agents e Skills."
+  brand_color: "#B91C1C"
+  default_prompt: |
+    Use a skill security-review para revisar mudanças sob a ótica de segurança.
+    Foque em:
+    - código
+    - Docker / build
+    - workflows
+    - scripts operacionais
+    - Agents e Skills
+
+    Não redefina a arquitetura.
+    Não implemente lógica de produto.
+    Produza riscos, severidade, mitigação e parecer final.
+
+policy:
+  allow_implicit_invocation: false
