@@ -5,15 +5,25 @@ description: Use esta skill quando a tarefa for consolidar a memória durável d
 
 # Objetivo
 
-Manter `memory.md` como memória durável, curta e reaproveitável do projeto, consolidando decisões estáveis, trade-offs, estado atual da frente e próximos passos.
+Manter `memory.md` como memória durável, curta e reaproveitável do projeto.
+
+O foco é consolidar:
+- estado global do projeto
+- snapshot local apenas quando ele afeta a próxima sessão
+- frentes ativas
+- decisões estáveis
+- pendências abertas
+- próximos passos recomendados
+- último handoff
 
 # Escopo
 
 Esta skill:
 - lê `AGENTS.md`, `CONTEXT.md`, `memory.md`, `PENDING_LOG.md` e `ERROR_LOG.md`
-- atualiza `memory.md` com decisões incorporadas, trade-offs, mudanças estruturais relevantes e estado atual da frente
-- consolida pendências abertas sem reabrir debates já encerrados
-- gera handoff de sessão quando explicitamente acionada para encerramento
+- usa `git status` e `git diff --stat` para captar apenas o snapshot local relevante
+- atualiza `memory.md` sem virar log de conversa
+- consolida decisões já aceitas e pendências ainda abertas
+- gera handoff de encerramento quando explicitamente acionada
 
 Esta skill não:
 - decide backlog sozinha
@@ -39,15 +49,13 @@ Leia nesta ordem:
 
 Use esta skill quando:
 - for necessário consolidar memória durável do projeto
-- for necessário atualizar o estado atual de uma frente, branch ou PR em `memory.md`
+- for necessário atualizar o estado atual de uma frente em `memory.md`
 - for necessário registrar decisões estáveis e trade-offs já aceitos
 - for necessário preparar handoff confiável para a próxima sessão
 
 # Convenção operacional de encerramento
 
-Quando o usuário disser exatamente `Vamos encerrar a conversa`, recomenda-se invocar esta skill com texto adicional para acionar o fluxo de fechamento.
-
-Use uma destas chamadas:
+Use explicitamente uma destas chamadas:
 - `$memory-curator encerrar conversa`
 - `$memory-curator close session`
 
@@ -55,17 +63,22 @@ Importante:
 - isso é uma convenção operacional de uso da skill
 - isso não é um alias técnico nativo da plataforma
 
-Ao ser chamada nesse modo, esta skill deve:
-1. organizar um resumo confiável da sessão
-2. atualizar `memory.md`
-3. gerar um prompt de handoff para a próxima sessão
+Ao ser chamada nesse modo, esta skill deve obrigatoriamente:
+1. atualizar `memory.md`
+2. consolidar o snapshot local apenas se ele alterar a próxima sessão
+3. gerar um prompt de handoff semelhante ao prompt de abertura em pair programming
 
 # Regras obrigatórias
 
-- Mantenha `memory.md` estável e reaproveitável.
-- Não transforme `memory.md` em transcrição de conversa.
-- Prefira consolidar em vez de duplicar.
-- Registre apenas decisões já tomadas ou estado realmente observado.
+- `memory.md` deve funcionar como memória durável do projeto, não como log de conversa.
+- Detalhe operacional da sessão fica em `PENDING_LOG.md` e `ERROR_LOG.md`.
+- Separe explicitamente estado global do projeto e snapshot local, quando houver snapshot relevante.
+- Registre em `Stable decisions` apenas decisões já adotadas pelo projeto.
+- Não promova detalhe frágil de ambiente a decisão estável sem adoção formal.
+- `Active fronts` deve listar apenas frentes em andamento ou recém-concluídas que ainda moldam o próximo passo.
+- `Open decisions` deve listar dúvidas reais ainda abertas, não backlog genérico.
+- `Next recommended steps` deve ser curto, finito e acionável.
+- `Last handoff summary` deve ser curto, reutilizável e orientado à próxima sessão.
 - Se houver dúvida de priorização, encaminhe para `technical-triage`.
 - Se algo pertencer ao log detalhado da sessão, deixe com `session-logger`.
 
@@ -80,13 +93,38 @@ Mantenha estas seções:
 - `Next recommended steps`
 - `Last handoff summary`
 
+Dentro de `Current project state`, separe:
+- estado global do projeto
+- snapshot local relevante, quando existir
+
 # Processo
 
 1. Leia o contexto estável e a memória existente.
-2. Identifique o que mudou de forma durável.
+2. Classifique cada informação como:
+   - memória durável
+   - snapshot local relevante
+   - detalhe operacional que deve ficar fora de `memory.md`
 3. Atualize `memory.md` sem duplicação desnecessária.
-4. Se a chamada for de encerramento, produza também o handoff.
+4. Se a chamada for de encerramento, gere também o handoff.
 5. Deixe explícito o que continua pendente.
+
+# Formato do handoff de encerramento
+
+O handoff deve manter o espírito de um prompt de pair programming para retomada.
+
+Use este formato curto:
+- `Read before acting`
+- `Current state`
+- `Open points`
+- `Recommended next front`
+
+Regras do handoff:
+- mandar a próxima sessão reler o contexto persistente
+- resumir o estado atual em poucas linhas
+- apontar pendências que realmente afetam a retomada
+- recomendar uma única frente principal para começar
+- não copiar a conversa
+- não virar checklist infinito
 
 # Saída final esperada
 

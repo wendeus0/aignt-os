@@ -1,48 +1,51 @@
 # Current project state
 
-- Repository: AIgnt OS, um meta-orquestrador CLI-first com AIgnt-Synapse-Flow como engine propria de pipeline.
-- Branch atual observada: `main`, alinhada com `origin/main`.
-- Worktree observada: limpa ao fim da frente anterior; esta sessao fecha apenas consolidacao de memoria e governanca operacional.
-- Baseline atual: infraestrutura isolada do Codex, Branch Sync Gate, `memory-curator` e fluxo Git/GitHub validado no sandbox com `network-access = true`.
+## Global project state
+
+- AIgnt OS continua como meta-orquestrador CLI-first; o AIgnt-Synapse-Flow segue como a engine propria de pipeline do projeto.
+- A baseline operacional atual combina `DOCKER_PREFLIGHT` leve por padrao, fluxo container-first para o Codex, Branch Sync Gate e separacao entre memoria duravel (`memory.md`) e log operacional (`PENDING_LOG.md` e `ERROR_LOG.md`).
+- A governanca de prompts dos agents segue formato contextual explicito, com contexto, leituras obrigatorias, objetivo, escopo, nao-faca, criterios de aceite e formato de entrega.
+
+## Local snapshot
+
+- A worktree atual esta em `chore/log-preflight-sync`, com `behind=1` em relacao a `origin/main`; o diff de arvore contra `origin/main` esta vazio, mas a branch deve ser sincronizada antes de nova frente ou fechamento operacional.
+- Ha edicoes locais focadas apenas em normalizar `memory.md` e ajustar o contrato da skill `memory-curator`.
 
 # Stable decisions
 
-- `DOCKER_PREFLIGHT` continua obrigatorio antes da execucao pratica de uma feature.
-- O preflight padrao segue leve por padrao.
-- O Codex opera em fluxo container-first via `codex-dev`, separado do runtime `aignt-os`.
-- No ambiente atual do Codex com `network-access = true`, `git push` e `gh pr create` funcionam no sandbox como caminho operacional padrao; fallback fora do sandbox fica restrito a contingencia por falha real de rede/sandbox.
-- A Branch Sync Gate usa `./scripts/branch-sync-check.sh` e `./scripts/branch-sync-update.sh` como caminho padrao e conservador.
-- `debug-failure` faz diagnostico inicial de falhas; `session-logger` continua responsavel pelo log operacional detalhado.
-- O caminho operacional padrao para checks/testes locais passa a ser `./scripts/commit-check.sh --sync-dev`, mantendo `uv` como gerenciador de ambiente e evitando dependencia de virtualenv legada do host.
-- `memory.md` permanece como memoria duravel e curta; `PENDING_LOG.md` e `ERROR_LOG.md` guardam o detalhe operacional da sessao.
-- O fechamento de sessao pode usar a convencao `$memory-curator encerrar conversa` ou `$memory-curator close session` para atualizar memoria e gerar handoff.
-- No ambiente atual do Codex com `network-access = true`, `git push` e `gh pr create` devem ser tentados normalmente no sandbox; fallback fora do sandbox fica apenas como contingencia.
+- `DOCKER_PREFLIGHT` continua obrigatorio antes da execucao pratica de uma feature; o modo padrao permanece leve.
+- O Codex opera em fluxo container-first via `./scripts/dev-codex.sh`, separado do servico `aignt-os`, onde o AIgnt-Synapse-Flow roda como engine propria de pipeline do AIgnt OS.
+- A Branch Sync Gate usa `./scripts/branch-sync-check.sh` para detectar drift e `./scripts/branch-sync-update.sh` apenas quando a worktree estiver limpa e segura para atualizacao.
+- `memory.md` guarda memoria duravel e reaproveitavel; `PENDING_LOG.md` e `ERROR_LOG.md` guardam detalhe operacional da sessao.
+- O `memory-curator` pode ser acionado por `$memory-curator encerrar conversa` ou `$memory-curator close session` para atualizar `memory.md` e gerar handoff de encerramento.
+- Com `network-access = true`, `git push` e `gh pr create` devem ser tentados primeiro no sandbox; fallback fora do sandbox fica restrito a falha real de rede ou sandbox.
 
 # Active fronts
 
-- Frente operacional principal: consolidacao do fluxo local de checks/testes e da governanca de fechamento Git/GitHub.
-- Estado atual: a frente foi concluida e mergeada; nao ha frente ativa registrada nesta worktree em `main`.
+- Normalizar a governanca de memoria duravel para que `memory.md` fique estavel e o `memory-curator` gere handoff de encerramento reutilizavel.
+- Fechar validacoes operacionais ainda abertas do fluxo recente sem reabrir escopo de produto.
 
 # Open decisions
 
-- Validar se o job `branch-validation` continua correto em GitHub Actions real.
+- Validar em GitHub Actions real se o job `branch-validation` continua correto apos os ajustes recentes.
+- Definir quando limpar ou re-sincronizar branches locais antigas e worktrees auxiliares para reduzir ruido operacional.
 
 # Recurrent pitfalls
 
-- `uv` pode falhar no sandbox por cache fora da workspace ou falta de rede.
-- `.venv` legada pode apontar para interpreter invalido.
+- `memory.md` perde valor quando mistura decisao estavel com snapshot local ou log de conversa.
+- `uv` pode falhar no sandbox por cache fora da workspace ou indisponibilidade de rede.
+- `branch-sync-update` nao e seguro com worktree suja, mesmo quando o drift contra `main` parece pequeno.
 - Subir `codex-dev` manualmente em paralelo ao launcher pode causar corrida operacional.
-- Branches com worktree suja impedem atualizacao segura pela Branch Sync Gate.
 
 # Next recommended steps
 
-- Validar `./scripts/docker-preflight.sh` sem `--dry-run` em ambiente com Docker acessivel.
-- Validar `uv sync --locked --extra dev` e o caminho `./scripts/commit-check.sh --sync-dev` em ambiente com rede liberada.
-- Confirmar em GitHub Actions real o comportamento do job `branch-validation`.
-- Manter `memory.md` como resumo duravel e continuar deixando o detalhe operacional em `PENDING_LOG.md` e `ERROR_LOG.md`.
+- Concluir esta normalizacao e manter o detalhe da sessao apenas em `PENDING_LOG.md` e `ERROR_LOG.md`.
+- Sincronizar a branch local com `main` antes de iniciar nova frente ou finalizar entrega operacional.
+- Validar em ambiente apropriado o job `branch-validation` e o fluxo `uv sync --locked --extra dev`.
 
 # Last handoff summary
 
-- A frente operacional de checks locais foi concluida com `./scripts/commit-check.sh --sync-dev` como caminho padrao e gate de branch antes de qualquer `uv sync`.
-- A governanca de Git/GitHub foi ajustada: com `network-access = true`, `git push` e `gh pr create` funcionam no sandbox; fallback fora do sandbox fica reservado a contingencias reais.
-- A branch `main` permaneceu alinhada com `origin/main`; as pendencias abertas restantes continuam operacionais e pequenas.
+- Read before acting: releia `AGENTS.md`, `CONTEXT.md`, `memory.md`, `PENDING_LOG.md`, `ERROR_LOG.md`, `git status` e `git diff --stat`.
+- Current state: a memoria duravel foi normalizada para separar baseline global, snapshot local, decisoes estaveis e proximo passo; a worktree ainda precisa sincronizar a branch antes da proxima frente.
+- Open points: validar `branch-validation` em GitHub Actions real, revalidar `uv sync --locked --extra dev` em ambiente com rede e decidir limpeza de branches/worktrees antigas.
+- Recommended next front: sincronize a branch com `main`, confirme os checks operacionais restantes e so entao abra a proxima feature ou ajuste operacional.
