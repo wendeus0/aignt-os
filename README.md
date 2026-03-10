@@ -193,6 +193,9 @@ Nenhuma feature avança para código sem `SPEC.md` aprovada e testes mínimos es
 ## Checks Locais vs. DOCKER_PREFLIGHT
 
 - Hook local leve: `.githooks/pre-commit` roda `./scripts/commit-check.sh --hook-mode` para checks rápidos de repositório sem executar o preflight Docker real.
+- Caminho operacional padrão para checks/testes locais: execute `./scripts/commit-check.sh --sync-dev` em uma branch de trabalho para sincronizar dependências dev no ambiente gerenciado por `uv` e rodar format, lint, typecheck e testes sem depender de `.venv` legada do host.
+- Reexecução rápida depois do bootstrap: use `./scripts/commit-check.sh --no-sync` para repetir o fluxo operacional sem nova sincronização; `uv run --no-sync ...` continua útil para comandos pontuais, mas não é o ponto de entrada recomendado para preparar um ambiente local do zero.
+- Virtualenv explícita com `PYTHONPATH=src` deve ficar restrita a fallback de diagnóstico ou recuperação de ambiente quando o fluxo padrão com `uv` estiver indisponível ou já classificado como problema externo ao repositório.
 - Preflight Docker operacional real: execute `./scripts/docker-preflight.sh` antes de iniciar a execução prática da feature ou da IA.
 - Runtime completo: execute `./scripts/docker-preflight.sh --full-runtime` apenas quando a mudança tocar boot, ciclo de vida, persistência ou integração.
 

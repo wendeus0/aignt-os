@@ -15,7 +15,7 @@ BASE_REF="origin/main"
 BUILD_IMAGE=0
 FULL_RUNTIME=0
 HOOK_MODE=0
-SYNC_DEV=0
+FLOW_MODE="sync-dev"
 
 export UV_CACHE_DIR="${UV_CACHE_DIR:-$ROOT_DIR/.cache/uv}"
 mkdir -p "$UV_CACHE_DIR"
@@ -31,7 +31,11 @@ while [[ $# -gt 0 ]]; do
       shift
       ;;
     --sync-dev)
-      SYNC_DEV=1
+      FLOW_MODE="sync-dev"
+      shift
+      ;;
+    --no-sync)
+      FLOW_MODE="no-sync"
       shift
       ;;
     --skip-branch-validation)
@@ -87,23 +91,8 @@ done
 
 if [[ "$HOOK_MODE" -eq 1 ]]; then
   SKIP_DOCKER=1
+  FLOW_MODE="no-sync"
 fi
-
-if ! command -v uv >/dev/null 2>&1; then
-  echo "uv is required to run repository checks." >&2
-  exit 1
-fi
-
-uv_run_args=(run --no-sync)
-flow_description="uv run --no-sync"
-
-if [[ "$SYNC_DEV" -eq 1 ]]; then
-  uv sync --locked --extra dev
-  uv_run_args=(run)
-  flow_description="uv sync --locked --extra dev + uv run"
-fi
-
-printf '%s\n' "Resolved local validation flow: $flow_description"
 
 if [[ "$SKIP_BRANCH_VALIDATION" -ne 1 ]]; then
   branch_args=(--base-ref "$BASE_REF")
@@ -117,6 +106,22 @@ if [[ "$SKIP_BRANCH_VALIDATION" -ne 1 ]]; then
   fi
   "$ROOT_DIR/scripts/validate-branch.sh" "${branch_args[@]}"
 fi
+
+if ! command -v uv >/dev/null 2>&1; then
+  echo "uv is required to run repository checks." >&2
+  exit 1
+fi
+
+if [[ "$FLOW_MODE" == "sync-dev" ]]; then
+  uv sync --locked --extra dev
+  uv_run_args=(run)
+  flow_description="uv sync --locked --extra dev + uv run"
+else
+  uv_run_args=(run --no-sync)
+  flow_description="uv run --no-sync"
+fi
+
+printf '%s\n' "Resolved local validation flow: $flow_description"
 
 if [[ "$SKIP_FORMAT" -ne 1 ]]; then
   uv "${uv_run_args[@]}" ruff format --check .

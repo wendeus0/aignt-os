@@ -6,7 +6,7 @@
 - O hook local `.githooks/pre-commit` ficou explicitamente leve via `./scripts/commit-check.sh --hook-mode`.
 - O `DOCKER_PREFLIGHT` operacional real continua explícito e separado do hook leve, via `./scripts/docker-preflight.sh`.
 - A baseline operacional do repositório foi restaurada com correções mínimas de Ruff/import order/formatação nos arquivos apontados pela revisão.
-- O `commit-check.sh` passou a usar `uv run --no-sync` por padrão e reserva `--sync-dev` para bootstrap explícito de dependências dev.
+- O `commit-check.sh` passou a usar `./scripts/commit-check.sh --sync-dev` como caminho padrão para bootstrap/checks locais, com `--no-sync` explícito para rerun rápido e `--hook-mode` preservando o fluxo leve.
 - A SPEC da feature e o lifecycle do runtime passaram a exigir validação adicional de identidade do processo antes de `stop`.
 - O estado do runtime passou a exigir escrita atômica, permissões restritas e tratamento seguro para corrupção/adulteração local.
 - O security-review final da feature considerou o escopo aprovado com ressalvas baixas e compatíveis com o MVP.
@@ -23,20 +23,21 @@
 - O `memory-curator` ficou definido para consolidar decisões incorporadas, trade-offs, estado atual da frente, pendências abertas e próximos passos em `memory.md`, sem substituir `session-logger` nem `technical-triage`.
 - O fluxo de fechamento por convenção operacional ficou registrado na skill `memory-curator` com as chamadas `$memory-curator encerrar conversa` e `$memory-curator close session`, deixando explícito que isso não é alias nativo da plataforma.
 - A avaliação mais recente de ADR concluiu que `memory-curator` e `memory.md` não exigem ADR neste momento, por serem governança operacional local e não mudança arquitetural estável.
+- A avaliação operacional desta frente fixou `./scripts/commit-check.sh --sync-dev` como caminho padrão para checks/testes locais, com `uv run --no-sync` restrito a reexecução rápida após bootstrap e virtualenv explícita apenas como fallback de diagnóstico.
+- A mitigação final desta frente moveu a validação de branch para antes de qualquer resolução de fluxo e antes de qualquer `uv sync`, eliminando sincronização desnecessária antes do gate operacional.
+- O `security-review` final desta frente foi concluído com aprovação sem ressalvas, mantendo a separação entre hook leve, checks locais e `DOCKER_PREFLIGHT` operacional real.
 
 ## Pendências abertas
 
 - Validar em GitHub Actions real se o job `branch-validation` continua correto em eventos `pull_request` usando `github.event.pull_request.head.sha` e `github.head_ref`.
 - Validar `./scripts/docker-preflight.sh` sem `--dry-run` em ambiente com Docker acessível.
 - Validar o fluxo completo de `uv sync --locked --extra dev` em ambiente com rede liberada.
-- Validar qual ambiente deve ser o caminho operacional padrão para testes locais: `uv run` ou virtualenv explícita, já que a sessão precisou recorrer a `.venv-codex-runtime`.
-- Documentar no fluxo local que `scripts/commit-check.sh` agora usa `uv run --no-sync` por padrão e requer `--sync-dev` para bootstrap explícito.
 - Resolver a dívida de formatação global do repositório para que `ruff format --check .` possa voltar a ser gate completo sem ressalvas.
 
 ## Pontos de atenção futuros
 
-- O fluxo local com `.venv` pode exigir `PYTHONPATH=src` quando não se usa `uv run`; isso ficou apenas contornado na sessão e ainda merece validação fora do sandbox.
-- A `.venv` legada do repositório pode carregar interpreter path inválido; até corrigir isso, ela não é base confiável para validação local.
+- `uv run --no-sync` continua dependendo de ambiente previamente sincronizado; em worktree fria ele pode cair no Python do host e falhar por dependências ausentes.
+- O fluxo local com `.venv` pode exigir `PYTHONPATH=src` quando não se usa `uv run`; por isso ele continua apenas como fallback operacional e não como caminho padrão.
 - O hardening do runtime valida identidade do processo por marcador + token em `/proc/<pid>/cmdline`; isso continua Linux-first.
 - A validação do diretório configurável de estado permanece propositalmente básica no MVP e pode ser endurecida depois com âncora explícita no workspace.
 - O runtime persistente continua propositalmente restrito a processo único local, sem scheduler, distribuição ou recuperação avançada.

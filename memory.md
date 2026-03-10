@@ -11,6 +11,7 @@
 - O Codex opera em fluxo container-first via `codex-dev`, separado do runtime `aignt-os`.
 - A Branch Sync Gate usa `./scripts/branch-sync-check.sh` e `./scripts/branch-sync-update.sh` como caminho padrao e conservador.
 - `debug-failure` faz diagnostico inicial de falhas; `session-logger` continua responsavel pelo log operacional detalhado.
+- O caminho operacional padrao para checks/testes locais passa a ser `./scripts/commit-check.sh --sync-dev`, mantendo `uv` como gerenciador de ambiente e evitando dependencia de virtualenv legada do host.
 
 # Active fronts
 
@@ -19,7 +20,6 @@
 
 # Open decisions
 
-- Definir o fluxo operacional preferido para testes locais: `uv run` ou virtualenv explicita.
 - Validar se o job `branch-validation` continua correto em GitHub Actions real.
 
 # Recurrent pitfalls
