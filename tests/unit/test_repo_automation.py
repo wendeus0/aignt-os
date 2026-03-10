@@ -235,7 +235,7 @@ def test_commit_check_hook_mode_skips_real_docker_preflight() -> None:
     assert "Light hook mode completed" in result.stdout
 
 
-def test_commit_check_uses_uv_run_no_sync_by_default(tmp_path: Path, monkeypatch) -> None:
+def test_commit_check_hook_mode_keeps_fast_no_sync_flow(tmp_path: Path, monkeypatch) -> None:
     uv_log = tmp_path / "uv.log"
     uv_bin = tmp_path / "uv"
     uv_bin.write_text(
@@ -249,6 +249,74 @@ def test_commit_check_uses_uv_run_no_sync_by_default(tmp_path: Path, monkeypatch
 
     result = run_script(
         "scripts/commit-check.sh",
+        "--hook-mode",
+        "--allow-main",
+        "--skip-branch-validation",
+        "--skip-security",
+    )
+
+    assert result.returncode == 0
+    assert "Resolved local validation flow: uv run --no-sync" in result.stdout
+
+    uv_calls = uv_log.read_text(encoding="utf-8").splitlines()
+    assert uv_calls == [
+        "run --no-sync ruff format --check .",
+        "run --no-sync ruff check .",
+        "run --no-sync mypy",
+        "run --no-sync pytest",
+    ]
+
+
+def test_commit_check_sync_dev_bootstraps_before_running_checks_by_default(
+    tmp_path: Path, monkeypatch
+) -> None:
+    uv_log = tmp_path / "uv.log"
+    uv_bin = tmp_path / "uv"
+    uv_bin.write_text(
+        '#!/usr/bin/env bash\nprintf \'%s\\n\' "$*" >> "$UV_LOG"\n',
+        encoding="utf-8",
+    )
+    uv_bin.chmod(0o755)
+
+    monkeypatch.setenv("PATH", f"{tmp_path}:{os.environ['PATH']}")
+    monkeypatch.setenv("UV_LOG", str(uv_log))
+
+    result = run_script(
+        "scripts/commit-check.sh",
+        "--allow-main",
+        "--skip-branch-validation",
+        "--skip-docker",
+        "--skip-security",
+    )
+
+    assert result.returncode == 0
+    assert "Resolved local validation flow: uv sync --locked --extra dev + uv run" in result.stdout
+
+    uv_calls = uv_log.read_text(encoding="utf-8").splitlines()
+    assert uv_calls == [
+        "sync --locked --extra dev",
+        "run ruff format --check .",
+        "run ruff check .",
+        "run mypy",
+        "run pytest",
+    ]
+
+
+def test_commit_check_no_sync_keeps_fast_rerun_mode(tmp_path: Path, monkeypatch) -> None:
+    uv_log = tmp_path / "uv.log"
+    uv_bin = tmp_path / "uv"
+    uv_bin.write_text(
+        '#!/usr/bin/env bash\nprintf \'%s\\n\' "$*" >> "$UV_LOG"\n',
+        encoding="utf-8",
+    )
+    uv_bin.chmod(0o755)
+
+    monkeypatch.setenv("PATH", f"{tmp_path}:{os.environ['PATH']}")
+    monkeypatch.setenv("UV_LOG", str(uv_log))
+
+    result = run_script(
+        "scripts/commit-check.sh",
+        "--no-sync",
         "--allow-main",
         "--skip-branch-validation",
         "--skip-docker",
@@ -267,7 +335,7 @@ def test_commit_check_uses_uv_run_no_sync_by_default(tmp_path: Path, monkeypatch
     ]
 
 
-def test_commit_check_sync_dev_bootstraps_before_running_checks(
+def test_commit_check_blocks_before_sync_when_branch_validation_fails(
     tmp_path: Path, monkeypatch
 ) -> None:
     uv_log = tmp_path / "uv.log"
@@ -278,29 +346,43 @@ def test_commit_check_sync_dev_bootstraps_before_running_checks(
     )
     uv_bin.chmod(0o755)
 
+    git_bin = tmp_path / "git"
+    git_bin.write_text(
+        """#!/usr/bin/env bash
+set -euo pipefail
+args=("$@")
+if [[ "${args[0]:-}" == "-C" ]]; then
+  args=("${args[@]:2}")
+fi
+case "${args[*]}" in
+  "rev-parse --verify origin/main")
+    printf '%s\\n' fake-origin-main
+    ;;
+  "rev-parse --abbrev-ref HEAD")
+    printf '%s\\n' main
+    ;;
+  *)
+    echo "unexpected git invocation: ${args[*]}" >&2
+    exit 1
+    ;;
+esac
+""",
+        encoding="utf-8",
+    )
+    git_bin.chmod(0o755)
+
     monkeypatch.setenv("PATH", f"{tmp_path}:{os.environ['PATH']}")
     monkeypatch.setenv("UV_LOG", str(uv_log))
 
     result = run_script(
         "scripts/commit-check.sh",
-        "--sync-dev",
-        "--allow-main",
-        "--skip-branch-validation",
         "--skip-docker",
         "--skip-security",
     )
 
-    assert result.returncode == 0
-    assert "Resolved local validation flow: uv sync --locked --extra dev + uv run" in result.stdout
-
-    uv_calls = uv_log.read_text(encoding="utf-8").splitlines()
-    assert uv_calls == [
-        "sync --locked --extra dev",
-        "run ruff format --check .",
-        "run ruff check .",
-        "run mypy",
-        "run pytest",
-    ]
+    assert result.returncode != 0
+    assert "main" in result.stderr.lower()
+    assert not uv_log.exists() or uv_log.read_text(encoding="utf-8") == ""
 
 
 def test_compose_declares_runtime_healthcheck() -> None:
