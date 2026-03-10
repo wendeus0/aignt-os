@@ -2,6 +2,7 @@
 
 ## Decisões incorporadas recentemente
 
+- A validação operacional de `./scripts/docker-preflight.sh` sem `--dry-run` foi concluída com sucesso no modo padrão leve (`compose config` + build, sem `up`) em ambiente com Docker acessível.
 - A validação contra `main` em `pull_request` passou a usar o `head.sha` real da PR e o nome real da branch, evitando merge ref/detached ref sintético no GitHub Actions.
 - O hook local `.githooks/pre-commit` ficou explicitamente leve via `./scripts/commit-check.sh --hook-mode`.
 - O `DOCKER_PREFLIGHT` operacional real continua explícito e separado do hook leve, via `./scripts/docker-preflight.sh`.
@@ -31,7 +32,6 @@
 ## Pendências abertas
 
 - Validar em GitHub Actions real se o job `branch-validation` continua correto em eventos `pull_request` usando `github.event.pull_request.head.sha` e `github.head_ref`.
-- Validar `./scripts/docker-preflight.sh` sem `--dry-run` em ambiente com Docker acessível.
 - Validar o fluxo completo de `uv sync --locked --extra dev` em ambiente com rede liberada.
 - Resolver a dívida de formatação global do repositório para que `ruff format --check .` possa voltar a ser gate completo sem ressalvas.
 
