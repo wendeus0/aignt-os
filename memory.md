@@ -1,8 +1,9 @@
 # Current project state
 
 - Repository: AIgnt OS, um meta-orquestrador CLI-first com AIgnt-Synapse-Flow como engine propria de pipeline.
-- Branch atual: `feat/memory-curator-skill`.
-- Baseline recente: infraestrutura isolada do Codex introduzida e governanca de branch/skills endurecida.
+- Branch atual observada: `main`, alinhada com `origin/main`.
+- Worktree observada: limpa ao fim da frente anterior; esta sessao fecha apenas consolidacao de memoria e governanca operacional.
+- Baseline atual: infraestrutura isolada do Codex, Branch Sync Gate, `memory-curator` e fluxo Git/GitHub validado no sandbox com `network-access = true`.
 
 # Stable decisions
 
@@ -13,11 +14,14 @@
 - A Branch Sync Gate usa `./scripts/branch-sync-check.sh` e `./scripts/branch-sync-update.sh` como caminho padrao e conservador.
 - `debug-failure` faz diagnostico inicial de falhas; `session-logger` continua responsavel pelo log operacional detalhado.
 - O caminho operacional padrao para checks/testes locais passa a ser `./scripts/commit-check.sh --sync-dev`, mantendo `uv` como gerenciador de ambiente e evitando dependencia de virtualenv legada do host.
+- `memory.md` permanece como memoria duravel e curta; `PENDING_LOG.md` e `ERROR_LOG.md` guardam o detalhe operacional da sessao.
+- O fechamento de sessao pode usar a convencao `$memory-curator encerrar conversa` ou `$memory-curator close session` para atualizar memoria e gerar handoff.
+- No ambiente atual do Codex com `network-access = true`, `git push` e `gh pr create` devem ser tentados normalmente no sandbox; fallback fora do sandbox fica apenas como contingencia.
 
 # Active fronts
 
-- Frente atual: criacao da skill `memory-curator` e introducao de `memory.md` como memoria duravel do repositorio.
-- Estado atual: branch aberta, sem PR nesta frente ainda.
+- Frente operacional principal: consolidacao do fluxo local de checks/testes e da governanca de fechamento Git/GitHub.
+- Estado atual: a frente foi concluida e mergeada; nao ha frente ativa registrada nesta worktree em `main`.
 
 # Open decisions
 
@@ -32,13 +36,13 @@
 
 # Next recommended steps
 
-- Finalizar a skill `memory-curator` e validar seu papel em `AGENTS.md`.
-- Validar os checks operacionais ainda pendentes fora do sandbox quando aplicavel.
-- Usar `memory.md` como resumo duravel e `PENDING_LOG.md`/`ERROR_LOG.md` como detalhe operacional.
+- Validar `./scripts/docker-preflight.sh` sem `--dry-run` em ambiente com Docker acessivel.
+- Validar `uv sync --locked --extra dev` e o caminho `./scripts/commit-check.sh --sync-dev` em ambiente com rede liberada.
+- Confirmar em GitHub Actions real o comportamento do job `branch-validation`.
+- Manter `memory.md` como resumo duravel e continuar deixando o detalhe operacional em `PENDING_LOG.md` e `ERROR_LOG.md`.
 
 # Last handoff summary
 
-- O repositorio saiu da frente de isolamento do Codex com security-review aprovado.
-- A Branch Sync Gate foi incorporada com mitigacao final das ressalvas baixas.
-- `debug-failure` foi introduzido para diagnostico inicial de falhas.
-- A nova frente aberta e a criacao da skill `memory-curator`.
+- A frente operacional de checks locais foi concluida com `./scripts/commit-check.sh --sync-dev` como caminho padrao e gate de branch antes de qualquer `uv sync`.
+- A governanca de Git/GitHub foi ajustada: com `network-access = true`, `git push` e `gh pr create` funcionam no sandbox; fallback fora do sandbox fica reservado a contingencias reais.
+- A branch `main` permaneceu alinhada com `origin/main`; as pendencias abertas restantes continuam operacionais e pequenas.
