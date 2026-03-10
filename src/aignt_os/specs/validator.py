@@ -2,7 +2,7 @@ from __future__ import annotations
 
 from pathlib import Path
 
-import yaml
+import yaml  # type: ignore[import-untyped]
 from pydantic import BaseModel, ConfigDict, Field, ValidationError
 
 
@@ -82,10 +82,7 @@ def _parse_sections(body: str) -> dict[str, str]:
         if current_section is not None:
             sections[current_section].append(line)
 
-    return {
-        name: "\n".join(lines).strip()
-        for name, lines in sections.items()
-    }
+    return {name: "\n".join(lines).strip() for name, lines in sections.items()}
 
 
 def _require_sections(sections: dict[str, str], required_sections: tuple[str, ...]) -> None:
