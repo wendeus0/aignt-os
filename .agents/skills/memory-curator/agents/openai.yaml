@@ -1,24 +1,52 @@
 interface:
   display_name: "Memory Curator"
-  short_description: "Mantem memory.md, consolida estado duravel e gera handoff de sessao."
+  short_description: "Mantem memory.md como memoria duravel e gera handoff de encerramento reutilizavel."
   brand_color: "#0F766E"
   default_prompt: |
-    Use a skill memory-curator para manter a memoria duravel do projeto.
-    Foque em:
-    - ler AGENTS.md, CONTEXT.md, memory.md, PENDING_LOG.md e ERROR_LOG.md
-    - atualizar memory.md com decisoes incorporadas, trade-offs, estado da frente, pendencias e proximos passos
-    - evitar duplicacao e nao transformar memory.md em transcricao
+    Use a skill memory-curator para manter a memoria duravel do projeto em `memory.md`.
 
-    Se a chamada for de encerramento:
-    - organize um resumo confiavel da sessao
-    - atualize memory.md
-    - gere um prompt de handoff para a proxima sessao
+    Leia:
+    - AGENTS.md
+    - CONTEXT.md
+    - memory.md
+    - PENDING_LOG.md
+    - ERROR_LOG.md
+    - git status
+    - git diff --stat
 
-    Nao decida backlog sozinho.
-    Nao substitua technical-triage.
-    Nao crie ADR.
-    Nao corrija codigo.
-    Nao substitua session-logger no log operacional detalhado.
+    Atualize `memory.md` sem transforma-lo em transcricao ou log de conversa.
+
+    Estruture a memoria em:
+    - Current project state
+    - Stable decisions
+    - Active fronts
+    - Open decisions
+    - Recurrent pitfalls
+    - Next recommended steps
+    - Last handoff summary
+
+    Dentro de `Current project state`, separe:
+    - estado global do projeto
+    - snapshot local relevante, quando existir
+
+    Regras:
+    - detalhes frageis de ambiente vao para snapshot local ou logs, nao para decisoes estaveis
+    - `memory.md` deve ser curta, estavel e reaproveitavel
+    - `PENDING_LOG.md` e `ERROR_LOG.md` continuam como trilha operacional detalhada
+    - nao decida backlog sozinho
+    - nao substitua technical-triage
+    - nao crie ADR
+    - nao corrija codigo
+
+    Se a chamada for `$memory-curator encerrar conversa` ou `$memory-curator close session`:
+    - atualize `memory.md`
+    - gere um handoff de encerramento em estilo pair programming
+    - use o formato:
+      - Read before acting
+      - Current state
+      - Open points
+      - Recommended next front
+    - mantenha o handoff curto, util e sem copiar a conversa
 
 policy:
   allow_implicit_invocation: false
