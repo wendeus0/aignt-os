@@ -5,7 +5,13 @@ from typing import Protocol
 
 from pydantic import BaseModel, ConfigDict, Field, StrictStr
 
-from aignt_os.specs import SpecDocument, validate_spec_file
+from aignt_os.specs import (
+    SpecDocument,
+    validate_spec_file,
+)
+from aignt_os.specs import (
+    SpecValidationError as _SpecValidationError,
+)
 from aignt_os.state_machine import LINEAR_STATE_FLOW, AIgntStateMachine
 
 PIPELINE_STOP_STATES = ("PLAN", "TEST_RED")
@@ -68,6 +74,8 @@ PIPELINE_STEPS: dict[str, PipelineStep] = {
         description="Produce the failing test hand-off for the current feature.",
     ),
 }
+
+SpecValidationError = _SpecValidationError
 
 
 class PipelineEngine:

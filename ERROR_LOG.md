@@ -1,5 +1,15 @@
 # ERROR_LOG
 
+## 2026-03-11 - `repo-checks` da PR `#28` falhou por drift entre teste e API publica da pipeline
+
+- Contexto: tentativa de preparar o merge da `F06-pipeline-engine-linear`.
+- Ação/comando relacionado: `gh pr checks 28`, `gh run view 22966152999 --job 66670192469 --log-failed` e reproducao local com `PYTHONPATH=src ... python -m pytest tests/unit/test_pipeline_engine.py -k invalid -q`.
+- Erro observado: o CI falhou em `tests/unit/test_pipeline_engine.py::test_pipeline_engine_blocks_plan_when_spec_is_invalid` com `AttributeError: module 'aignt_os.pipeline' has no attribute 'SpecValidationError'`.
+- Causa identificada: o teste da `F06` ja modelava `SpecValidationError` como parte da API publica de `aignt_os.pipeline`, mas o modulo nao reexportava esse simbolo vindo de `aignt_os.specs`.
+- Ação tomada: o modulo `src/aignt_os/pipeline.py` passou a reexportar `SpecValidationError`; a revalidacao local com `pytest`, `ruff`, `mypy` e `./scripts/commit-check.sh --sync-dev --skip-branch-validation --skip-docker --skip-security` voltou a fechar verde.
+- Status: resolvido localmente; PR pendente de atualizacao no GitHub.
+- Observação futura: quando a feature introduzir novo modulo de orquestracao, manter teste e API publica alinhados explicitamente para evitar regressao em `repo-checks`.
+
 ## 2026-03-11 - Corpo de PR inline sofreu expansao de shell durante `gh pr create`
 
 - Contexto: fechamento Git da branch `chore/docker-preflight-modes` com abertura de PR no sandbox.

@@ -2,6 +2,7 @@
 
 ## Decisões incorporadas recentemente
 
+- A correcao de follow-up da `F06-pipeline-engine-linear` reexportou `SpecValidationError` em `aignt_os.pipeline`, alinhando a API publica da engine com o teste de bloqueio por SPEC invalida e restaurando o `repo-checks` local no mesmo caminho usado pelo CI.
 - A `F06-pipeline-engine-linear` passou a ter `SPEC.md` propria, `NOTES.md`, contratos tipados de pipeline (`PipelineStep`, `StepExecutionResult`, `PipelineContext`) e uma `PipelineEngine` linear em fake mode para o AIgnt-Synapse-Flow.
 - O recorte da `F06-pipeline-engine-linear` ficou deliberadamente restrito a `SPEC_VALIDATION`, `PLAN` e `TEST_RED`, reutilizando `SpecValidator` e state machine ja existentes, sem persistencia, worker, supervisor ou adapters reais.
 - A validacao local da `F06-pipeline-engine-linear` fechou verde com `SPEC` validada, `88` testes passando via `python -m pytest`, `ruff check`, `ruff format --check`, `mypy` e `./scripts/branch-sync-check.sh` em `ahead=0 behind=0`.
