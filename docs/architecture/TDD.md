@@ -4,7 +4,7 @@
 Definir a estratégia de testes para implementar o AIgnt OS com foco em confiabilidade do **AIgnt-Synapse-Flow**, a engine própria de pipeline do projeto, dos adapters CLI, do formato de SPEC, do runtime dual (CLI + worker leve) e dos hand-offs entre etapas.
 
 ## 2. Princípios
-- Validar `DOCKER_PREFLIGHT` antes de iniciar execução prática da feature.
+- Validar `DOCKER_PREFLIGHT` antes de iniciar execução prática dependente de Docker.
 - Testar contratos antes da implementação.
 - Separar testes de unidade, integração, pipeline e worker.
 - Simular ferramentas CLI com outputs realistas.
@@ -18,13 +18,12 @@ Definir a estratégia de testes para implementar o AIgnt OS com foco em confiabi
 ## 3. Fluxo de execução por feature
 
 ```text
-DOCKER_PREFLIGHT → SPEC → TEST_RED → CODE_GREEN → REFACTOR → SECURITY_REVIEW → REPORT → COMMIT
+SPEC → TEST_RED → CODE_GREEN → REFACTOR → SECURITY_REVIEW → REPORT → COMMIT
 ```
 
-- `DOCKER_PREFLIGHT` é executado pela skill `repo-automation`.
+- `DOCKER_PREFLIGHT` é executado pela skill `repo-automation` quando a feature exigir validação prática em Docker.
 - O `DOCKER_PREFLIGHT` padrão em CI e no fluxo local deve ser leve, sem `docker compose up`.
 - O runtime completo deve ser validado em workflow dedicado ou por acionamento explícito.
-- `SPEC` só avança com ambiente validado.
 - `SECURITY_REVIEW` fecha o ciclo técnico antes de `REPORT` e `COMMIT`.
 
 ## 4. Estratégia RED → GREEN → REFACTOR
@@ -107,20 +106,20 @@ Garantem que:
 ---
 
 ## 6. Ordem Recomendada de Implementação
-1. `DOCKER_PREFLIGHT` validado pela skill `repo-automation`.
-2. SPEC aprovada.
-3. Modelos Pydantic principais.
-4. Validador da SPEC híbrida.
-5. State machine.
-6. Cleaner/parser básico.
-7. Base adapter async.
-8. Step executor.
-9. AIgnt-Synapse-Flow linear.
-10. Persistência SQLite.
-11. Worker leve.
-12. Supervisor com retry/reroute.
-13. Geração do `RUN_REPORT.md`.
-14. Adapters reais.
+1. SPEC aprovada.
+2. Modelos Pydantic principais.
+3. Validador da SPEC híbrida.
+4. State machine.
+5. Cleaner/parser básico.
+6. Base adapter async.
+7. Step executor.
+8. AIgnt-Synapse-Flow linear.
+9. Persistência SQLite.
+10. Worker leve.
+11. Supervisor com retry/reroute.
+12. Geração do `RUN_REPORT.md`.
+13. Adapters reais.
+14. `DOCKER_PREFLIGHT` validado quando a frente exigir execução prática em Docker.
 15. Paralelismo controlado.
 
 ---

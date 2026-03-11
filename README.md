@@ -38,13 +38,13 @@ CLI funcional → SPEC válida → State Machine → Parser → Adapter base asy
 ### Esteira principal do MVP
 
 ```
-DOCKER_PREFLIGHT → SPEC → TEST_RED → CODE_GREEN → REFACTOR → SECURITY_REVIEW → REPORT → COMMIT
+SPEC → TEST_RED → CODE_GREEN → REFACTOR → SECURITY_REVIEW → REPORT → COMMIT
 ```
 
 Dentro do macroestágio `SPEC`, o AIgnt-Synapse-Flow pode decompor a execução em `SPEC_DISCOVERY`, `SPEC_NORMALIZATION` e `SPEC_VALIDATION`.
 
-Por padrão, o `DOCKER_PREFLIGHT` do projeto é leve: valida apenas `compose config`, sem build nem `up`. O build explícito fica para workflows e comandos de imagem, e o runtime completo fica para workflow dedicado de integração/runtime ou para execução explícita quando a feature tocar boot, ciclo de vida, persistência ou integração.
-Os hooks locais permanecem leves por padrão para feedback rápido de repositório e não substituem o `DOCKER_PREFLIGHT` operacional real antes do início prático da feature.
+O `DOCKER_PREFLIGHT` do projeto deixou de ser etapa inicial fixa da esteira e passou a ser gate operacional condicional. Por padrão, ele é leve: valida apenas `compose config`, sem build nem `up`. O build explícito fica para workflows e comandos de imagem, e o runtime completo fica para workflow dedicado de integração/runtime ou para execução explícita quando a feature tocar boot, ciclo de vida, persistência ou integração.
+Os hooks locais permanecem leves por padrão para feedback rápido de repositório e não substituem o `DOCKER_PREFLIGHT` operacional real quando houver início prático dependente de Docker.
 
 ### Entregas obrigatórias
 
@@ -173,7 +173,7 @@ aignt-os/
 
 ## Desenvolvimento por feature
 
-O desenvolvimento segue o ciclo **Docker Preflight → Spec → Red → Green → Refactor → Security Review → Report → Commit**, com uma feature por worktree:
+O desenvolvimento segue o ciclo **Spec → Red → Green → Refactor → Security Review → Report → Commit**, com uma feature por worktree:
 
 ```
 feature/f01-bootstrap-contracts
@@ -188,7 +188,7 @@ feature/f09-supervisor-mvp
 feature/f10-run-report-one-real-adapter
 ```
 
-Nenhuma feature avança para código sem `SPEC.md` aprovada e testes mínimos escritos.
+Nenhuma feature avança para código sem `SPEC.md` aprovada e testes mínimos escritos. O `DOCKER_PREFLIGHT` entra quando a mudança exigir validação prática em Docker.
 
 ## Checks Locais vs. DOCKER_PREFLIGHT
 
@@ -196,7 +196,7 @@ Nenhuma feature avança para código sem `SPEC.md` aprovada e testes mínimos es
 - Caminho operacional padrão para checks/testes locais: execute `./scripts/commit-check.sh --sync-dev` em uma branch de trabalho para sincronizar dependências dev no ambiente gerenciado por `uv` e rodar format, lint, typecheck e testes sem depender de `.venv` legada do host.
 - Reexecução rápida depois do bootstrap: use `./scripts/commit-check.sh --no-sync` para repetir o fluxo operacional sem nova sincronização; `uv run --no-sync ...` continua útil para comandos pontuais, mas não é o ponto de entrada recomendado para preparar um ambiente local do zero.
 - Virtualenv explícita com `PYTHONPATH=src` deve ficar restrita a fallback de diagnóstico ou recuperação de ambiente quando o fluxo padrão com `uv` estiver indisponível ou já classificado como problema externo ao repositório.
-- Preflight Docker operacional real: execute `./scripts/docker-preflight.sh` antes de iniciar a execução prática da feature ou da IA.
+- Preflight Docker operacional real: execute `./scripts/docker-preflight.sh` antes de iniciar a execução prática da feature ou da IA quando a tarefa depender de Docker.
 - Build explícito de imagem: execute `./scripts/docker-preflight.sh --build` quando o objetivo for validar a imagem Docker.
 - Runtime completo: execute `./scripts/docker-preflight.sh --full-runtime` apenas quando a mudança tocar boot, ciclo de vida, persistência ou integração.
 

@@ -4,7 +4,7 @@
 Aceito
 
 ## Contexto
-O fluxo oficial do projeto exige `DOCKER_PREFLIGHT` antes de iniciar a execução prática de uma feature. Ao mesmo tempo, subir o container completo em todo check local ou toda execução de CI aumenta tempo, custo operacional e pontos de falha, inclusive para mudanças que não tocam ciclo de vida, boot, persistência ou integração real do runtime.
+O fluxo oficial do projeto passou a abrir em `SPEC`, enquanto o `DOCKER_PREFLIGHT` ficou reposicionado como gate operacional condicional antes de execução prática dependente de Docker. Ao mesmo tempo, subir o container completo em todo check local ou toda execução de CI aumenta tempo, custo operacional e pontos de falha, inclusive para mudanças que não tocam ciclo de vida, boot, persistência ou integração real do runtime.
 
 O projeto também busca preservar segurança operacional e previsibilidade sem bloquear desnecessariamente o desenvolvimento feature-by-feature.
 
