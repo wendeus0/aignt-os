@@ -23,6 +23,7 @@ PIPELINE_STOP_STATES = (
     "CODE_GREEN",
     "REVIEW",
     "SECURITY",
+    "DOCUMENT",
 )
 PIPELINE_ENTRY_STATES = (
     "REQUEST",
@@ -34,6 +35,8 @@ PIPELINE_ENTRY_STATES = (
     "CODE_GREEN",
     "REVIEW",
     "SECURITY",
+    "DOCUMENT",
+    "COMPLETE",
 )
 
 
@@ -54,6 +57,10 @@ class StepExecutionResult(BaseModel):
     artifacts: dict[str, StrictStr] = Field(default_factory=dict)
     raw_output: StrictStr | None = None
     clean_output: StrictStr | None = None
+    tool_name: StrictStr | None = None
+    return_code: int | None = None
+    duration_ms: int | None = None
+    timed_out: bool | None = None
 
 
 class PipelineContext(BaseModel):
@@ -129,6 +136,10 @@ PIPELINE_STEPS: dict[str, PipelineStep] = {
         state="SECURITY",
         description="Review security-sensitive aspects before reporting completion.",
     ),
+    "DOCUMENT": PipelineStep(
+        state="DOCUMENT",
+        description="Generate the final RUN_REPORT.md for the current run.",
+    ),
 }
 
 SpecValidationError = _SpecValidationError
@@ -178,6 +189,12 @@ class PipelineEngine:
                     context.current_state = self.state_machine.current_state
                     continue
 
+                if current_state == "COMPLETE":
+                    context.current_state = current_state
+                    if self.observer is not None:
+                        self.observer.on_run_completed(context)
+                    return context
+
                 if current_state == "SPEC_VALIDATION":
                     current_step = PIPELINE_STEPS[current_state]
                     self._execute_spec_validation(context)
@@ -191,7 +208,14 @@ class PipelineEngine:
                     context.current_state = self.state_machine.current_state
                     continue
 
-                if current_state in {"PLAN", "TEST_RED", "CODE_GREEN", "REVIEW", "SECURITY"}:
+                if current_state in {
+                    "PLAN",
+                    "TEST_RED",
+                    "CODE_GREEN",
+                    "REVIEW",
+                    "SECURITY",
+                    "DOCUMENT",
+                }:
                     current_step = PIPELINE_STEPS[current_state]
                     result = self._run_runtime_step(current_step, context)
                     if result is None:
@@ -279,7 +303,7 @@ class PipelineEngine:
     def _validate_entry_state(self) -> None:
         if self.state_machine.current_state not in PIPELINE_ENTRY_STATES:
             raise PipelineExecutionError(
-                f"Current state '{self.state_machine.current_state}' is not supported by F06."
+                f"Current state '{self.state_machine.current_state}' is not supported by F10."
             )
 
     def _next_state(self, current_state: str) -> str:

@@ -126,3 +126,20 @@ def test_base_cli_adapter_handles_timeout_and_kills_process(
     assert result.timed_out is True
     assert result.success is False
     assert result.stderr_clean == "timed out"
+
+
+def test_codex_cli_adapter_builds_container_first_exec_command() -> None:
+    adapters = _adapters_module()
+
+    adapter = adapters.CodexCLIAdapter()
+
+    command = adapter.build_command("Implement the plan.")
+
+    assert command == [
+        "./scripts/dev-codex.sh",
+        "--",
+        "exec",
+        "--color",
+        "never",
+        "Implement the plan.",
+    ]

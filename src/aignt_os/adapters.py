@@ -73,3 +73,20 @@ class BaseCLIAdapter(ABC):
             raise ValueError("build_command() must return at least one token.")
         if any(not token.strip() for token in command):
             raise ValueError("build_command() returned an empty command token.")
+
+
+class CodexCLIAdapter(BaseCLIAdapter):
+    def __init__(self, *, timeout_seconds: float = 30.0) -> None:
+        super().__init__(tool_name="codex", timeout_seconds=timeout_seconds)
+
+    def build_command(self, prompt: str) -> list[str]:
+        if not prompt.strip():
+            raise ValueError("prompt must not be empty.")
+        return [
+            "./scripts/dev-codex.sh",
+            "--",
+            "exec",
+            "--color",
+            "never",
+            prompt,
+        ]

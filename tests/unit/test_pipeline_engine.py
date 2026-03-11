@@ -222,6 +222,50 @@ def test_pipeline_engine_can_retry_code_green_and_continue_to_security(tmp_path:
     assert code_green_executor.calls == 2
 
 
+def test_pipeline_engine_can_stop_after_document(tmp_path: Path) -> None:
+    pipeline = _pipeline_module()
+    spec_path = tmp_path / "SPEC.md"
+    _write_valid_spec(spec_path)
+    plan_executor = _RecordingExecutor(artifact_key="plan_md", artifact_value="plan")
+    test_red_executor = _RecordingExecutor(artifact_key="tests_md", artifact_value="red")
+    code_green_executor = _RecordingExecutor(artifact_key="code_md", artifact_value="green")
+    review_executor = _RecordingExecutor(artifact_key="review_md", artifact_value="review")
+    security_executor = _RecordingExecutor(
+        artifact_key="security_md",
+        artifact_value="security",
+    )
+    document_executor = _RecordingExecutor(
+        artifact_key="run_report_md",
+        artifact_value="# RUN_REPORT\n",
+    )
+
+    engine = pipeline.PipelineEngine(
+        executors={
+            "PLAN": plan_executor,
+            "TEST_RED": test_red_executor,
+            "CODE_GREEN": code_green_executor,
+            "REVIEW": review_executor,
+            "SECURITY": security_executor,
+            "DOCUMENT": document_executor,
+        }
+    )
+
+    context = engine.run(spec_path, stop_at="DOCUMENT")
+
+    assert engine.state_machine.current_state == "DOCUMENT"
+    assert context.current_state == "DOCUMENT"
+    assert context.step_history == [
+        "SPEC_VALIDATION",
+        "PLAN",
+        "TEST_RED",
+        "CODE_GREEN",
+        "REVIEW",
+        "SECURITY",
+        "DOCUMENT",
+    ]
+    assert context.artifacts["run_report_md"] == "# RUN_REPORT\n"
+
+
 def test_pipeline_engine_can_return_from_review_to_code_green(tmp_path: Path) -> None:
     pipeline = _pipeline_module()
     spec_path = tmp_path / "SPEC.md"

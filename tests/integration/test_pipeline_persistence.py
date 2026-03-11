@@ -45,6 +45,10 @@ class _PlanExecutor:
             artifacts={"plan_md": "# Generated Plan\n"},
             raw_output="RAW PLAN\n",
             clean_output="# Generated Plan\n",
+            tool_name="fake-executor",
+            return_code=0,
+            duration_ms=45,
+            timed_out=False,
         )
 
 
@@ -179,3 +183,62 @@ def test_persisted_pipeline_records_supervisor_decision_events(tmp_path: Path) -
     assert events[3].state == "TEST_RED"
     assert events[4].state == "CODE_GREEN"
     assert "retry" in events[4].message
+
+
+def test_persisted_pipeline_generates_run_report_until_document(tmp_path: Path) -> None:
+    persistence = import_module("aignt_os.persistence")
+
+    spec_path = tmp_path / "SPEC.md"
+    _write_valid_spec(spec_path)
+    repository = persistence.RunRepository(tmp_path / "runs.sqlite3")
+    artifact_store = persistence.ArtifactStore(tmp_path / "artifacts")
+
+    class _FixedExecutor:
+        def __init__(
+            self,
+            artifact_name: str,
+            content: str,
+            *,
+            tool_name: str | None = None,
+        ) -> None:
+            self.artifact_name = artifact_name
+            self.content = content
+            self.tool_name = tool_name
+
+        def execute(self, step, context):  # type: ignore[no-untyped-def]
+            del step, context
+            pipeline = import_module("aignt_os.pipeline")
+            return pipeline.StepExecutionResult(
+                artifacts={self.artifact_name: self.content},
+                raw_output=self.content,
+                clean_output=self.content,
+                tool_name=self.tool_name,
+                return_code=0 if self.tool_name is not None else None,
+                duration_ms=45 if self.tool_name is not None else None,
+                timed_out=False if self.tool_name is not None else None,
+            )
+
+    runner = persistence.PersistedPipelineRunner(
+        repository=repository,
+        artifact_store=artifact_store,
+        executors={
+            "PLAN": _FixedExecutor("plan_md", "# Plan\n", tool_name="codex"),
+            "TEST_RED": _FixedExecutor("tests_md", "# Tests\n"),
+            "CODE_GREEN": _FixedExecutor("code_md", "# Green\n"),
+            "REVIEW": _FixedExecutor("review_md", "# Review\n"),
+            "SECURITY": _FixedExecutor("security_md", "# Security\n"),
+        },
+    )
+
+    context = runner.run(spec_path, stop_at="DOCUMENT")
+    run_report_path = artifact_store.base_path / context.run_id / "RUN_REPORT.md"
+    run_report_content = run_report_path.read_text(encoding="utf-8")
+    steps = repository.list_steps(context.run_id)
+
+    assert context.current_state == "DOCUMENT"
+    assert run_report_path.exists()
+    assert "# RUN_REPORT" in run_report_content
+    assert "codex" in run_report_content
+    assert "PLAN" in run_report_content
+    assert steps[-1].state == "DOCUMENT"
+    assert steps[1].tool_name == "codex"
