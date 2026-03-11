@@ -38,6 +38,12 @@
 - O `security-review` da `F02-spec-engine-mvp` foi aprovado com ressalvas baixas: manter `yaml.safe_load` e, na integracao futura, restringir o chamador a paths esperados de `SPEC.md` dentro do workspace da run.
 - A PR `#19` da `F02-spec-engine-mvp` teve o gate `repo-checks` restaurado com correcao minima de formatacao, import order e compatibilidade de `mypy` no `SpecValidator`, sem ampliar o escopo da feature.
 - O `security-review` mais recente da correcao da F02 aprovou o delta com ressalva baixa e localizada: o `# type: ignore[import-untyped]` em `yaml` e aceitavel neste recorte, mas pode ser removido depois com tipagem mais explicita ou `types-PyYAML`.
+- A `F03-state-machine-mvp` passou a ter `SPEC.md` propria, state machine minima do AIgnt-Synapse-Flow com transicoes lineares validas, bloqueio de `PLAN` antes de `SPEC_VALIDATION` e estado terminal `FAILED`, com testes verdes e PR `#20` aberta.
+- O `security-review` da `F03-state-machine-mvp` foi aprovado com ressalvas baixas: os estados ainda sao modelados como strings livres e `TERMINAL_STATES` ainda nao e usada explicitamente nas validacoes internas.
+- A `F03-state-machine-mvp` ficou autocontida na worktree atual com materializacao de `features/F03-state-machine-mvp/SPEC.md`, mantendo alinhamento com o recorte aprovado da feature.
+- A validacao local da `F03-state-machine-mvp` confirmou `5` testes unitarios verdes para a state machine minima, e o proximo passo logico permanece fechar `REPORT/COMMIT` antes de abrir a `F04`.
+- A `F03-state-machine-mvp` foi encerrada: correcao de `B905` (`zip()` com `strict=False`), rebase sobre `main` atualizado, 10/10 checks CI verdes, PR `#20` mergeada por merge commit em `main`. Worktree e branch local removidos.
+- O commit `chore(repo): add copilot instructions and codex MCP servers` incluiu `.github/copilot-instructions.md` (instrucoes de projeto com regra de idioma portugues) e `.codex/config.toml` com 4 MCP servers essenciais (GitHub, GitHub Actions, Docker, SQLite).
 
 ## Pendências abertas
 
@@ -54,6 +60,7 @@
 - O `memory-curator` deve consolidar estado e handoff, enquanto `ERROR_LOG.md` e `PENDING_LOG.md` seguem como trilha operacional detalhada.
 - Na integracao futura do `SpecValidator`, o chamador deve restringir a leitura de `SPEC.md` a paths esperados do workspace para evitar ampliacao desnecessaria da superficie de entrada.
 - O `# type: ignore[import-untyped]` em `yaml` da F02 permanece como mitigacao minima de tipagem; reavaliar remocao quando houver frente dedicada de endurecimento ou tipagem de dependencias.
+- Na evolucao da state machine apos a F03, considerar encapsular estados em `Enum` ou aplicar `TERMINAL_STATES` de forma efetiva para reduzir risco de drift semantico sem ampliar esta feature.
 
 ## Itens que podem virar novas features ou ajustes futuros
 
@@ -62,3 +69,4 @@
 - Documentação operacional curta para bootstrap local (`--sync-dev`) e para o lifecycle do runtime persistente.
 - Limpeza operacional do repositório para remover debt de formatação fora do escopo desta feature.
 - Integracao do `SpecValidator` ao fluxo seguinte da pipeline, incluindo bloqueio formal antes de `PLAN`.
+- Evolucao da state machine para suportar estados adicionais como `RETRYING`, integracao com executor de steps e persistencia do estado fora do recorte minimo da F03.
