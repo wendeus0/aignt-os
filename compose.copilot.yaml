@@ -1,0 +1,57 @@
+# compose.copilot.yaml
+# Ambiente isolado para execução do Copilot CLI dentro do devcontainer do projeto.
+# Usa a mesma imagem do codex-dev (uv, git, python, npm, github-mcp-server).
+#
+# O binário do Copilot (~/.local/bin/copilot) é montado read-only do host.
+# O config de auth é copiado para a tmpfs pelo dev-copilot.sh ao iniciar.
+#
+# Uso: ./scripts/dev-copilot.sh [--build] [-- <copilot-args>]
+# Alias sugerido: sonnet='cd ~/work/projects/aignt-os && ./scripts/dev-copilot.sh'
+
+services:
+  copilot-dev:
+    build:
+      context: .
+      dockerfile: .devcontainer/Dockerfile
+      args:
+        DEV_UID: ${AIGNT_DEV_UID:-1000}
+        DEV_GID: ${AIGNT_DEV_GID:-1000}
+    image: aignt-os-codex-dev:dev
+    command: ["sleep", "infinity"]
+    environment:
+      HOME: /home/codex
+      NPM_CONFIG_CACHE: /home/codex/.cache/npm
+      UV_CACHE_DIR: /home/codex/.cache/uv
+      UV_TOOL_DIR: /home/codex/.local/share/uv/tools
+      XDG_CACHE_HOME: /home/codex/.cache
+      XDG_STATE_HOME: /home/codex/.local/state
+      XDG_DATA_HOME: /home/codex/.local/share
+      GITHUB_PERSONAL_ACCESS_TOKEN: ${GITHUB_PERSONAL_ACCESS_TOKEN:-}
+      GITHUB_TOKEN: ${GITHUB_TOKEN:-}
+    user: "${AIGNT_DEV_UID:-1000}:${AIGNT_DEV_GID:-1000}"
+    volumes:
+      - .:/workspace
+      # Binário do Copilot CLI — montado read-only do host (133 MB, não copiado na imagem)
+      - ${COPILOT_BIN:-~/.local/bin/copilot}:/usr/local/bin/copilot:ro
+      - copilot-cache:/home/codex/.cache
+      - copilot-state:/home/codex/.local/state
+      - copilot-data:/home/codex/.local/share
+    working_dir: /workspace
+    security_opt:
+      - no-new-privileges:true
+    cap_drop:
+      - ALL
+    read_only: true
+    init: true
+    stdin_open: true
+    tty: true
+    tmpfs:
+      # /home/codex/.copilot: config de auth copiado pelo dev-copilot.sh antes do exec
+      - /home/codex/.copilot:size=16777216,mode=700
+      - /tmp:size=268435456,mode=1777
+      - /run:size=16777216,mode=755
+
+volumes:
+  copilot-cache:
+  copilot-state:
+  copilot-data:

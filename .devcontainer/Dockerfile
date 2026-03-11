@@ -34,6 +34,7 @@ RUN groupadd --gid "${DEV_GID}" codex \
     && mkdir -p \
         /workspace \
         /home/codex/.codex \
+        /home/codex/.copilot \
         /home/codex/.cache/uv \
         /home/codex/.local/state \
         /home/codex/.local/share \
