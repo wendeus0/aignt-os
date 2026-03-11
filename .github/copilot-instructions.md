@@ -30,6 +30,7 @@ Estas regras são equivalentes ao `sandbox_mode = "workspace-write"` configurado
 - Executar comandos definidos nos scripts do repositório (`./scripts/`, `uv run`, `git`)
 - Consultar GitHub via MCP (issues, PRs, branches, workflows)
 - Sugerir mudanças, propor refatorações e explicar código
+- Operações de rede relacionadas ao projeto: `git fetch`, `git pull`, `gh` CLI, `uv` (downloads de pacotes), `docker pull`
 
 **O que requer confirmação explícita antes de executar:**
 - Deletar arquivos ou diretórios
@@ -38,12 +39,12 @@ Estas regras são equivalentes ao `sandbox_mode = "workspace-write"` configurado
 - Modificar arquivos fora do repositório (configurações do sistema, `~/.bashrc`, etc.)
 - Instalar pacotes globalmente no sistema
 - Executar scripts com efeitos colaterais externos (`curl | sh`, instaladores)
+- Chamadas a APIs externas fora do fluxo normal do projeto
 
 **O que está fora do escopo (nunca fazer):**
 - Acessar, ler ou modificar arquivos fora do diretório do repositório
 - Ler variáveis de ambiente que contenham credenciais não relacionadas ao projeto
 - Acessar `.env`, `*.pem`, `*secret*`, `*token*` fora do contexto explícito da tarefa
-- Executar operações de rede fora do contexto da tarefa (downloads, chamadas a APIs externas)
 - Montar ou referenciar caminhos do `$HOME` do host em containers
 
 ## Política de aprovação
