@@ -149,3 +149,13 @@
 - Ação tomada: correção mínima no `SpecValidator` e no teste afetado, com revalidação local completa dos mesmos gates usados no CI.
 - Status: resolvido na branch atual.
 - Observação futura: manter a reexecução explícita do `repo-checks` local equivalente antes de concluir novas atualizações da PR.
+
+## 2026-03-11 05:40 - Configuração do Codex aplicada inicialmente no alvo errado
+
+- Contexto: ajuste operacional do ambiente local do Codex para multi-agent e fluxo de planejamento.
+- Ação/comando relacionada: criação inicial de scaffolding paralelo fora de `.codex/config.toml` e validações com `./scripts/dev-codex.sh -- features list` e `./scripts/dev-codex.sh -- mcp list`.
+- Erro observado: a mudança foi implementada inicialmente fora do alvo correto do Codex; durante a validação do launcher houve ainda uma falha transitória de configuração renderizada com `duplicate key` em `mcp_servers.github`.
+- Causa identificada: interpretação incorreta do objetivo inicial e necessidade de validar o config efetivo renderizado do Codex no `codex-dev`.
+- Ação tomada: remoção dos arquivos criados fora do alvo, correção em `.codex/config.toml` e `scripts/dev-codex.sh`, revalidação dos perfis `container_planning` e `container_aggressive`, da feature `multi_agent` e dos MCPs efetivos.
+- Status: resolvido.
+- Observação futura: confirmar primeiro se a mudança desejada é na configuração do Codex ou no scaffolding do projeto e sempre validar o config efetivo renderizado do launcher.

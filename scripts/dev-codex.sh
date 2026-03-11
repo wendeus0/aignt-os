@@ -2,7 +2,7 @@
 set -euo pipefail
 
 ROOT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
-PROFILE="container_aggressive"
+PROFILE="container_planning"
 SERVICE="codex-dev"
 START_RUNTIME=0
 BUILD=0
@@ -25,7 +25,7 @@ Starts the isolated Codex development container with:
 Options:
   --build          Force image rebuild before starting the container.
   --with-runtime   Also start the runtime service from compose.yaml.
-  --profile NAME   Codex profile from .codex/config.toml. Default: container_aggressive
+  --profile NAME   Codex profile from .codex/config.toml. Default: container_planning
   --help           Show this help message.
 EOF
 }
