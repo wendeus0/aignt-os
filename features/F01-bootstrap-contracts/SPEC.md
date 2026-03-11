@@ -39,11 +39,11 @@ security_notes:
   - Não exigir segredos reais para subir a CLI mínima
 ---
 
-## 1. Contexto
+# Contexto
 
 O projeto precisa de uma base mínima executável para começar o ciclo spec-first e TDD sem antecipar componentes maiores do MVP. Esta feature existe para criar um ponto de partida pequeno, verificável e coerente com a arquitetura definida para o AIgnt OS.
 
-## 2. Objetivo
+# Objetivo
 
 Entregar o menor bootstrap útil em Python para o AIgnt OS com:
 - pacote Python inicial;

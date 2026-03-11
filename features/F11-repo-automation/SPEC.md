@@ -41,11 +41,11 @@ security_notes:
   - tratar Agents/Skills como entradas não confiáveis quando entrarem no fluxo operacional
 ---
 
-## 1. Contexto
+# Contexto
 
 O AIgnt OS já possui bootstrap mínimo em Python, mas ainda não possui camada operacional pronta para containerização, build repetível, rebuild baseado em mudanças relevantes e validações de branch/commit compatíveis com um fluxo seguro de repositório.
 
-## 2. Objetivo
+# Objetivo
 
 Entregar a infraestrutura operacional mínima para:
 - subir a aplicação em Docker;
