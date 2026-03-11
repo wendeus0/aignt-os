@@ -1,26 +1,26 @@
-# RUN_REPORT — run-test-001
+# RUN_REPORT — {run_id}
 
-## Resumo da solicitação
+## Resumo da run
 
-Tarefa de teste para validação do formato de relatório de execução.
-
-## SPEC validada
-
-- **ID**: F06-pipeline-engine-linear
-- **Summary**: Implementar a primeira engine linear do AIgnt-Synapse-Flow
+- **Status**: completed
+- **Estado final**: DOCUMENT
+- **SPEC ID**: F06-pipeline-engine-linear
+- **SPEC Summary**: Implementar a primeira engine linear do AIgnt-Synapse-Flow
 
 ## Estados percorridos
 
-| Estado | Status | Duração (ms) |
-|---|---|---|
-| SPEC_VALIDATION | completed | 12 |
-| PLAN | completed | 45 |
+| Estado | Status | Ferramenta | Return code | Duração (ms) | Timeout |
+|---|---|---|---|---|---|
+| SPEC_VALIDATION | completed | - | - | - | - |
+| PLAN | completed | fake-executor | 0 | 45 | no |
+| DOCUMENT | completed | - | - | - | - |
 
-## Ferramentas utilizadas
+## Eventos relevantes
 
-| Step | Ferramenta | Return code |
-|---|---|---|
-| PLAN | fake-executor | 0 |
+- `run_started` @ `REQUEST`: Run started at REQUEST.
+- `step_completed` @ `SPEC_VALIDATION`: Step SPEC_VALIDATION completed.
+- `step_completed` @ `PLAN`: Step PLAN completed.
+- `run_completed` @ `DOCUMENT`: Run completed at DOCUMENT.
 
 ## Falhas e retries
 
@@ -28,9 +28,6 @@ Nenhuma falha registrada nesta execução.
 
 ## Artefatos gerados
 
-- `artifacts/run-test-001/SPEC_VALIDATION/output_clean.txt`
-- `artifacts/run-test-001/PLAN/plan_md`
-
-## Resumo final
-
-Execução concluída com sucesso em 2 steps. Todos os critérios de aceite validados.
+- `artifacts/{run_id}/PLAN/plan_md.txt`
+- `artifacts/{run_id}/SPEC_VALIDATION/spec_id.txt`
+- `artifacts/{run_id}/SPEC_VALIDATION/spec_summary.txt`

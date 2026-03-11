@@ -5,6 +5,7 @@ import re
 from dataclasses import dataclass
 from datetime import UTC, datetime
 from pathlib import Path
+from typing import Any, cast
 from uuid import uuid4
 
 from sqlalchemy import (
@@ -60,6 +61,10 @@ class RunStepRecord:
     status: str
     raw_output_path: str | None
     clean_output_path: str | None
+    tool_name: str | None
+    return_code: int | None
+    duration_ms: int | None
+    timed_out: bool | None
     created_at: str
 
 
@@ -108,6 +113,10 @@ class RunRepository:
             Column("status", String, nullable=False),
             Column("raw_output_path", Text, nullable=True),
             Column("clean_output_path", Text, nullable=True),
+            Column("tool_name", String, nullable=True),
+            Column("return_code", Integer, nullable=True),
+            Column("duration_ms", Integer, nullable=True),
+            Column("timed_out", Boolean, nullable=True),
             Column("created_at", String, nullable=False),
         )
         self.run_events = Table(
@@ -191,6 +200,10 @@ class RunRepository:
         status: str,
         raw_output_path: Path | None = None,
         clean_output_path: Path | None = None,
+        tool_name: str | None = None,
+        return_code: int | None = None,
+        duration_ms: int | None = None,
+        timed_out: bool | None = None,
     ) -> None:
         with self.engine.begin() as connection:
             connection.execute(
@@ -202,6 +215,10 @@ class RunRepository:
                     clean_output_path=(
                         str(clean_output_path) if clean_output_path is not None else None
                     ),
+                    tool_name=tool_name,
+                    return_code=return_code,
+                    duration_ms=duration_ms,
+                    timed_out=timed_out,
                     created_at=_timestamp(),
                 )
             )
@@ -281,6 +298,11 @@ class ArtifactStore:
         self.base_path = base_path
         _ensure_private_directory(self.base_path)
 
+    def run_directory(self, run_id: str) -> Path:
+        run_directory = self.base_path / _safe_segment(run_id, fallback="run")
+        _ensure_private_directory(run_directory)
+        return run_directory
+
     def save_step_outputs(
         self,
         *,
@@ -317,8 +339,23 @@ class ArtifactStore:
         _write_private_text(artifact_path, content)
         return artifact_path
 
-    def _step_directory(self, run_id: str, step_state: str) -> Path:
+    def save_run_report(self, *, run_id: str, content: str) -> Path:
+        report_path = self.run_directory(run_id) / "RUN_REPORT.md"
+        _write_private_text(report_path, content)
+        return report_path
+
+    def list_artifact_paths(self, run_id: str) -> list[str]:
         run_directory = self.base_path / _safe_segment(run_id, fallback="run")
+        if not run_directory.exists():
+            return []
+        return sorted(
+            str(path.relative_to(self.base_path))
+            for path in run_directory.rglob("*")
+            if path.is_file()
+        )
+
+    def _step_directory(self, run_id: str, step_state: str) -> Path:
+        run_directory = self.run_directory(run_id)
         step_directory = run_directory / _safe_segment(step_state, fallback="step")
         _ensure_private_directory(step_directory)
         return step_directory
@@ -358,6 +395,10 @@ class PipelinePersistenceObserver(PipelineObserver):
             status="completed",
             raw_output_path=saved_outputs.raw_path,
             clean_output_path=saved_outputs.clean_path,
+            tool_name=None if result is None else result.tool_name,
+            return_code=None if result is None else result.return_code,
+            duration_ms=None if result is None else result.duration_ms,
+            timed_out=None if result is None else result.timed_out,
         )
 
         artifacts = self._artifacts_for_step(step, context, result)
@@ -475,8 +516,16 @@ class PersistedPipelineRunner:
         if not assume_locked and not self.repository.acquire_lock(run_id):
             raise RuntimeError(f"Could not acquire lock for run '{run_id}'.")
 
+        executors = dict(self.executors)
+        executors.setdefault(
+            "DOCUMENT",
+            _RunReportStepExecutor(
+                repository=self.repository,
+                artifact_store=self.artifact_store,
+            ),
+        )
         engine = PipelineEngine(
-            executors=self.executors,
+            executors=executors,
             observer=PipelinePersistenceObserver(self.repository, self.artifact_store),
             supervisor=self.supervisor,
         )
@@ -532,6 +581,10 @@ def _step_record_from_row(row: RowMapping) -> RunStepRecord:
         status=_string_value(row, "status"),
         raw_output_path=_optional_string_value(row, "raw_output_path"),
         clean_output_path=_optional_string_value(row, "clean_output_path"),
+        tool_name=_optional_string_value(row, "tool_name"),
+        return_code=_optional_int_value(row, "return_code"),
+        duration_ms=_optional_int_value(row, "duration_ms"),
+        timed_out=_optional_bool_value(row, "timed_out"),
         created_at=_string_value(row, "created_at"),
     )
 
@@ -570,8 +623,47 @@ def _int_value(row: RowMapping, key: str) -> int:
     return value
 
 
+def _optional_int_value(row: RowMapping, key: str) -> int | None:
+    value = row[key]
+    if value is None:
+        return None
+    if not isinstance(value, int):
+        raise TypeError(f"Expected '{key}' to be an integer or None.")
+    return value
+
+
 def _bool_value(row: RowMapping, key: str) -> bool:
     value = row[key]
     if not isinstance(value, bool):
         raise TypeError(f"Expected '{key}' to be a boolean.")
     return value
+
+
+def _optional_bool_value(row: RowMapping, key: str) -> bool | None:
+    value = row[key]
+    if value is None:
+        return None
+    if not isinstance(value, bool):
+        raise TypeError(f"Expected '{key}' to be a boolean or None.")
+    return value
+
+
+class _RunReportStepExecutor:
+    def __init__(self, *, repository: RunRepository, artifact_store: ArtifactStore) -> None:
+        self.repository = repository
+        self.artifact_store = artifact_store
+
+    def execute(self, step: PipelineStep, context: PipelineContext) -> StepExecutionResult:
+        del step
+        if context.run_id is None:
+            raise ValueError("Pipeline context is missing run_id for report generation.")
+
+        from aignt_os.reporting import RunReportGenerator
+
+        generator = RunReportGenerator(
+            repository=cast(Any, self.repository),
+            artifact_store=self.artifact_store,
+        )
+        report_content = generator.build(context.run_id)
+        self.artifact_store.save_run_report(run_id=context.run_id, content=report_content)
+        return StepExecutionResult(clean_output=report_content)

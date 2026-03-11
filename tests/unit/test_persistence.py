@@ -66,3 +66,32 @@ def test_artifact_store_saves_raw_clean_and_named_artifacts(tmp_path: Path) -> N
     assert saved_outputs.clean_path.read_text(encoding="utf-8") == "clean plan"
     assert artifact_path.read_text(encoding="utf-8") == "# Plan\n"
     assert artifact_path.name == "plan_md.txt"
+
+
+def test_run_repository_records_step_execution_metadata(tmp_path: Path) -> None:
+    persistence = import_module("aignt_os.persistence")
+
+    repository = persistence.RunRepository(tmp_path / "runs.sqlite3")
+    run_id = repository.create_run(
+        spec_path=tmp_path / "SPEC.md",
+        initial_state="REQUEST",
+        stop_at="DOCUMENT",
+    )
+
+    repository.record_step(
+        run_id,
+        state="PLAN",
+        status="completed",
+        tool_name="codex",
+        return_code=0,
+        duration_ms=45,
+        timed_out=False,
+    )
+
+    steps = repository.list_steps(run_id)
+
+    assert len(steps) == 1
+    assert steps[0].tool_name == "codex"
+    assert steps[0].return_code == 0
+    assert steps[0].duration_ms == 45
+    assert steps[0].timed_out is False
