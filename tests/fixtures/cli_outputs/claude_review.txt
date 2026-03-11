@@ -1,0 +1,27 @@
+Code review for the submitted implementation:
+
+## Review Summary
+
+**Status**: APPROVED with minor suggestions
+
+### Observations
+
+1. The `RunRepository.create_run()` method correctly initializes the run status as `pending`.
+2. Path sanitization in `ArtifactStore` properly prevents directory traversal.
+3. The lock mechanism in `acquire_lock()` is thread-safe for single-process use.
+
+### Suggestions (non-blocking)
+
+- Consider adding a `updated_at` timestamp to run records for better observability.
+- The `load_raw()` method could return `None` instead of raising `FileNotFoundError` when the artifact does not exist.
+
+```python
+# Suggested defensive pattern
+def load_raw(self, run_id: str, step: str) -> str | None:
+    path = self._artifact_path(run_id, step, "raw")
+    if not path.exists():
+        return None
+    return path.read_text(encoding="utf-8")
+```
+
+Overall the implementation is clean and adheres to the MVP constraints.

@@ -22,9 +22,10 @@ acceptance_criteria:
   - Existe validacao automatizada para detectar ausencia de front matter YAML obrigatorio.
   - Existe validacao automatizada para os campos minimos obrigatorios do YAML da SPEC.
   - Existe validacao automatizada para exigir ao menos um item em acceptance_criteria.
-  - Existe validacao automatizada para exigir as secoes markdown Contexto e Objetivo.
+  - Existe validacao automatizada para exigir as secoes markdown Contexto e Objetivo como headings H1.
   - Uma SPEC valida no formato oficial passa pela validacao e expõe dados estruturados consumiveis.
   - Uma SPEC invalida bloqueia explicitamente o avanco para a proxima etapa por erro verificavel.
+  - A chamada de validate_spec_file() com um arquivo de SPEC valido em disco retorna SpecDocument com todos os campos preenchidos sem erro de I/O ou parsing.
 non_goals:
   - gerar ou editar SPEC automaticamente
   - implementar state machine

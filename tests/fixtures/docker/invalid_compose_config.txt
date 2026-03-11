@@ -1,0 +1,8 @@
+name: aignt-os
+services:
+  aignt-os:
+    image: nonexistent-image:missing
+    environment:
+      - INVALID_FORMAT_WITHOUT_VALUE
+    volumes:
+      - /nonexistent/host/path:/app/data:invalid_mode

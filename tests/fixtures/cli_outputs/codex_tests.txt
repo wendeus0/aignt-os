@@ -1,0 +1,25 @@
+Generating test suite based on SPEC acceptance criteria...
+
+```python
+import pytest
+from aignt_os.persistence import RunRepository, ArtifactStore
+
+
+def test_run_repository_persists_run_after_creation(tmp_path):
+    db_path = tmp_path / "runs.db"
+    repo = RunRepository(db_path=db_path)
+    run_id = repo.create_run(request="test request")
+    assert run_id is not None
+    run = repo.get_run(run_id)
+    assert run is not None
+    assert run.status == "pending"
+
+
+def test_artifact_store_saves_raw_output_by_step(tmp_path):
+    store = ArtifactStore(artifacts_dir=tmp_path)
+    store.save_raw("run-001", "PLAN", "raw output content")
+    saved = store.load_raw("run-001", "PLAN")
+    assert saved == "raw output content"
+```
+
+Tests cover: run creation, artifact persistence, and status transitions.

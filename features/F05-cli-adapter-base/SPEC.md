@@ -28,6 +28,7 @@ acceptance_criteria:
   - A execução do adapter captura stdout e stderr, sanitiza ANSI sem destruir o output bruto original e devolve resultado estruturado.
   - O adapter trata timeout de forma verificável, marca timed_out, encerra o processo e retorna resultado consistente.
   - Os testes cobrem caminho de sucesso, retorno não-zero, timeout e sanitização básica de streams.
+  - O BaseCLIAdapter integrado ao Parsing Engine produz CLIExecutionResult com stdout_clean sanitizado e artefatos extraidos a partir de output raw real.
 non_goals:
   - integrar tool real
   - implementar pipeline linear, worker ou supervisor

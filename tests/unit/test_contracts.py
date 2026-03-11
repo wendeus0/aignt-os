@@ -19,6 +19,25 @@ def test_run_request_serializes_to_plain_data() -> None:
     assert request.model_dump() == {"prompt": "bootstrap project"}
 
 
+@pytest.mark.parametrize(
+    "prompt",
+    [
+        "a",
+        "bootstrap project",
+        "very long " * 100,
+        "Prompt com acentuação: ã, é, ü",
+        "   spaces around   ",
+    ],
+    ids=["single_char", "normal", "very_long", "unicode", "whitespace"],
+)
+def test_run_request_accepts_any_non_empty_prompt(prompt: str) -> None:
+    contracts_module = import_module("aignt_os.contracts")
+
+    request = contracts_module.RunRequest(prompt=prompt)
+
+    assert request.prompt == prompt
+
+
 def test_cli_execution_result_keeps_raw_and_clean_outputs_separate() -> None:
     contracts_module = import_module("aignt_os.contracts")
 
@@ -59,3 +78,85 @@ def test_cli_execution_result_rejects_invalid_return_code_type() -> None:
             timed_out=False,
             success=True,
         )
+
+
+@pytest.mark.parametrize(
+    "field_override, field_name",
+    [
+        ({"return_code": "0"}, "return_code"),
+        ({"duration_ms": -1}, "duration_ms"),
+        ({"duration_ms": 1.5}, "duration_ms"),
+        ({"timed_out": "yes"}, "timed_out"),
+        ({"success": 1}, "success"),
+        ({"command": "aignt version"}, "command"),
+    ],
+    ids=[
+        "return_code_as_string",
+        "negative_duration",
+        "float_duration",
+        "timed_out_as_string",
+        "success_as_int",
+        "command_as_string_not_list",
+    ],
+)
+def test_cli_execution_result_rejects_invalid_field_types(
+    field_override: dict, field_name: str
+) -> None:
+    contracts_module = import_module("aignt_os.contracts")
+
+    base = {
+        "tool_name": "aignt",
+        "command": ["aignt", "version"],
+        "return_code": 0,
+        "stdout_raw": "",
+        "stderr_raw": "",
+        "stdout_clean": "",
+        "stderr_clean": "",
+        "duration_ms": 10,
+        "timed_out": False,
+        "success": True,
+    }
+    base.update(field_override)
+
+    with pytest.raises(ValidationError):
+        contracts_module.CLIExecutionResult(**base)
+
+
+def test_cli_execution_result_allows_timed_out_with_nonzero_return_code() -> None:
+    contracts_module = import_module("aignt_os.contracts")
+
+    result = contracts_module.CLIExecutionResult(
+        tool_name="aignt",
+        command=["aignt", "runtime", "run"],
+        return_code=124,
+        stdout_raw="",
+        stderr_raw="timed out\n",
+        stdout_clean="",
+        stderr_clean="timed out",
+        duration_ms=30000,
+        timed_out=True,
+        success=False,
+    )
+
+    assert result.timed_out is True
+    assert result.return_code == 124
+    assert result.success is False
+
+
+def test_cli_execution_result_allows_zero_duration() -> None:
+    contracts_module = import_module("aignt_os.contracts")
+
+    result = contracts_module.CLIExecutionResult(
+        tool_name="aignt",
+        command=["aignt", "version"],
+        return_code=0,
+        stdout_raw="",
+        stderr_raw="",
+        stdout_clean="",
+        stderr_clean="",
+        duration_ms=0,
+        timed_out=False,
+        success=True,
+    )
+
+    assert result.duration_ms == 0

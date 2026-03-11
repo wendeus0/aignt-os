@@ -1,5 +1,25 @@
 # ERROR_LOG
 
+## 2026-03-11 - `test_adapter_parser_flow` falhou por fixture ANSI como texto literal
+
+- Contexto: criação dos testes de integração do parsing engine na branch `chore/tdd-integration-hardening`.
+- Ação/comando relacionado: `uv run --no-sync python -m pytest tests/integration/test_adapter_parser_flow.py`
+- Erro observado: `assert '\x1b[' in result.stdout_raw` falhou porque `noisy_mixed_output.txt` armazena sequências ANSI como text literals `\u001b[32m` (6 chars), não como o byte ESC real (`\x1b`, chr(27)).
+- Causa identificada: `_read_fixture()` sem `unicode_escape=True` retorna os chars literais `\u001b`, que o parser não reconhece como sequências ANSI. O padrão correto já existia nos testes unitários mas não foi replicado na versão de integração.
+- Ação tomada: `_read_fixture()` em `test_adapter_parser_flow.py` passou a aceitar `unicode_escape=True`; todos os usos de `noisy_mixed_output.txt` foram atualizados.
+- Status: resolvido.
+- Observação futura: fixtures com ANSI armazenado como escape literal requerem `unicode_escape=True` no helper de leitura. Considerar documentar isso em comentário nos arquivos `noisy_mixed_output.txt` e `noisy_no_code_block.txt`.
+
+## 2026-03-11 - Assertiva incorreta sobre `[rpc]` no teste de parsing
+
+- Contexto: expansão do `test_parsing_engine.py` durante hardening TDD.
+- Ação/comando relacionado: `uv run --no-sync python -m pytest tests/unit/test_parsing_engine.py`
+- Erro observado: `assert "[rpc]" not in parsed_output.stdout_clean` falhou; o parser remove apenas `[transport]` (via `TRANSPORT_NOISE_PREFIXES`), não `[rpc]`.
+- Causa identificada: o teste assumiu que `[rpc]` seria tratado como ruído operacional, mas `parsing.py:16` define apenas `("[transport]",)` como prefixo a remover.
+- Ação tomada: a assertiva incorreta foi removida. O comportamento do parser (não remover `[rpc]`) está correto por design.
+- Status: resolvido.
+- Observação futura: qualquer expansão de `TRANSPORT_NOISE_PREFIXES` para incluir `[rpc]` ou outros prefixos deve ser uma decisão explícita documentada, não uma suposição de teste.
+
 ## 2026-03-11 - `repo-checks` da PR `#28` falhou por drift entre teste e API publica da pipeline
 
 - Contexto: tentativa de preparar o merge da `F06-pipeline-engine-linear`.

@@ -1,0 +1,19 @@
+\u001b[32mINFO\u001b[0m Starting code generation...
+[rpc] tool call: write_code
+[transport] stream opened
+
+Here is the first artifact:
+
+```python
+def greet(name: str) -> str:
+    return f"Hello, {name}"
+```
+
+And here is the second artifact:
+
+```python
+def farewell(name: str) -> str:
+    return f"Goodbye, {name}"
+```
+
+Done. Two functions generated.
