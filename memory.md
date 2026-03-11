@@ -8,9 +8,9 @@
 
 ## Local snapshot
 
-- A frente ativa esta na worktree `feature/f08-worker-runtime-dual`, alinhada com `origin/main` antes do delta local.
-- A F08 adiciona dispatch interno `sync`/`async`/`auto`, worker leve consumindo runs pendentes, suporte a `stop_at=SPEC_VALIDATION`, checklist da feature e ignorar `.aignt-os/` no Git.
-- Os gates locais mais recentes da F08 fecharam verdes: `commit-check --no-sync --skip-docker --skip-security`, `DOCKER_PREFLIGHT` real com `--full-runtime`, container `aignt-os` em estado `healthy`, e suite completa com `223` testes verdes.
+- `main` local esta limpo e sincronizado com `origin/main` apos o merge da PR `#38` da `F12-codex-adapter-operational-hardening`.
+- A worktree atual foi aberta na branch `chore/post-f12-handoff-logs-memory` apenas para consolidar `PENDING_LOG.md`, `ERROR_LOG.md` e `memory.md`.
+- O MVP inicial de 10 features foi concluido; o follow-up `F12` tambem foi mergeado, fechando o hardening operacional do primeiro adapter real.
 
 # Stable decisions
 
@@ -20,18 +20,18 @@
 - `memory.md` guarda memoria duravel e reaproveitavel; `PENDING_LOG.md` e `ERROR_LOG.md` guardam detalhe operacional da sessao.
 - O `memory-curator` pode ser acionado por `$memory-curator encerrar conversa` ou `$memory-curator close session` para atualizar `memory.md` e gerar handoff de encerramento.
 - Com `network-access = true`, `git push` e `gh pr create` devem ser tentados primeiro no sandbox; fallback fora do sandbox fica restrito a falha real de rede ou sandbox.
-- Na F08, o runtime foreground passa a poder hospedar um worker leve do AIgnt-Synapse-Flow, a engine propria de pipeline do AIgnt OS, sem nova CLI publica de runs.
+- O `CodexCLIAdapter` permanece o primeiro adapter real integrado; a F12 fixou classificacao operacional explicita para timeout, return code nao zero e bloqueios de launcher/container/autenticacao sem reabrir a pipeline.
 - Os artefatos operacionais padrao em `.aignt-os/` devem permanecer fora do versionamento.
 
 # Active fronts
 
-- Fechar a F08 no fluxo Git com `security-review`, commit, push e PR.
-- Abrir a F09 logo apos o fechamento da F08, mantendo o recorte em supervisor MVP com retry deterministico, reroute simples e falha terminal.
+- Fechar a chore `post-f12-handoff-logs-memory` no fluxo Git.
+- Abrir a proxima frente pequena de produto depois do merge desta chore, com `F13-rich-cli-output` como candidata principal.
 
 # Open decisions
 
-- Confirmar na F10 qual adapter real sera priorizado no happy path final; default atual continua sendo Codex CLI.
-- Decidir depois do merge da F08 se vale endurecer o tratamento de falhas amplas do worker alem do recorte MVP atual.
+- Decidir se `F13-rich-cli-output` fica restrita a enriquecer `aignt runtime status` com Rich ou se tambem inclui pequenos componentes visuais em outras saidas CLI.
+- Decidir em momento futuro se o smoke autenticado do Codex deve virar gate obrigatorio; por ora o `401 Unauthorized` ficou classificado como bloqueio operacional externo e nao como requisito de produto.
 
 # Recurrent pitfalls
 
@@ -39,16 +39,17 @@
 - `uv` pode falhar no sandbox por cache fora da workspace ou indisponibilidade de rede.
 - `branch-sync-update` nao e seguro com worktree suja, mesmo quando o drift contra `main` parece pequeno.
 - Subir `codex-dev` manualmente em paralelo ao launcher pode causar corrida operacional.
+- Smoke real do Codex sem credencial valida falha por autenticacao (`401 Unauthorized`) mesmo com launcher/container saudavel; isso deve ser tratado como bloqueio operacional externo.
 
 # Next recommended steps
 
-- Concluir o `security-review` da F08 e fechar commit/push/PR da branch `feature/f08-worker-runtime-dual`.
-- Depois do merge da F08, abrir a F09 com `spec-editor` → `test-red` → `green-refactor`.
-- Deixar limpeza ampla de logs/docs antigos fora do caminho critico ate o MVP fechar.
+- Promover a chore de handoff atual para alinhar logs e memoria com o estado pos-F12.
+- Depois disso, abrir a `F13-rich-cli-output` via `spec-editor` como proxima frente de produto de baixo risco.
+- Manter revisoes amplas de docs antigas fora do caminho critico, salvo quando bloquearem validacao real.
 
 # Last handoff summary
 
 - Read before acting: releia `AGENTS.md`, `CONTEXT.md`, `memory.md`, `PENDING_LOG.md`, `ERROR_LOG.md`, `git status` e `git diff --stat`.
-- Current state: a F08 esta implementada e validada localmente, incluindo worker leve, dispatch interno e `DOCKER_PREFLIGHT` real com runtime saudavel.
-- Open points: concluir o parecer de seguranca da F08, fechar commit/PR e depois abrir a F09.
-- Recommended next front: terminar o fechamento Git da F08 e so entao iniciar a frente do supervisor MVP.
+- Current state: `main` esta sincronizado apos o merge da PR `#38`; a worktree atual existe apenas para consolidar logs e memoria duravel.
+- Open points: promover a chore de handoff e, em seguida, abrir a proxima frente pequena de produto.
+- Recommended next front: `F13-rich-cli-output`, mantendo o recorte inicial pequeno e centrado em melhoria visual da CLI com Rich.
