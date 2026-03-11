@@ -32,6 +32,17 @@ def test_settings_exposes_runtime_state_file(monkeypatch: pytest.MonkeyPatch) ->
     assert settings.runtime_state_file.name == "runtime-state.json"
 
 
+def test_settings_exposes_run_persistence_paths(monkeypatch: pytest.MonkeyPatch) -> None:
+    config_module = import_module("aignt_os.config")
+    monkeypatch.setenv("AIGNT_OS_RUNS_DB_PATH", ".runtime/runs.sqlite3")
+    monkeypatch.setenv("AIGNT_OS_ARTIFACTS_DIR", ".runtime/artifacts")
+
+    settings = config_module.AppSettings()
+
+    assert settings.runs_db_path.name == "runs.sqlite3"
+    assert settings.artifacts_dir.name == "artifacts"
+
+
 def test_settings_rejects_invalid_environment_value() -> None:
     config_module = import_module("aignt_os.config")
 
