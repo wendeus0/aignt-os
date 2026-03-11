@@ -2,6 +2,12 @@
 
 ## Decisões incorporadas recentemente
 
+- A `F10-run-report-one-real-adapter` foi materializada com `SPEC.md`, `NOTES.md` e `CHECKLIST.md` proprios, mantendo o AIgnt-Synapse-Flow como a engine propria de pipeline do AIgnt OS e fechando o MVP com `DOCUMENT`, `RUN_REPORT.md` e um unico adapter real.
+- A pipeline e o runner persistido agora suportam `DOCUMENT`; `RUN_REPORT.md` passou a ser gerado de forma deterministica em `artifacts/<run_id>/RUN_REPORT.md`, e a persistencia ganhou metadados minimos por step (`tool_name`, `return_code`, `duration_ms`, `timed_out`).
+- O `CodexCLIAdapter` foi adotado como primeiro adapter real, encapsulando a execucao container-first via `./scripts/dev-codex.sh -- exec` sem usar shell.
+- A validacao local da `F10-run-report-one-real-adapter` fechou verde com `21` testes focados passando, `ruff check`, `mypy`, validacao da SPEC e `./scripts/security-gate.sh`.
+- A feature `F10-run-report-one-real-adapter` foi isolada na branch `feature/f10-run-report-one-real-adapter`, com commit `d3b732d feat(reporting): add run report generation and codex adapter`, push concluido e PR `#36` aberta contra `main`.
+
 - A chore `test-layout-typecheck-hardening` estabilizou a arvore `tests/` com package markers explicitos, removendo a colisao operacional entre `tests/unit/conftest.py` e `tests/integration/conftest.py`.
 - O repositório agora aceita `uv run mypy src tests`, mas isso foi fechado via override explícito do `mypy` para `tests` e `tests.*`, preservando o contrato strict no pacote `src/aignt_os`.
 
@@ -85,9 +91,8 @@
 
 ## Pendências abertas
 
-- Commit, push e PR da branch `feature/f09-supervisor-mvp` ainda pendentes.
-- Revisar o delta final da F09 no fluxo Git (`REPORT` e `COMMIT`) antes de abrir a proxima feature.
-- Definir a frente seguinte apos o fechamento da F09; o proximo passo natural continua sendo `F10` para `RUN_REPORT.md` e 1 adapter real.
+- Revisar e mergear a PR `#36` da `F10-run-report-one-real-adapter`.
+- Reexecutar `technical-triage` em `main` apos o merge da F10 para escolher a proxima frente de produto com o backlog ja alinhado ao estado real do repositório.
 - Revisão dos `NOTES.md` de cada feature (F01–F07) para verificar se referenciam conceitos obsoletos (estados `INIT`/`RETRYING`, `parser_confidence`, `REQUEST.md` como artefato).
 - Verificar se SPECs F01–F05 usam `## 1. Contexto` (H2) em vez de `# Contexto` (H1) — o validator exige H1. Ainda não foi confirmado se esses SPECs passam no `validate_spec_file()`. Pode exigir atualização das SPECs ou confirmação de que a regra H1 se aplica apenas ao validator e não ao formato de seções do corpo da SPEC.
 - Fixtures de testes aspiracionais marcadas como 🔜 no TDD.md: `tests/fixtures/worker/` (ainda ausente).
@@ -95,6 +100,7 @@
 
 ## Pontos de atenção futuros
 
+- O caminho real nao mockado de `codex exec` dentro da pipeline continua fora do gate obrigatorio da F10; se isso virar exigencia operacional, tratar em frente separada ou follow-up pequeno apos o merge da PR `#36`.
 - Validar em momento futuro uma operacao real do MCP oficial do GitHub com credencial valida, pois a frente atual fechou apenas o startup path e a cobertura operacional do launcher.
 - Fixture `noisy_mixed_output.txt` e `noisy_no_code_block.txt` armazenam sequências ANSI como literais `\u001b`. Todo helper que os lê para testar comportamento de ANSI precisa de `unicode_escape=True`. Considerar adicionar comentário nos próprios arquivos de fixture documentando isso.
 - A ampliação de `TRANSPORT_NOISE_PREFIXES` para incluir prefixos como `[rpc]` deve ser decisão explícita documentada na SPEC da feature responsável — não uma adição silenciosa.

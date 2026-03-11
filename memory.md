@@ -5,12 +5,12 @@
 - AIgnt OS continua como meta-orquestrador CLI-first; o AIgnt-Synapse-Flow segue como a engine propria de pipeline do projeto.
 - A baseline operacional atual combina `DOCKER_PREFLIGHT` leve por padrao, fluxo container-first para o Codex, Branch Sync Gate e separacao entre memoria duravel (`memory.md`) e log operacional (`PENDING_LOG.md` e `ERROR_LOG.md`).
 - A governanca de prompts dos agents segue formato contextual explicito, com contexto, leituras obrigatorias, objetivo, escopo, nao-faca, criterios de aceite e formato de entrega.
+- O MVP de produto agora chega ate `DOCUMENT`: a F10 adicionou `RUN_REPORT.md` por run e o primeiro adapter real via `CodexCLIAdapter`.
 
 ## Local snapshot
 
-- A frente ativa esta na worktree `feature/f08-worker-runtime-dual`, alinhada com `origin/main` antes do delta local.
-- A F08 adiciona dispatch interno `sync`/`async`/`auto`, worker leve consumindo runs pendentes, suporte a `stop_at=SPEC_VALIDATION`, checklist da feature e ignorar `.aignt-os/` no Git.
-- Os gates locais mais recentes da F08 fecharam verdes: `commit-check --no-sync --skip-docker --skip-security`, `DOCKER_PREFLIGHT` real com `--full-runtime`, container `aignt-os` em estado `healthy`, e suite completa com `223` testes verdes.
+- A PR `#36` (`feature/f10-run-report-one-real-adapter` -> `main`) esta aberta e ainda nao foi mergeada.
+- A worktree local desta sessao esta na branch `chore/post-f10-handoff-logs-memory`, criada para alinhar `PENDING_LOG.md` e `memory.md` sem contaminar a PR da F10.
 
 # Stable decisions
 
@@ -20,35 +20,37 @@
 - `memory.md` guarda memoria duravel e reaproveitavel; `PENDING_LOG.md` e `ERROR_LOG.md` guardam detalhe operacional da sessao.
 - O `memory-curator` pode ser acionado por `$memory-curator encerrar conversa` ou `$memory-curator close session` para atualizar `memory.md` e gerar handoff de encerramento.
 - Com `network-access = true`, `git push` e `gh pr create` devem ser tentados primeiro no sandbox; fallback fora do sandbox fica restrito a falha real de rede ou sandbox.
-- Na F08, o runtime foreground passa a poder hospedar um worker leve do AIgnt-Synapse-Flow, a engine propria de pipeline do AIgnt OS, sem nova CLI publica de runs.
+- A F10 fecha o MVP de observabilidade local com `DOCUMENT`, `RUN_REPORT.md` deterministico e persistencia de metadados minimos por step.
+- O `CodexCLIAdapter` e o primeiro adapter real priorizado no happy path final do MVP.
 - Os artefatos operacionais padrao em `.aignt-os/` devem permanecer fora do versionamento.
 
 # Active fronts
 
-- Fechar a F08 no fluxo Git com `security-review`, commit, push e PR.
-- Abrir a F09 logo apos o fechamento da F08, mantendo o recorte em supervisor MVP com retry deterministico, reroute simples e falha terminal.
+- Revisar e mergear a PR `#36` da `F10-run-report-one-real-adapter`.
+- Concluir a chore `post-f10-handoff-logs-memory`, mantendo os registros operacionais e a memoria duravel alinhados ao estado real do repositório.
 
 # Open decisions
 
-- Confirmar na F10 qual adapter real sera priorizado no happy path final; default atual continua sendo Codex CLI.
-- Decidir depois do merge da F08 se vale endurecer o tratamento de falhas amplas do worker alem do recorte MVP atual.
+- Definir qual sera a proxima frente de produto apos o merge da F10; a triagem deve ser refeita em `main` com backlog e memoria ja atualizados.
+- Decidir se o caminho real nao mockado de `codex exec` dentro da pipeline deve virar gate operacional obrigatorio ou permanecer como smoke opcional.
 
 # Recurrent pitfalls
 
 - `memory.md` perde valor quando mistura decisao estavel com snapshot local ou log de conversa.
+- `memory.md` e `PENDING_LOG.md` ficam rapidamente obsoletos quando merges e PRs mudam o estado real do repositório e o handoff nao e consolidado em seguida.
 - `uv` pode falhar no sandbox por cache fora da workspace ou indisponibilidade de rede.
 - `branch-sync-update` nao e seguro com worktree suja, mesmo quando o drift contra `main` parece pequeno.
 - Subir `codex-dev` manualmente em paralelo ao launcher pode causar corrida operacional.
 
 # Next recommended steps
 
-- Concluir o `security-review` da F08 e fechar commit/push/PR da branch `feature/f08-worker-runtime-dual`.
-- Depois do merge da F08, abrir a F09 com `spec-editor` → `test-red` → `green-refactor`.
-- Deixar limpeza ampla de logs/docs antigos fora do caminho critico ate o MVP fechar.
+- Revisar e mergear a PR `#36`.
+- Depois do merge da F10, rerodar `technical-triage` em `main` para escolher a proxima frente de produto.
+- Manter limpezas amplas de docs/logs historicos fora do caminho critico ate a frente seguinte estar definida.
 
 # Last handoff summary
 
 - Read before acting: releia `AGENTS.md`, `CONTEXT.md`, `memory.md`, `PENDING_LOG.md`, `ERROR_LOG.md`, `git status` e `git diff --stat`.
-- Current state: a F08 esta implementada e validada localmente, incluindo worker leve, dispatch interno e `DOCKER_PREFLIGHT` real com runtime saudavel.
-- Open points: concluir o parecer de seguranca da F08, fechar commit/PR e depois abrir a F09.
-- Recommended next front: terminar o fechamento Git da F08 e so entao iniciar a frente do supervisor MVP.
+- Current state: a F10 foi implementada, validada e promovida para a PR `#36`, adicionando `DOCUMENT`, `RUN_REPORT.md` e `CodexCLIAdapter`; esta chore branch so alinha logs e memoria.
+- Open points: mergear a PR `#36`, decidir se o smoke real do Codex vira gate e escolher a proxima frente apos a F10.
+- Recommended next front: concluir o merge da F10 e so entao rerodar `technical-triage` em `main`.
