@@ -24,7 +24,6 @@ Leia nesta ordem:
 Use esta skill quando:
 
 - a SPEC estiver estável
-- o `DOCKER_PREFLIGHT` já tiver sido validado pela skill `repo-automation`
 - os testes RED já tiverem sido escritos
 - a feature estiver pronta para a etapa GREEN
 

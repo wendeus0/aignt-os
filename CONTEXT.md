@@ -25,8 +25,7 @@ Construir um runtime de desenvolvimento autônomo e controlado que:
 - evolução progressiva sem sobreengenharia
 
 ## Fluxo oficial do projeto
-DOCKER_PREFLIGHT
-→ SPEC
+SPEC
 → TEST_RED
 → CODE_GREEN
 → REFACTOR
@@ -73,12 +72,11 @@ No MVP, a implementação prática continua linear, mas o operador deve seguir p
 - memória semântica MVP: advisory/read-only
 - runtime dual: CLI efêmero + worker leve
 - isolamento: container da aplicação + containers dos agentes selecionados
-- `DOCKER_PREFLIGHT`: obrigatório antes da execução prática de uma feature
+- `DOCKER_PREFLIGHT`: gate operacional condicional antes de execução prática dependente de Docker, imagem, boot, persistência ou integração
 - `DOCKER_PREFLIGHT` leve: padrão para CI e fluxo local, com `compose config` sem `up`; build fica explícito quando necessário
 - hook local leve: checks rápidos de repositório; não equivale ao `DOCKER_PREFLIGHT` operacional real
 - preflight completo de runtime: reservado para workflow dedicado ou pedido explícito em tarefas de boot/ciclo de vida/persistência/integração
 - `repo-automation`: skill responsável pelo preflight operacional em Docker/container
-- `spec-editor`: só inicia após ambiente validado
 - `security-review`: gate de segurança antes de `REPORT` e `COMMIT`
 - AIgnt-Synapse-Flow: engine própria de pipeline interna ao projeto, state-driven, linear no MVP
 
@@ -94,16 +92,16 @@ No MVP, a implementação prática continua linear, mas o operador deve seguir p
 O trabalho deve acontecer por feature.
 Cada feature tem sua própria pasta em `features/` e sua própria `SPEC.md`.
 O ciclo ideal é:
-1. validar `DOCKER_PREFLIGHT` com `repo-automation`
-2. escrever/refinar a `SPEC` com `spec-editor`
-3. escrever testes `TEST_RED`
-4. implementar `CODE_GREEN`
-5. executar `REFACTOR`
+1. escrever/refinar a `SPEC` com `spec-editor`
+2. escrever testes `TEST_RED`
+3. implementar `CODE_GREEN`
+4. executar `REFACTOR`
+5. validar `DOCKER_PREFLIGHT` com `repo-automation` quando a feature exigir execução prática dependente de Docker
 6. rodar `SECURITY_REVIEW`
 7. gerar `REPORT`
 8. concluir `COMMIT`
 
-Checks locais de hook podem rodar antes do commit para feedback rápido, mas a execução prática da feature só pode começar após o `DOCKER_PREFLIGHT` operacional real.
+Checks locais de hook podem rodar antes do commit para feedback rápido, mas a execução prática dependente de Docker só pode começar após o `DOCKER_PREFLIGHT` operacional real.
 
 ## O que significa “memória semântica” neste momento
 No MVP, memória semântica não decide automaticamente qual agente usar.

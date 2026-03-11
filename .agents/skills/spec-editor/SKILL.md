@@ -41,7 +41,6 @@ Não use esta skill para:
 - Trabalhe **uma feature por vez**.
 - Nunca aumente escopo sem necessidade explícita.
 - Se faltarem detalhes, **reduza o escopo** em vez de inventar comportamento.
-- Só inicie após `DOCKER_PREFLIGHT` verde ou explicitamente validado pela skill `repo-automation`.
 - A SPEC deve ser pequena o suficiente para caber em 1 a 3 dias de trabalho.
 - A SPEC deve ser coerente com o MVP:
   - pipeline linear state-driven
@@ -67,10 +66,10 @@ A SPEC deve:
 # Processo
 
 1. Resuma o pedido do usuário em 1 ou 2 frases.
-2. Confirme que `DOCKER_PREFLIGHT` já liberou o início prático da feature.
-3. Identifique o menor recorte útil da feature.
-4. Verifique aderência ao MVP e à arquitetura.
-5. Produza ou atualize `features/<feature>/SPEC.md`.
+2. Identifique o menor recorte útil da feature.
+3. Verifique aderência ao MVP e à arquitetura.
+4. Produza ou atualize `features/<feature>/SPEC.md`.
+5. Se a feature depender de validação prática em Docker, registre que `DOCKER_PREFLIGHT` será exigido antes da execução prática.
 6. Se houver ambiguidade relevante, registre em `NOTES.md`.
 7. Não siga para testes ou código.
 

@@ -22,14 +22,13 @@ Em caso de conflito:
 - Trabalhe **uma feature por vez**.
 - Não misture escopo de duas features na mesma mudança.
 - Sempre siga o fluxo oficial:
-  1. `DOCKER_PREFLIGHT`
-  2. `SPEC`
-  3. `TEST_RED`
-  4. `CODE_GREEN`
-  5. `REFACTOR`
-  6. `SECURITY_REVIEW`
-  7. `REPORT`
-  8. `COMMIT`
+  1. `SPEC`
+  2. `TEST_RED`
+  3. `CODE_GREEN`
+  4. `REFACTOR`
+  5. `SECURITY_REVIEW`
+  6. `REPORT`
+  7. `COMMIT`
 - Nunca invente requisitos ausentes. Se faltar informação, reduza escopo e registre a lacuna em `NOTES.md`.
 - Prefira mudanças pequenas, localizadas e reversíveis.
 - Nunca altere docs centrais sem necessidade real da feature.
@@ -51,15 +50,14 @@ Em caso de conflito:
 ## Fluxo oficial do projeto
 
 ```text
-DOCKER_PREFLIGHT → SPEC → TEST_RED → CODE_GREEN → REFACTOR → SECURITY_REVIEW → REPORT → COMMIT
+SPEC → TEST_RED → CODE_GREEN → REFACTOR → SECURITY_REVIEW → REPORT → COMMIT
 ```
 
-- `DOCKER_PREFLIGHT` é obrigatório antes de qualquer execução prática da feature.
+- `DOCKER_PREFLIGHT` é gate operacional condicional, obrigatório antes de execução prática que dependa de Docker, imagem, boot, ciclo de vida, persistência ou integração.
 - O preflight operacional de Docker/container é responsabilidade da skill `repo-automation`.
 - Em CI e no fluxo local, o `DOCKER_PREFLIGHT` deve permanecer leve por padrão: validar `compose config` sem subir o container completo; build fica explícito quando necessário.
-- Hooks locais podem executar checks leves de repositório, mas isso não substitui o `DOCKER_PREFLIGHT` operacional real antes da execução prática da feature.
+- Hooks locais podem executar checks leves de repositório, mas isso não substitui o `DOCKER_PREFLIGHT` operacional real quando a tarefa exigir validação prática em Docker.
 - O container completo só sobe em workflow dedicado de runtime/integração ou quando houver pedido explícito ligado a boot, ciclo de vida, persistência ou integração.
-- `spec-editor` só pode iniciar depois que o ambiente estiver verde em Docker ou explicitamente validado.
 - `security-review` atua como gate de segurança antes de `REPORT` e `COMMIT`.
 - `SPEC` pode conter subetapas internas como descoberta, normalização e validação, sem alterar o fluxo oficial acima.
 
@@ -87,7 +85,7 @@ Pare imediatamente e peça revisão quando:
 - Faça TDD de forma explícita.
 - Escreva testes antes do código de produção.
 - Não refatore antes de os testes ficarem verdes.
-- Não inicie execução prática da feature sem `DOCKER_PREFLIGHT` validado.
+- Não inicie execução prática dependente de Docker sem `DOCKER_PREFLIGHT` validado.
 - Mantenha baixo acoplamento e contratos explícitos com Pydantic.
 - Trate parsing como componente crítico.
 - Separe output bruto de output limpo.
@@ -106,7 +104,7 @@ Pare imediatamente e peça revisão quando:
 ## Agentes recomendados
 ### 1. repo-automation
 Responsável por:
-- executar `DOCKER_PREFLIGHT`
+- executar `DOCKER_PREFLIGHT` quando houver validação operacional real ligada a Docker/container
 - validar build/rebuild do container
 - validar alinhamento operacional com `main`
 - preparar workflows e scripts operacionais
@@ -135,7 +133,6 @@ Responsável por:
 - transformar o pedido em `SPEC.md`
 - ajustar `SPEC_FORMAT.md` apenas se necessário
 - reduzir ambiguidade
-Só começa após `DOCKER_PREFLIGHT` verde ou explicitamente validado.
 Não implementa código de produção.
 
 ### 3. test-red
@@ -161,22 +158,21 @@ Não substitui `repo-automation` na execução operacional.
 
 ## Alternativas de operação
 Se multi-agent não estiver disponível:
-- execute `repo-automation` primeiro
-- depois `spec-editor`
+- execute `spec-editor` primeiro
 - depois `test-red`
 - depois `green-refactor`
+- execute `repo-automation` quando a feature exigir execução prática dependente de Docker
 - depois `security-review`
 
 Se multi-agent estiver disponível:
-- `repo-automation` roda primeiro e valida `DOCKER_PREFLIGHT`
-- `spec-editor` só roda após ambiente validado
+- `spec-editor` pode abrir a frente e estabilizar a SPEC sem depender de preflight inicial
 - `test-red` e leituras auxiliares podem rodar em paralelo apenas quando a SPEC estiver estável
 - `green-refactor` só começa após a etapa RED estar validada
+- `repo-automation` entra antes de validação prática que dependa de Docker, imagem ou runtime
 - `security-review` roda depois de `REFACTOR` e antes de `REPORT`/`COMMIT`
 
 ## Entregáveis por feature
 Cada feature deve terminar com:
-- `DOCKER_PREFLIGHT` validado ou explicitamente aprovado
 - `SPEC.md` atualizado
 - testes cobrindo a feature
 - implementação mínima funcional
@@ -184,3 +180,4 @@ Cada feature deve terminar com:
 - revisão de segurança concluída
 - `NOTES.md` com decisões locais
 - checklist de aceite da feature
+- `DOCKER_PREFLIGHT` validado ou explicitamente aprovado quando houver execução prática dependente de Docker

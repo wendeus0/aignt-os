@@ -12,10 +12,10 @@ Implementar automações operacionais do repositório de forma prática e mínim
 - validação contra `main`
 - workflows e scripts operacionais
 
-Esta skill é a responsável por executar e validar o estágio `DOCKER_PREFLIGHT` do fluxo oficial:
+Esta skill é a responsável por executar e validar o gate operacional `DOCKER_PREFLIGHT` quando a feature ou a tarefa exigir validação prática em Docker:
 
 ```text
-DOCKER_PREFLIGHT → SPEC → TEST_RED → CODE_GREEN → REFACTOR → SECURITY_REVIEW → REPORT → COMMIT
+SPEC → TEST_RED → CODE_GREEN → REFACTOR → SECURITY_REVIEW → REPORT → COMMIT
 ```
 
 # Leia antes de agir
@@ -56,7 +56,7 @@ Não use esta skill para:
 - Não substitua a estratégia de desenvolvimento feature-by-feature.
 - Não altere a branch `main` diretamente.
 - Não assuma acesso real ao GitHub ou à registry se isso não estiver disponível; nesse caso, gere arquivos prontos para uso.
-- Considere `spec-editor` bloqueada até o `DOCKER_PREFLIGHT` ficar verde ou explicitamente validado.
+- Trate `DOCKER_PREFLIGHT` como gate operacional condicional, não como bloqueio inicial universal de `SPEC`.
 
 # Resultados esperados
 
@@ -79,7 +79,7 @@ Quando aplicável, esta skill pode:
 - identifique os arquivos operacionais já existentes
 - descubra como o projeto é executado e testado
 - identifique quais arquivos devem disparar rebuild
-- valide como o `DOCKER_PREFLIGHT` libera o início prático da feature
+- valide quando o `DOCKER_PREFLIGHT` passa a ser necessário para liberar execução prática dependente de Docker
 
 ## 2. Commit flow
 Implemente automação prática para o fluxo de commit, priorizando:
@@ -104,6 +104,7 @@ Política operacional:
 - o preflight padrão em CI e no fluxo local deve ser leve;
 - subir o container completo é exceção, não padrão;
 - runtime completo deve acontecer só em workflow dedicado ou quando explicitamente pedido para boot/ciclo de vida/persistência/integração.
+- `SPEC`, `TEST_RED` e `CODE_GREEN` podem começar sem preflight quando a frente ainda não depender de validação prática em Docker.
 
 ## 4. Gatilho de rebuild
 Considere como relevantes para rebuild:
@@ -144,7 +145,7 @@ Ordem preferida:
 Antes de encerrar, confirme:
 - a automação realmente modifica arquivos operacionais do repo
 - build/rebuild ficou acionável e claro
-- o `DOCKER_PREFLIGHT` ficou explícito como requisito antes da feature
+- o `DOCKER_PREFLIGHT` ficou explícito como gate operacional quando a tarefa depender de Docker
 - a validação contra `main` está explícita
 - não houve ampliação indevida de escopo
 - riscos operacionais e de segurança foram identificados

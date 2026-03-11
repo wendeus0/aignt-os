@@ -96,14 +96,13 @@ Responsável por persistir runs, steps, artefatos, eventos e relatórios.
 ### 5.1 Fluxo oficial do projeto
 
 ```text
-DOCKER_PREFLIGHT → SPEC → TEST_RED → CODE_GREEN → REFACTOR → SECURITY_REVIEW → REPORT → COMMIT
+SPEC → TEST_RED → CODE_GREEN → REFACTOR → SECURITY_REVIEW → REPORT → COMMIT
 ```
 
 Regras:
-- `DOCKER_PREFLIGHT` é executado pela skill `repo-automation`.
+- `DOCKER_PREFLIGHT` é executado pela skill `repo-automation` quando a feature exigir validação prática em Docker.
 - Em CI e no fluxo local, o `DOCKER_PREFLIGHT` padrão é leve: `compose config` sem `up`; build fica explícito quando necessário.
 - O runtime completo em container fica reservado para workflow dedicado ou acionamento explícito em features que toquem boot, ciclo de vida, persistência ou integração.
-- `spec-editor` só inicia após o ambiente Docker estar verde ou explicitamente validado.
 - `security-review` atua como gate antes de `REPORT` e `COMMIT`.
 - O fluxo oficial organiza o trabalho por feature sem substituir os estados internos do runtime.
 
@@ -130,7 +129,7 @@ A etapa de especificação transforma intenção em contrato operacional. Ela re
 
 ### 6.1 Modo CLI efêmero
 Usado para:
-- executar ou validar `DOCKER_PREFLIGHT` antes do trabalho prático da feature,
+- executar ou validar `DOCKER_PREFLIGHT` antes do trabalho prático dependente de Docker,
 - iniciar runs,
 - executar runs curtas inline,
 - inspecionar status,
@@ -155,14 +154,14 @@ O runtime dual permite preservar a experiência CLI e, ao mesmo tempo, suportar 
 [User Task / CLI Command]
           |
           v
- [DOCKER_PREFLIGHT / repo-automation]
-          |
-          v
    [Spec Engine]
    |    |    |
    |    |    +--> SPEC_VALIDATION
    |    +--------> SPEC_NORMALIZATION
    +-------------> SPEC_DISCOVERY
+          |
+          v
+ [DOCKER_PREFLIGHT / repo-automation when required]
           |
           v
  [Orchestrator Engine]

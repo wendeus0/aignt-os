@@ -15,10 +15,12 @@ Adotar **Spec-Driven Development** com uma SPEC híbrida:
 A esteira passa a ser:
 
 ```text
-DOCKER_PREFLIGHT → SPEC → TEST_RED → CODE_GREEN → REFACTOR → SECURITY_REVIEW → REPORT → COMMIT
+SPEC → TEST_RED → CODE_GREEN → REFACTOR → SECURITY_REVIEW → REPORT → COMMIT
 ```
 
 Dentro do macroestágio `SPEC`, o AIgnt-Synapse-Flow continua usando `SPEC_DISCOVERY`, `SPEC_NORMALIZATION` e `SPEC_VALIDATION` como subetapas internas.
+
+O `DOCKER_PREFLIGHT` permanece como gate operacional condicional antes de execução prática dependente de Docker, sem fazer parte da abertura padrão da esteira.
 
 ## Consequências
 ### Positivas

@@ -9,7 +9,7 @@ O projeto já adotou o AIgnt-Synapse-Flow como conceito técnico central para co
 Ao mesmo tempo, o fluxo oficial do projeto passou a exigir a sequência:
 
 ```text
-DOCKER_PREFLIGHT → SPEC → TEST_RED → CODE_GREEN → REFACTOR → SECURITY_REVIEW → REPORT → COMMIT
+SPEC → TEST_RED → CODE_GREEN → REFACTOR → SECURITY_REVIEW → REPORT → COMMIT
 ```
 
 Essa formalização aumenta a necessidade de um nome estável para o AIgnt-Synapse-Flow, a engine própria de pipeline do AIgnt OS.
