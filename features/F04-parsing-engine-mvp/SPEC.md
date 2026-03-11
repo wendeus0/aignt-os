@@ -27,6 +27,7 @@ acceptance_criteria:
   - Existe validacao automatizada para aceitar bloco Python sintaticamente valido e rejeitar bloco Python corrompido.
   - O resultado do parsing expoe dados estruturados consumiveis sem substituir o output bruto original.
   - Os testes cobrem output com ANSI, extracao de bloco Python e falha verificavel para artefato corrompido.
+  - O Parsing Engine integrado recebe output raw com ruido e codigo e devolve ParsedOutput com artefatos extraidos e stdout_clean distinto do stdout_raw.
 non_goals:
   - implementar adapter base async
   - chamar subprocessos reais

@@ -137,104 +137,136 @@ Garantem que:
 ## 8. Casos de Teste Prioritários
 
 ### 8.1 Preflight e segurança
-- `test_docker_preflight_requires_valid_compose_config()`
-- `test_docker_preflight_blocks_feature_execution_when_environment_is_invalid()`
-- `test_security_review_gate_runs_before_report_and_commit()`
+- `test_docker_preflight_validates_compose_config_without_starting_container()`
+- `test_docker_preflight_fails_when_compose_config_is_invalid()`
+- `test_security_gate_runs_before_report_and_commit()`
 - `test_security_gate_rejects_insecure_operational_patterns()`
 
 ### 8.2 Parsing
-- `test_cli_output_cleaning()`
-- `test_parser_extracts_python_code_block()`
-- `test_parser_rejects_corrupted_output()`
-- `test_parser_removes_ansi_sequences()`
+- `test_parse_cli_output_strips_transport_noise_from_raw_output()`
+- `test_parse_cli_output_extracts_python_code_block()`
+- `test_parse_cli_output_raises_when_output_exceeds_max_size()`
+- `test_parse_cli_output_strips_ansi_sequences_from_clean_output()`
 
 ### 8.3 SPEC
-- `test_spec_yaml_header_is_required()`
-- `test_spec_schema_validation_passes_for_valid_spec()`
-- `test_spec_validation_blocks_plan_when_invalid()`
-- `test_spec_requires_acceptance_criteria()`
+- `test_spec_validator_raises_when_yaml_header_is_missing()`
+- `test_spec_validator_passes_for_valid_spec_with_all_required_fields()`
+- `test_spec_validator_raises_when_acceptance_criteria_is_empty()`
+- `test_spec_validator_raises_when_objetivo_section_is_missing()`
+- `test_spec_validator_raises_when_sections_use_h2_instead_of_h1()`
 
 ### 8.4 State machine / pipeline
-- `test_state_machine_transitions()`
-- `test_invalid_transition_raises_error()`
-- `test_pipeline_rolls_back_from_review_to_code_green()`
-- `test_pipeline_stops_on_unrecoverable_security_failure()`
-- `test_pipeline_does_not_advance_without_valid_spec()`
+- `test_state_machine_follows_minimal_happy_path_to_complete()`
+- `test_state_machine_raises_on_invalid_transition()`
+- `test_pipeline_engine_blocks_plan_when_spec_is_invalid()`
+- `test_pipeline_engine_stops_at_plan_when_stop_at_is_plan()`
+- `test_pipeline_engine_raises_when_executor_is_missing_for_required_step()`
 
 ### 8.5 Adapters
-- `test_cli_timeout_handling()`
-- `test_cli_nonzero_exit_code()`
-- `test_adapter_sanitizes_ansi_sequences()`
-- `test_all_adapters_return_cli_execution_result()`
+- `test_cli_execution_result_marks_timed_out_when_timeout_occurs()`
+- `test_cli_execution_result_marks_failure_when_return_code_is_nonzero()`
+- `test_cli_execution_result_rejects_invalid_return_code_type()`
+- `test_all_adapters_return_cli_execution_result_with_valid_contract()`
 
 ### 8.6 Supervisor
-- `test_pipeline_failure_recovery()`
-- `test_supervisor_reroutes_after_repeated_failures()`
-- `test_supervisor_marks_terminal_failure_after_schema_error()`
-- `test_supervisor_requests_retry_after_timeout()`
+- `test_supervisor_requests_retry_after_recoverable_step_failure()`
+- `test_supervisor_reroutes_after_repeated_step_failures()`
+- `test_supervisor_marks_terminal_failure_after_spec_validation_error()`
+- `test_supervisor_returns_to_code_green_after_review_rejection()`
 
 ### 8.7 Worker
-- `test_worker_picks_pending_run()`
-- `test_worker_respects_run_lock()`
-- `test_worker_requeues_retryable_step()`
-- `test_worker_generates_run_report_after_completion()`
-- `test_worker_does_not_process_completed_run()`
+- `test_worker_picks_pending_run_and_transitions_to_running()`
+- `test_worker_does_not_acquire_lock_for_already_locked_run()`
+- `test_worker_requeues_step_after_retryable_failure()`
+- `test_worker_generates_run_report_after_pipeline_completion()`
+- `test_worker_does_not_process_run_already_in_completed_state()`
 
 ### 8.8 Persistência e relatório
-- `test_run_repository_persists_current_state()`
-- `test_artifact_store_saves_raw_and_clean_outputs()`
-- `test_run_report_contains_steps_tools_and_failures()`
+- `test_run_repository_persists_run_state_after_execution()`
+- `test_artifact_store_saves_raw_and_clean_outputs_by_step()`
+- `test_run_report_contains_all_steps_tools_and_failures()`
 
 ---
 
 ## 9. Fixtures Recomendadas
+
+> Legenda: ✅ = existente no repositório | 🔜 = aspiracional / a criar
+
 ```text
 tests/
   fixtures/
     docker/
-      valid_compose_config.txt
-      invalid_compose_config.txt
+      valid_compose_config.txt          🔜
+      invalid_compose_config.txt        🔜
     cli_outputs/
-      gemini_plan.txt
-      codex_tests.txt
-      opencode_code.txt
-      claude_review.txt
-      noisy_mixed_output.txt
+      multiple_python_blocks.txt        ✅
+      noisy_no_code_block.txt           ✅
+      gemini_plan.txt                   🔜
+      codex_tests.txt                   🔜
+      opencode_code.txt                 🔜
+      claude_review.txt                 🔜
+      noisy_mixed_output.txt            🔜
     specs/
-      valid_feature_spec.md
-      invalid_missing_yaml_spec.md
-      invalid_acceptance_criteria_spec.md
+      valid_feature_spec.md             ✅  (valid_spec.md)
+      invalid_missing_yaml_spec.md      ✅
+      invalid_missing_objetivo_spec.md  ✅
+      invalid_empty_inputs_spec.md      ✅
+      invalid_missing_id_spec.md        ✅
+      invalid_h2_sections_spec.md       ✅
+      invalid_acceptance_criteria.md    ✅
     reports/
-      expected_run_report.md
+      expected_run_report.md            🔜
 ```
 
 ---
 
-## 10. Estrutura de Testes Sugerida
+## 10. Estrutura de Testes
+
+> Legenda: ✅ = existe | 🔜 = aspiracional / a criar
+
 ```text
 tests/
-  unit/
-    test_docker_preflight.py
-    test_spec_validator.py
-    test_parsing_cleaners.py
-    test_state_machine.py
-    test_retry_policy.py
-    test_report_generator.py
-    test_security_gate.py
-  integration/
-    test_adapter_parser_flow.py
-    test_pipeline_memory_flow.py
-    test_cli_pipeline_entrypoint.py
-  pipeline/
-    test_happy_path.py
-    test_failure_recovery.py
-    test_review_rework.py
-  worker/
-    test_worker_runtime.py
-    test_worker_locking.py
-  fixtures/
-    ...
+  unit/                                        ✅
+    test_spec_validator.py                     ✅
+    test_state_machine.py                      ✅
+    test_parsing_engine.py                     ✅  (equivale a test_parsing_cleaners)
+    test_contracts.py                          ✅
+    test_config.py                             ✅
+    test_cli_adapter.py                        ✅
+    test_runtime_state.py                      ✅
+    test_runtime_service_security.py           ✅
+    test_persistence.py                        ✅
+    test_pipeline_engine.py                    ✅
+    test_repo_automation.py                    ✅
+    test_docker_preflight.py                   🔜
+    test_retry_policy.py                       🔜
+    test_report_generator.py                   🔜
+    test_security_gate.py                      🔜
+  integration/                                 ✅
+    test_cli_bootstrap.py                      ✅
+    test_runtime_cli.py                        ✅
+    test_pipeline_persistence.py               ✅
+    test_adapter_parser_flow.py                🔜
+    test_pipeline_memory_flow.py               🔜
+  pipeline/                                    ✅
+    test_happy_path.py                         ✅
+    test_failure_recovery.py                   🔜
+    test_review_rework.py                      🔜
+  worker/                                      🔜
+    test_worker_runtime.py                     🔜
+    test_worker_locking.py                     🔜
+  fixtures/                                    ✅
+    specs/                                     ✅
+    cli_outputs/                               ✅
 ```
+
+### Sobre CLI simulation tests (nível 5.3)
+
+Testes de simulação de subprocessos CLI **vivem em `tests/unit/`** enquanto o volume for pequeno. Quando o número de fixtures de output por ferramenta justificar, podem ser movidos para `tests/cli_simulation/`. Por enquanto, não há diretório separado — usar `tests/unit/test_cli_adapter.py` e arquivos de fixture em `tests/fixtures/cli_outputs/`.
+
+### Configuração de testes assíncronos
+
+Adapters e integrações assíncronas usam `pytest-asyncio`. A configuração `asyncio_mode = "auto"` está declarada em `pyproject.toml` em `[tool.pytest.ini_options]`. Todos os testes `async def` são coletados automaticamente sem decorator adicional.
 
 ---
 
@@ -258,4 +290,22 @@ O MVP só deve ser considerado tecnicamente pronto quando houver testes cobrindo
 - retorno de `REVIEW` para `CODE_GREEN`,
 - gate de segurança antes de `REPORT`/`COMMIT`,
 - run longa em worker,
-- geração de `RUN_REPORT.md`.
+- geração de `RUN_REPORT.md`,
+- persistência de run, steps, eventos e artefatos em SQLite + filesystem (F07 ✅),
+- lock inicial impedindo dupla aquisição da mesma run (F07 ✅).
+
+## 13. Requisito de Testes de Integração por Feature
+
+Testes de integração **são obrigatórios** para features que envolvam qualquer um dos seguintes:
+
+| Categoria | Exemplos de feature |
+|---|---|
+| Lifecycle de runtime | start/stop/status do processo residente via CLI |
+| Persistência | SQLite, filesystem de artefatos |
+| Entrypoint público | comandos CLI que orquestram módulos reais |
+| Adapter com subprocesso | execução de ferramenta externa real |
+| Pipeline com módulos reais | pipeline engine + validator real (sem mocks totais) |
+
+**Regra**: o `acceptance_criteria` de uma feature nessas categorias deve incluir ao menos um critério verificável **somente via teste de integração**. Critérios como "o CLI retorna sucesso ao executar X" ou "a run é registrada no banco após execução" são exemplos válidos.
+
+Testes puramente unitários não substituem testes de integração quando o comportamento envolve I/O real ou encadeamento entre módulos distintos.

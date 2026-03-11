@@ -25,6 +25,7 @@ acceptance_criteria:
   - O fluxo nao avanca para PLAN sem passar por SPEC_VALIDATION.
   - Existe estado terminal de sucesso e ao menos um estado terminal de falha para o recorte do MVP.
   - Os testes da feature cobrem happy path minimo e pelo menos um conjunto de transicoes invalidas.
+  - A state machine integrada a PipelineEngine respeita a ordem linear e bloqueia a pipeline quando SPEC_VALIDATION nao passou.
 non_goals:
   - implementar step executor
   - executar handoff real entre etapas

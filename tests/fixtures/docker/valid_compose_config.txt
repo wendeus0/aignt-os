@@ -1,0 +1,11 @@
+name: aignt-os
+services:
+  aignt-os:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    environment:
+      AIGNT_OS_ENVIRONMENT: development
+    volumes:
+      - ./artifacts:/app/artifacts
+    restart: unless-stopped

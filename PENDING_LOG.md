@@ -2,6 +2,13 @@
 
 ## Decisões incorporadas recentemente
 
+- Os três documentos arquiteturais principais foram refinados para maior convergência: `SPEC_FORMAT.md` ganhou tabela de campos obrigatórios, regra H1 obrigatória documentada, valores válidos para `type`, assimetria intencional `non_goals`/`acceptance_criteria` explicada, referência ao template v2 e nova seção sobre testes de integração nos acceptance_criteria. `TDD.md` teve nomes de testes corrigidos para convenção do projeto, seção 9 de fixtures marcada com ✅/🔜, seção 10 sincronizada com estrutura real, e nova seção 13 formalizando requisito de testes de integração por categoria de feature. `SDD.md` teve estados `INIT`/`RETRYING` marcados como pós-MVP, DOCKER_PREFLIGHT reposicionado como gate lateral no diagrama, `metadata: dict` corrigido para `dict[str, Any]`, `parser_confidence` e `REQUEST.md` marcados como não implementados no MVP, e tabela de mapeamento macro ↔ estados internos adicionada na seção 5.
+- A suíte de testes foi expandida de 88 → 215 testes ao longo da sessão de hardening: novos conftest.py (unit + integration), fixtures de SPEC inválidas, fixtures de CLI output realistas, test_spec_validator (4→18), test_state_machine (5→30), test_parsing_engine (9→21), test_contracts (4→17), test_config (4→12), test_happy_path (20 novos), test_failure_recovery (9 novos), test_review_rework (11 novos), test_adapter_parser_flow (10 novos de integração).
+- `pytest-cov>=5.0.0` foi adicionado ao `pyproject.toml` com configuração `[tool.coverage.run]` e `[tool.coverage.report]`. Versão instalada: `7.0.0`.
+- Os `acceptance_criteria` de F02, F03, F04 e F05 foram atualizados para incluir pelo menos um critério verificável somente via teste de integração, alinhando as SPECs com o novo requisito documentado em `TDD.md` seção 13 e `SPEC_FORMAT.md`.
+- Fixtures novas criadas: `tests/fixtures/docker/valid_compose_config.txt`, `invalid_compose_config.txt`, `tests/fixtures/reports/expected_run_report.md`, `tests/fixtures/cli_outputs/gemini_plan.txt`, `codex_tests.txt`, `claude_review.txt`.
+- Security review da branch `chore/tdd-integration-hardening` foi aprovado sem ressalvas: zero mudanças em código de produção, todos os padrões de subprocess existentes são legítimos, uso de `unicode_escape` em fixtures é controlado e sem risco de injeção.
+
 - A correcao de follow-up da `F06-pipeline-engine-linear` reexportou `SpecValidationError` em `aignt_os.pipeline`, alinhando a API publica da engine com o teste de bloqueio por SPEC invalida e restaurando o `repo-checks` local no mesmo caminho usado pelo CI.
 - A `F06-pipeline-engine-linear` passou a ter `SPEC.md` propria, `NOTES.md`, contratos tipados de pipeline (`PipelineStep`, `StepExecutionResult`, `PipelineContext`) e uma `PipelineEngine` linear em fake mode para o AIgnt-Synapse-Flow.
 - O recorte da `F06-pipeline-engine-linear` ficou deliberadamente restrito a `SPEC_VALIDATION`, `PLAN` e `TEST_RED`, reutilizando `SpecValidator` e state machine ja existentes, sem persistencia, worker, supervisor ou adapters reais.
@@ -70,9 +77,19 @@
 
 ## Pendências abertas
 
-- Validar em momento futuro uma operacao real do MCP oficial do GitHub com credencial valida, pois a frente atual fechou apenas o startup path e a cobertura operacional do launcher.
+- Commit, PR e merge da branch `chore/tdd-integration-hardening` ainda pendentes (próximo passo imediato).
+- Revisão dos `NOTES.md` de cada feature (F01–F07) para verificar se referenciam conceitos obsoletos (estados `INIT`/`RETRYING`, `parser_confidence`, `REQUEST.md` como artefato).
+- Verificar se SPECs F01–F05 usam `## 1. Contexto` (H2) em vez de `# Contexto` (H1) — o validator exige H1. Ainda não foi confirmado se esses SPECs passam no `validate_spec_file()`. Pode exigir atualização das SPECs ou confirmação de que a regra H1 se aplica apenas ao validator e não ao formato de seções do corpo da SPEC.
+- Fixtures de testes aspiracionais marcadas como 🔜 no TDD.md: `tests/fixtures/worker/` (ainda ausente).
+- Property-based testing com `hypothesis` ainda não implementado (mencionado como evolução futura em TDD.md).
 
 ## Pontos de atenção futuros
+
+- Validar em momento futuro uma operacao real do MCP oficial do GitHub com credencial valida, pois a frente atual fechou apenas o startup path e a cobertura operacional do launcher.
+- Fixture `noisy_mixed_output.txt` e `noisy_no_code_block.txt` armazenam sequências ANSI como literais `\u001b`. Todo helper que os lê para testar comportamento de ANSI precisa de `unicode_escape=True`. Considerar adicionar comentário nos próprios arquivos de fixture documentando isso.
+- A ampliação de `TRANSPORT_NOISE_PREFIXES` para incluir prefixos como `[rpc]` deve ser decisão explícita documentada na SPEC da feature responsável — não uma adição silenciosa.
+- Os testes de `test_review_rework.py` exercitam a state machine diretamente para estados CODE_GREEN/REVIEW/SECURITY que ainda não estão implementados no `PipelineEngine`. Quando o Supervisor/pipeline for implementado para esses estados, esses testes servem como documentação de comportamento esperado e devem ser migrados para testes de integração.
+- H1 vs H2 nas SPECs F01–F05: checar se `## 1. Contexto` causa falha de validação no `SpecValidator` após a regra H1 ter sido documentada.
 
 - O fallback de `GITHUB_TOKEN` para `GITHUB_PERSONAL_ACCESS_TOKEN` continua aceitavel para o baseline atual, mas pode merecer opt-in explicito se gerar ambiguidade operacional em ambientes com tokens preexistentes.
 - O helper `scripts/render-codex-config.sh` continua restrito ao launcher atual; se passar a ser reutilizado fora desse fluxo, vale endurecer os paths aceitos.

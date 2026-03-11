@@ -1,0 +1,5 @@
+\u001b[33mWARN\u001b[0m Analyzing feature spec...
+[transport] adapter heartbeat
+[rpc] Received response with no code blocks
+INFO: Processing complete. No artifacts were generated for this step.
+Summary: validation passed, no code output expected.
