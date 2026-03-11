@@ -78,18 +78,35 @@ up_cmd=("${compose_cmd[@]}" up --detach)
 [[ "${BUILD}" -eq 1 ]] && up_cmd+=(--build)
 up_cmd+=("${SERVICE}")
 
-echo "Subindo ${SERVICE}..."
-"${up_cmd[@]}"
+# Sobe o container em silêncio; redireciona todo o output para evitar
+# que mensagens do docker se misturem com a UI do Copilot.
+if ! "${up_cmd[@]}" > /tmp/copilot-up.log 2>&1; then
+  echo "ERRO: falha ao subir ${SERVICE}. Log:" >&2
+  cat /tmp/copilot-up.log >&2
+  exit 1
+fi
 
 # Copia o config de auth para a tmpfs via stdin (docker exec respeita a tmpfs;
 # docker cp usa o overlay FS e falha com read_only: true)
-echo "Copiando config de autenticação do Copilot para o container..."
 "${compose_cmd[@]}" exec -T "${SERVICE}" \
   bash -c 'cat > /home/codex/.copilot/config.json && chmod 600 /home/codex/.copilot/config.json' \
-  < "${COPILOT_CONFIG}"
+  < "${COPILOT_CONFIG}" \
+  > /dev/null 2>&1
+
+# Injeta permissions-config.json pre-aprovando /workspace para eliminar
+# o prompt "Confirm folder trust" a cada sessão.
+"${compose_cmd[@]}" exec -T "${SERVICE}" \
+  bash -c 'cat > /home/codex/.copilot/permissions-config.json && chmod 600 /home/codex/.copilot/permissions-config.json' \
+  > /dev/null 2>&1 <<'PERMS'
+{"locations":{"/workspace":{"tool_approvals":[{"kind":"write"},{"kind":"commands","commandIdentifiers":["*"]}]}}}
+PERMS
+
+# Limpa a tela antes de entregar o terminal ao Copilot, garantindo
+# uma experiência idêntica à de abrir uma nova aba de terminal.
+clear
 
 # Executa o Copilot interativo
-# --add-dir /workspace : pre-autoriza o workspace (evita o prompt "Confirm folder trust")
+# --add-dir /workspace : pre-autoriza o workspace para acesso a arquivos
 # --no-alt-screen      : desativa o buffer alternativo (melhor renderizacao via docker exec)
 # TERM via -e          : herda o tipo de terminal do host
 exec_cmd=(
@@ -104,5 +121,4 @@ exec_cmd=(
 
 [[ $# -gt 0 ]] && exec_cmd+=("$@")
 
-echo "Iniciando Copilot CLI em ambiente isolado..."
-"${exec_cmd[@]}"
+exec "${exec_cmd[@]}"
