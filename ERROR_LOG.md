@@ -1,5 +1,15 @@
 # ERROR_LOG
 
+## 2026-03-11 19:26 -03 - Smoke real do Codex falhou por autenticacao ausente
+
+- Contexto: validacao operacional da `F12-codex-adapter-operational-hardening` apos `DOCKER_PREFLIGHT` completo e hardening do `CodexCLIAdapter`.
+- Ação/comando relacionado: `./scripts/dev-codex.sh -- exec --color never "Reply with OK only."`
+- Erro observado: `401 Unauthorized: Missing bearer or basic authentication in header` retornado pelo Codex apos o launcher/container-first iniciar corretamente.
+- Causa identificada: credencial de autenticacao ausente ou invalida para o provider do Codex no ambiente real; nao houve falha do adapter nem do launcher Docker.
+- Ação tomada: o caso foi classificado na F12 como `authentication_unavailable`, tratado como bloqueio operacional explicito e nao como falha funcional do `CodexCLIAdapter`.
+- Status: conhecido e nao bloqueante para o merge da F12.
+- Observação futura: revalidar o smoke autenticado apenas quando houver necessidade real de uso do Codex com credencial valida; nao abrir subsistema de autenticacao dedicado sem demanda concreta.
+
 ## 2026-03-11 17:44 -03 - Worktree fria da F09 sem dependencias dev para coleta de testes
 
 - Contexto: implementacao da `F09-supervisor-mvp` em worktree nova.

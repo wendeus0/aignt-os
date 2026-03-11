@@ -2,6 +2,11 @@
 
 ## Decisões incorporadas recentemente
 
+- A `F10-run-report-one-real-adapter` foi concluida e mergeada em `main`, fechando o MVP inicial do AIgnt-Synapse-Flow com `DOCUMENT`, `RUN_REPORT.md` e o primeiro adapter real (`CodexCLIAdapter`).
+- A `F12-codex-adapter-operational-hardening` foi concluida e mergeada pela PR `#38`, com `main` local e `origin/main` sincronizados em `ahead=0 behind=0`.
+- O hardening da F12 manteve `CLIExecutionResult` como contrato de execucao e adicionou classificacao operacional explicita do Codex (`timeout`, `return_code_nonzero`, `launcher_unavailable`, `container_unavailable`, `authentication_unavailable`) sem reabrir a pipeline.
+- O `DOCKER_PREFLIGHT` real e o smoke container-first do Codex foram validados; o unico bloqueio observado foi autenticacao ausente (`401 Unauthorized`), tratado como bloqueio operacional externo e nao como defeito do adapter.
+
 - A chore `test-layout-typecheck-hardening` estabilizou a arvore `tests/` com package markers explicitos, removendo a colisao operacional entre `tests/unit/conftest.py` e `tests/integration/conftest.py`.
 - O repositório agora aceita `uv run mypy src tests`, mas isso foi fechado via override explícito do `mypy` para `tests` e `tests.*`, preservando o contrato strict no pacote `src/aignt_os`.
 
@@ -85,15 +90,16 @@
 
 ## Pendências abertas
 
-- Commit, push e PR da branch `feature/f09-supervisor-mvp` ainda pendentes.
-- Revisar o delta final da F09 no fluxo Git (`REPORT` e `COMMIT`) antes de abrir a proxima feature.
-- Definir a frente seguinte apos o fechamento da F09; o proximo passo natural continua sendo `F10` para `RUN_REPORT.md` e 1 adapter real.
+- Promover a chore `chore/post-f12-handoff-logs-memory` para alinhar `PENDING_LOG.md`, `ERROR_LOG.md` e `memory.md` com o estado real pos-PR `#38`.
+- Abrir a proxima frente pequena de produto so depois desse handoff; a candidata principal no momento e `F13-rich-cli-output`.
 - Revisão dos `NOTES.md` de cada feature (F01–F07) para verificar se referenciam conceitos obsoletos (estados `INIT`/`RETRYING`, `parser_confidence`, `REQUEST.md` como artefato).
 - Verificar se SPECs F01–F05 usam `## 1. Contexto` (H2) em vez de `# Contexto` (H1) — o validator exige H1. Ainda não foi confirmado se esses SPECs passam no `validate_spec_file()`. Pode exigir atualização das SPECs ou confirmação de que a regra H1 se aplica apenas ao validator e não ao formato de seções do corpo da SPEC.
 - Fixtures de testes aspiracionais marcadas como 🔜 no TDD.md: `tests/fixtures/worker/` (ainda ausente).
 - Property-based testing com `hypothesis` ainda não implementado (mencionado como evolução futura em TDD.md).
 
 ## Pontos de atenção futuros
+
+- O bloqueio operacional de autenticacao do Codex (`401 Unauthorized`) ficou explicitamente classificado na F12; revalidar esse smoke apenas quando houver credencial valida e necessidade real de uso autenticado.
 
 - Validar em momento futuro uma operacao real do MCP oficial do GitHub com credencial valida, pois a frente atual fechou apenas o startup path e a cobertura operacional do launcher.
 - Fixture `noisy_mixed_output.txt` e `noisy_no_code_block.txt` armazenam sequências ANSI como literais `\u001b`. Todo helper que os lê para testar comportamento de ANSI precisa de `unicode_escape=True`. Considerar adicionar comentário nos próprios arquivos de fixture documentando isso.
