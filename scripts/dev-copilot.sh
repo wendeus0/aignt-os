@@ -89,11 +89,17 @@ echo "Copiando config de autenticação do Copilot para o container..."
   < "${COPILOT_CONFIG}"
 
 # Executa o Copilot interativo
+# --add-dir /workspace : pre-autoriza o workspace (evita o prompt "Confirm folder trust")
+# --no-alt-screen      : desativa o buffer alternativo (melhor renderizacao via docker exec)
+# TERM via -e          : herda o tipo de terminal do host
 exec_cmd=(
   "${compose_cmd[@]}"
   exec
+  -e "TERM=${TERM:-xterm-256color}"
   "${SERVICE}"
   /usr/local/bin/copilot
+  --add-dir /workspace
+  --no-alt-screen
 )
 
 [[ $# -gt 0 ]] && exec_cmd+=("$@")
