@@ -1,0 +1,68 @@
+from __future__ import annotations
+
+from importlib import import_module
+from pathlib import Path
+
+
+def test_run_repository_persists_run_lifecycle(tmp_path: Path) -> None:
+    persistence = import_module("aignt_os.persistence")
+
+    repository = persistence.RunRepository(tmp_path / "runs.sqlite3")
+    run_id = repository.create_run(
+        spec_path=tmp_path / "SPEC.md",
+        initial_state="REQUEST",
+        stop_at="PLAN",
+    )
+
+    assert repository.acquire_lock(run_id) is True
+
+    repository.mark_run_running(run_id, current_state="SPEC_VALIDATION")
+    repository.mark_run_completed(run_id, current_state="PLAN")
+
+    run_record = repository.get_run(run_id)
+
+    assert run_record.run_id == run_id
+    assert run_record.status == "completed"
+    assert run_record.current_state == "PLAN"
+    assert run_record.locked is False
+    assert run_record.completed_at is not None
+
+
+def test_run_repository_prevents_double_lock_for_same_run(tmp_path: Path) -> None:
+    persistence = import_module("aignt_os.persistence")
+
+    repository = persistence.RunRepository(tmp_path / "runs.sqlite3")
+    run_id = repository.create_run(
+        spec_path=tmp_path / "SPEC.md",
+        initial_state="REQUEST",
+        stop_at="PLAN",
+    )
+
+    assert repository.acquire_lock(run_id) is True
+    assert repository.acquire_lock(run_id) is False
+
+
+def test_artifact_store_saves_raw_clean_and_named_artifacts(tmp_path: Path) -> None:
+    persistence = import_module("aignt_os.persistence")
+
+    store = persistence.ArtifactStore(tmp_path / "artifacts")
+
+    saved_outputs = store.save_step_outputs(
+        run_id="run-123",
+        step_state="PLAN",
+        raw_output="RAW PLAN\n",
+        clean_output="clean plan",
+    )
+    artifact_path = store.save_named_artifact(
+        run_id="run-123",
+        step_state="PLAN",
+        artifact_name="../plan_md",
+        content="# Plan\n",
+    )
+
+    assert saved_outputs.raw_path is not None
+    assert saved_outputs.clean_path is not None
+    assert saved_outputs.raw_path.read_text(encoding="utf-8") == "RAW PLAN\n"
+    assert saved_outputs.clean_path.read_text(encoding="utf-8") == "clean plan"
+    assert artifact_path.read_text(encoding="utf-8") == "# Plan\n"
+    assert artifact_path.name == "plan_md.txt"

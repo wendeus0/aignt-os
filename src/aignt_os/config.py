@@ -13,6 +13,8 @@ class AppSettings(BaseSettings):
     app_name: str = "AIgnt OS"
     environment: Literal["development", "test", "production"] = "development"
     runtime_state_dir: Path = Path(".aignt-os/runtime")
+    runs_db_path: Path = Path(".aignt-os/runs/runs.sqlite3")
+    artifacts_dir: Path = Path(".aignt-os/artifacts")
 
     @property
     def runtime_state_file(self) -> Path:
