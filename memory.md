@@ -10,9 +10,9 @@
 
 ## Local snapshot
 
-- `main` local carrega o fechamento da `F13-rich-cli-output` com delta pronto para commit local, sem nova branch de produto aberta para frente paralela.
+- `main` local esta limpa e `ahead=1` de `origin/main` apos o commit local da `F13-rich-cli-output`, sem nova branch de produto aberta para frente paralela.
 - A F13 fechou verde localmente com SPEC validada, testes focados de CLI/runtime e `security-gate`, sem exigir `DOCKER_PREFLIGHT`.
-- O MVP inicial de 10 features segue concluido, com `F12` mergeada e `F13` encerrada localmente como follow-up pequeno de UX na CLI.
+- O MVP inicial de 10 features segue concluido, com `F12` mergeada e `F13` agora encerrada tambem no fechamento Git local como follow-up pequeno de UX na CLI.
 
 # Stable decisions
 
@@ -28,7 +28,7 @@
 
 # Active fronts
 
-- Encerrar o handoff da `F13-rich-cli-output` e manter o repositório pronto para nova triagem de frente.
+- Nenhuma nova frente foi aberta apos a F13; o repositório esta pronto para nova triagem de prioridade.
 - Manter apenas follow-ups operacionais realmente bloqueantes fora da trilha principal de produto.
 
 # Open decisions
@@ -47,13 +47,13 @@
 
 # Next recommended steps
 
-- Concluir o commit local da `F13-rich-cli-output` e, em seguida, retriar a proxima frente a partir do estado real atualizado do repositório.
+- Retriajar a proxima frente a partir do estado real pos-F13 e decidir se ha motivo concreto para abrir produto novo ou fechar um ajuste pequeno de baseline.
 - Nao abrir `F14-tui-watch-command` antes de uma decisao explicita sobre observabilidade e recorte de TUI.
 - Manter revisoes amplas de docs antigas fora do caminho critico, salvo quando bloquearem validacao real.
 
 # Last handoff summary
 
 - Read before acting: releia `AGENTS.md`, `CONTEXT.md`, `memory.md`, `PENDING_LOG.md`, `ERROR_LOG.md`, `git status` e `git diff --stat`.
-- Current state: a `F13-rich-cli-output` fechou localmente com helper de rendering em Rich, ajuste de `runtime status` e testes verdes; o proximo passo e apenas concluir o fechamento Git e reavaliar a fila.
+- Current state: a `F13-rich-cli-output` fechou em Git local com helper de rendering em Rich, ajuste de `runtime status` e testes verdes; o repositório esta limpo e pronto para reavaliar a fila.
 - Open points: escolher a proxima frente apos a F13 e manter o smoke autenticado do Codex como follow-up operacional nao bloqueante.
 - Recommended next front: executar nova triagem apos o handoff da F13; `F14-tui-watch-command` segue apenas como candidata futura.

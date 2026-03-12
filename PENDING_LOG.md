@@ -97,7 +97,7 @@
 
 - Fixtures de testes aspiracionais marcadas como 🔜 no TDD.md: `tests/fixtures/worker/` (ainda ausente).
 - Property-based testing com `hypothesis` ainda não implementado (mencionado como evolução futura em TDD.md).
-- Retriajar a proxima frente apos o fechamento Git da F13; `F14-tui-watch-command` continua apenas como candidata futura e nao deve ser aberta por inercia.
+- Retriajar a proxima frente agora que a F13 foi fechada em Git local; `F14-tui-watch-command` continua apenas como candidata futura e nao deve ser aberta por inercia.
 
 ## Pontos de atenção futuros
 
@@ -127,7 +127,7 @@
 
 ## TUI — Ideia de feature futura (análise de viabilidade concluída)
 
-- **Rich enriquecido (F13-rich-cli-output)**: Rich `>=13.9.4` já é dependência de produção e nunca foi usado em `src/`. Substituir `typer.echo()` por `Console`/`Table`/`Panel` em `aignt runtime status` é de baixo risco e sem nova dependência. Indicado como F13.
+- **Rich enriquecido (F13-rich-cli-output)**: concluida localmente como primeira adocao de Rich em `src/`, restrita a `aignt runtime status` e sem abrir TUI completa.
 - **TUI watch (F14-tui-watch-command)**: `aignt tui` como subcomando opcional usando Textual. Pré-requisito: F13 + implementação de `observability/` (diretório vazio). Hook ideal já existe: `PipelineObserver` em `pipeline.py`.
 - **Constraint Typer×asyncio**: `asyncio.run(app.run_async())` dentro do comando Typer é a forma de coexistência; funcional mas exige cuidado com event loop.
 - **TTY em container**: Rich degrada automaticamente sem TTY; Textual exige guarda `sys.stdout.isatty()`.
