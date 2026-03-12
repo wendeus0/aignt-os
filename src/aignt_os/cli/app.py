@@ -5,16 +5,20 @@ from typing import Annotated
 
 import typer
 from rich.console import Console
+from sqlalchemy.exc import NoResultFound
 
 from aignt_os import __version__
-from aignt_os.cli.rendering import render_runtime_status
+from aignt_os.cli.rendering import render_run_detail, render_runs_list, render_runtime_status
 from aignt_os.config import AppSettings
+from aignt_os.persistence import ArtifactStore, RunRepository
 from aignt_os.runtime.service import RuntimeLifecycleError, RuntimeService
 from aignt_os.runtime.worker import build_runtime_worker
 
 app = typer.Typer(help="AIgnt OS CLI")
 runtime_app = typer.Typer(help="Manage the minimal persistent runtime.")
+runs_app = typer.Typer(help="Inspect persisted runs and artifacts.")
 app.add_typer(runtime_app, name="runtime")
+app.add_typer(runs_app, name="runs")
 
 
 @app.callback()
@@ -36,6 +40,16 @@ def _runtime_service() -> RuntimeService:
         )
     except ValueError as exc:
         raise typer.BadParameter(str(exc)) from exc
+
+
+def _run_repository() -> RunRepository:
+    settings = AppSettings()
+    return RunRepository(settings.runs_db_path)
+
+
+def _artifact_store() -> ArtifactStore:
+    settings = AppSettings()
+    return ArtifactStore(settings.artifacts_dir)
 
 
 @runtime_app.command("start")
@@ -113,3 +127,29 @@ def runtime_stop() -> None:
         raise typer.Exit(code=1) from exc
 
     typer.echo(f"Runtime status: {state.status}")
+
+
+@runs_app.command("list")
+def runs_list() -> None:
+    repository = _run_repository()
+    runs = repository.list_runs()
+    render_runs_list(runs)
+
+
+@runs_app.command("show")
+def runs_show(run_id: str) -> None:
+    repository = _run_repository()
+    artifact_store = _artifact_store()
+
+    try:
+        run = repository.get_run(run_id)
+    except NoResultFound as exc:
+        typer.echo(f"Run '{run_id}' not found.", err=True)
+        raise typer.Exit(code=1) from exc
+
+    render_run_detail(
+        run,
+        steps=repository.list_steps(run_id),
+        events=repository.list_events(run_id),
+        artifact_paths=artifact_store.list_artifact_paths(run_id),
+    )
