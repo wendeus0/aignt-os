@@ -238,6 +238,74 @@ def test_base_cli_adapter_waits_for_available_slot_when_limit_is_one(
     asyncio.run(scenario())
 
 
+def test_base_cli_adapter_releases_slot_after_timeout_under_contention(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    adapters = _adapters_module()
+    adapters._ADAPTER_EXECUTION_GUARDS.clear()
+
+    class FakeAdapter(_FakeAdapterMixin, adapters.BaseCLIAdapter):
+        pass
+
+    spawn_order: list[str] = []
+    second_started = asyncio.Event()
+    release_timeout = asyncio.Event()
+    wait_for_calls = 0
+
+    async def fake_create_subprocess_exec(*command: str, **kwargs: object) -> _FakeProcess:
+        del kwargs
+        prompt = command[-1]
+        spawn_order.append(prompt)
+        if prompt == "second":
+            second_started.set()
+            return _FakeProcess(stdout=b"second\n", stderr=b"", returncode=0)
+        return _FakeProcess(stdout=b"", stderr=b"timed out\n", returncode=-9)
+
+    async def fake_wait_for(awaitable: object, timeout: float) -> tuple[bytes, bytes]:
+        nonlocal wait_for_calls
+        del timeout
+        wait_for_calls += 1
+        if wait_for_calls == 1:
+            await release_timeout.wait()
+            awaitable.close()
+            raise TimeoutError
+        return await awaitable
+
+    monkeypatch.setattr(adapters.asyncio, "create_subprocess_exec", fake_create_subprocess_exec)
+    monkeypatch.setattr(adapters.asyncio, "wait_for", fake_wait_for)
+
+    async def scenario() -> None:
+        first_adapter = FakeAdapter(
+            tool_name="fake-tool",
+            timeout_seconds=0.01,
+            max_concurrent_adapters=1,
+        )
+        second_adapter = FakeAdapter(tool_name="fake-tool", max_concurrent_adapters=1)
+
+        first_task = asyncio.create_task(first_adapter.execute("first"))
+        await asyncio.sleep(0)
+        second_task = asyncio.create_task(second_adapter.execute("second"))
+        await asyncio.sleep(0)
+        await asyncio.sleep(0)
+
+        assert spawn_order == ["first"]
+        assert second_started.is_set() is False
+
+        release_timeout.set()
+        first_result = await first_task
+        await asyncio.sleep(0)
+        await asyncio.sleep(0)
+
+        assert first_result.timed_out is True
+        assert spawn_order == ["first", "second"]
+        assert second_started.is_set() is True
+
+        second_result = await second_task
+        assert second_result.stdout_clean == "second"
+
+    asyncio.run(scenario())
+
+
 def test_base_cli_adapter_shares_guard_across_instances_in_same_process(
     monkeypatch: pytest.MonkeyPatch,
 ) -> None:
