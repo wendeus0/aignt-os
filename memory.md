@@ -15,8 +15,8 @@
 ## Local snapshot
 
 - `main` local esta sincronizada com `origin/main` apos o merge da PR `#43` da `F15-public-run-submission`.
-- A F15 esta concluida em `main`; a worktree atual esta suja apenas com a chore documental separada da etapa 2.
-- O foco imediato nao e mais fechar a F15, e sim consolidar a documentacao pos-merge e preparar a proxima frente (`F16`).
+- A F15 esta concluida em `main` e as fontes de verdade da etapa 2 foram alinhadas ao baseline pos-merge.
+- O proximo front de produto passa a ser a `F16-run-detail-expansion`.
 
 # Stable decisions
 
@@ -33,13 +33,12 @@
 # Active fronts
 
 - Nenhuma nova frente de produto esta aberta neste momento.
-- A frente ativa no momento e documental: consolidar o estado pos-F15 nas fontes de verdade da etapa 2.
 - Nao ha frente autonoma extra antes da etapa 2; os guardrails propostos seguem reabsorvidos em `F15`/`F21`, salvo necessidade real de mascaramento de secrets em observabilidade.
 
 # Open decisions
 
-- A sequencia da etapa 2 ja foi decidida; a decisao imediata em aberto passa a ser quando abrir a SPEC da `F16-run-detail-expansion` apos a chore documental.
-- Decidir depois do fechamento da F15 se o follow-up de mascaramento de secrets precisa virar frente propria curta ou se pode esperar a `F21`.
+- A sequencia da etapa 2 ja foi decidida; a proxima decisao pratica em aberto e estabilizar a SPEC da `F16-run-detail-expansion`.
+- Decidir durante ou apos a F16 se o follow-up de mascaramento de secrets precisa virar frente propria curta ou se pode esperar a `F21`.
 - Decidir em momento futuro se o smoke autenticado do Codex deve virar gate obrigatorio; por ora o `401 Unauthorized` ficou classificado como bloqueio operacional externo e nao como requisito de produto.
 
 # Recurrent pitfalls
@@ -54,14 +53,13 @@
 # Next recommended steps
 
 - Manter `docs/architecture/PHASE_2_ROADMAP.md`, `WORKTREE_FEATURES.md`, `README.md`, `memory.md`, `PENDING_LOG.md` e `.github/copilot-instructions.md` coerentes entre si.
-- Fechar a chore documental da etapa 2 (`README.md`, roadmap, handoff e contexto operacional) agora que a F15 ja esta mergeada.
 - Nao abrir features paralelas de hardening pre-etapa-2; se surgir risco concreto depois da F15, limitar o recorte a mascaramento de secrets em observabilidade.
-- Quando a chore documental estiver mergeada, abrir a SPEC da `F16-run-detail-expansion`.
+- Abrir a SPEC da `F16-run-detail-expansion`.
 - Nao abrir `F14-tui-watch-command` por inercia; a etapa 2 prioriza caminho publico de execucao, diagnostico e onboarding.
 
 # Last handoff summary
 
 - Read before acting: releia `AGENTS.md`, `CONTEXT.md`, `memory.md`, `PENDING_LOG.md`, `ERROR_LOG.md`, `git status` e `git diff --stat`.
-- Current state: a `F15-public-run-submission` foi mergeada em `main`; a documentacao da etapa 2 ainda precisa ser atualizada para refletir esse novo baseline.
-- Open points: fechar a chore documental pos-F15 e decidir se ha follow-up curto de mascaramento de secrets antes da `F16`.
-- Recommended next front: concluir a chore documental; a proxima frente de produto continua sendo `F16-run-detail-expansion`.
+- Current state: a `F15-public-run-submission` foi mergeada em `main` e a documentacao da etapa 2 esta alinhada ao baseline atual.
+- Open points: estabilizar a SPEC da `F16-run-detail-expansion` e decidir se ha follow-up curto de mascaramento de secrets antes da `F21`.
+- Recommended next front: abrir a `F16-run-detail-expansion`.
