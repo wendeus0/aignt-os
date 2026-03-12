@@ -18,10 +18,10 @@ Definir a estratégia de testes para implementar o AIgnt OS com foco em confiabi
 ## 3. Fluxo de execução por feature
 
 ```text
-SPEC → TEST_RED → CODE_GREEN → REFACTOR → SECURITY_REVIEW → REPORT → COMMIT
+SPEC → TEST_RED → CODE_GREEN → REFACTOR → QUALITY_GATE → SECURITY_REVIEW → REPORT → COMMIT
 ```
 
-- `DOCKER_PREFLIGHT` é executado pela skill `repo-automation` quando a feature exigir validação prática em Docker.
+- `DOCKER_PREFLIGHT` é executado pela skill `repo-preflight` quando a feature exigir validação prática em Docker.
 - O `DOCKER_PREFLIGHT` padrão em CI e no fluxo local deve ser leve, sem `docker compose up`.
 - O runtime completo deve ser validado em workflow dedicado ou por acionamento explícito.
 - `SECURITY_REVIEW` fecha o ciclo técnico antes de `REPORT` e `COMMIT`.
@@ -142,6 +142,14 @@ Garantem que:
 - `test_security_gate_runs_before_report_and_commit()`
 - `test_security_gate_rejects_insecure_operational_patterns()`
 
+### 8.1b Quality gate
+- `test_quality_gate_runs_after_refactor_and_before_security_review()`
+- `test_quality_gate_blocks_security_when_tests_fail()`
+- `test_quality_gate_blocks_security_when_lint_fails()`
+- `test_quality_gate_blocks_security_when_typecheck_fails()`
+- `test_state_machine_transitions_from_code_green_to_quality_gate()`
+- `test_state_machine_cannot_skip_quality_gate_to_security()`
+
 ### 8.2 Parsing
 - `test_parse_cli_output_strips_transport_noise_from_raw_output()`
 - `test_parse_cli_output_extracts_python_code_block()`
@@ -158,6 +166,7 @@ Garantem que:
 ### 8.4 State machine / pipeline
 - `test_state_machine_follows_minimal_happy_path_to_complete()`
 - `test_state_machine_raises_on_invalid_transition()`
+- `test_state_machine_includes_quality_gate_between_code_green_and_review()`
 - `test_pipeline_engine_blocks_plan_when_spec_is_invalid()`
 - `test_pipeline_engine_stops_at_plan_when_stop_at_is_plan()`
 - `test_pipeline_engine_raises_when_executor_is_missing_for_required_step()`

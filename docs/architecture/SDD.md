@@ -96,11 +96,11 @@ Responsável por persistir runs, steps, artefatos, eventos e relatórios.
 ### 5.1 Fluxo oficial do projeto
 
 ```text
-SPEC → TEST_RED → CODE_GREEN → REFACTOR → SECURITY_REVIEW → REPORT → COMMIT
+SPEC → TEST_RED → CODE_GREEN → REFACTOR → QUALITY_GATE → SECURITY_REVIEW → REPORT → COMMIT
 ```
 
 Regras:
-- `DOCKER_PREFLIGHT` é executado pela skill `repo-automation` quando a feature exigir validação prática em Docker.
+- `DOCKER_PREFLIGHT` é executado pela skill `repo-preflight` quando a feature exigir validação prática em Docker.
 - Em CI e no fluxo local, o `DOCKER_PREFLIGHT` padrão é leve: `compose config` sem `up`; build fica explícito quando necessário.
 - O runtime completo em container fica reservado para workflow dedicado ou acionamento explícito em features que toquem boot, ciclo de vida, persistência ou integração.
 - `security-review` atua como gate antes de `REPORT` e `COMMIT`.
@@ -109,7 +109,7 @@ Regras:
 ### 5.2 Subetapas internas do AIgnt-Synapse-Flow
 
 ```text
-REQUEST → SPEC_DISCOVERY → SPEC_NORMALIZATION → SPEC_VALIDATION → PLAN → TEST_RED → CODE_GREEN → REVIEW → SECURITY → DOCUMENT → COMPLETE
+REQUEST → SPEC_DISCOVERY → SPEC_NORMALIZATION → SPEC_VALIDATION → PLAN → TEST_RED → CODE_GREEN → QUALITY_GATE → REVIEW → SECURITY → DOCUMENT → COMPLETE
 ```
 
 O macroestágio `SPEC` do fluxo oficial engloba `SPEC_DISCOVERY`, `SPEC_NORMALIZATION` e `SPEC_VALIDATION`.
@@ -122,6 +122,7 @@ O macroestágio `SPEC` do fluxo oficial engloba `SPEC_DISCOVERY`, `SPEC_NORMALIZ
 | `TEST_RED` | `PLAN` → `TEST_RED` |
 | `CODE_GREEN` | `CODE_GREEN` |
 | `REFACTOR` | parte de `CODE_GREEN` (sem estado dedicado no MVP) |
+| `QUALITY_GATE` | `QUALITY_GATE` |
 | `SECURITY_REVIEW` | `SECURITY` |
 | `REPORT` | `DOCUMENT` |
 | `COMMIT` | pós-`COMPLETE` (fora da state machine, ação do operador) |
@@ -178,7 +179,7 @@ O runtime dual permite preservar a experiência CLI e, ao mesmo tempo, suportar 
           |
           v
  [State Machine + Pipeline Manager] <--- [DOCKER_PREFLIGHT gate]
-          |                                (executado por repo-automation
+          |                                (executado por repo-preflight
           |                                 quando a feature exige Docker)
           +-----------------------------+
           |                             |
@@ -232,6 +233,7 @@ Estados implementados no MVP:
 - `PLAN`
 - `TEST_RED`
 - `CODE_GREEN`
+- `QUALITY_GATE`
 - `REVIEW`
 - `SECURITY`
 - `DOCUMENT`
@@ -334,7 +336,7 @@ O AIgnt-Synapse-Flow é a engine própria de pipeline do AIgnt OS. Ele coordena 
 ---
 
 ## 9. Fluxo de Dados
-1. `repo-automation` valida o `DOCKER_PREFLIGHT` quando a feature exige execução prática.
+1. `repo-preflight` valida o `DOCKER_PREFLIGHT` quando a feature exige execução prática.
 2. Usuário envia uma tarefa.
 3. O CLI cria ou dispara uma run.
 4. O Spec Engine produz e valida a SPEC.
@@ -350,7 +352,8 @@ O AIgnt-Synapse-Flow é a engine própria de pipeline do AIgnt OS. Ele coordena 
 - `PLAN.md` — plano gerado pelo step PLAN
 - `TESTS_RED.md` ou arquivos de teste — gerados no step TEST_RED
 - código gerado — produzido no step CODE_GREEN
-- `REVIEW.md` — resultado da revisão
+- `QUALITY_GATE.md` — resultado do gate de qualidade automatizado
+- `REVIEW.md` — resultado da revisão de código
 - `SECURITY.md` — resultado do gate de segurança
 - `DOCUMENT.md` — documentação gerada
 - `RUN_REPORT.md` — relatório final consolidado

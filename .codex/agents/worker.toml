@@ -1,0 +1,26 @@
+model = "gpt-5.4"
+model_reasoning_effort = "medium"
+sandbox_mode = "workspace-write"
+approval_policy = "on-request"
+
+developer_instructions = """
+Implement narrowly scoped changes after the task is understood.
+
+Rules:
+- follow the repo workflow
+- keep edits small and reversible
+- do not expand scope
+- preserve CLI-first, spec-first, and feature-by-feature design
+- do not bypass required gates
+- prefer the minimum change that satisfies the SPEC and tests
+
+Before editing:
+- confirm the target files
+- confirm the acceptance criteria
+- confirm the relevant tests
+
+After editing:
+- summarize what changed
+- list validations run
+- report residual risks
+"""

@@ -201,6 +201,9 @@ def test_pipeline_engine_can_retry_code_green_and_continue_to_security(tmp_path:
             "PLAN": plan_executor,
             "TEST_RED": test_red_executor,
             "CODE_GREEN": code_green_executor,
+            "QUALITY_GATE": _RecordingExecutor(
+                artifact_key="quality_gate_md", artifact_value="gate"
+            ),
             "REVIEW": review_executor,
             "SECURITY": security_executor,
         },
@@ -215,6 +218,7 @@ def test_pipeline_engine_can_retry_code_green_and_continue_to_security(tmp_path:
         "PLAN",
         "TEST_RED",
         "CODE_GREEN",
+        "QUALITY_GATE",
         "REVIEW",
         "SECURITY",
     ]
@@ -244,6 +248,9 @@ def test_pipeline_engine_can_stop_after_document(tmp_path: Path) -> None:
             "PLAN": plan_executor,
             "TEST_RED": test_red_executor,
             "CODE_GREEN": code_green_executor,
+            "QUALITY_GATE": _RecordingExecutor(
+                artifact_key="quality_gate_md", artifact_value="gate"
+            ),
             "REVIEW": review_executor,
             "SECURITY": security_executor,
             "DOCUMENT": document_executor,
@@ -259,6 +266,7 @@ def test_pipeline_engine_can_stop_after_document(tmp_path: Path) -> None:
         "PLAN",
         "TEST_RED",
         "CODE_GREEN",
+        "QUALITY_GATE",
         "REVIEW",
         "SECURITY",
         "DOCUMENT",
@@ -295,6 +303,9 @@ def test_pipeline_engine_can_return_from_review_to_code_green(tmp_path: Path) ->
             "PLAN": plan_executor,
             "TEST_RED": test_red_executor,
             "CODE_GREEN": code_green_executor,
+            "QUALITY_GATE": _RecordingExecutor(
+                artifact_key="quality_gate_md", artifact_value="gate"
+            ),
             "REVIEW": review_executor,
             "SECURITY": security_executor,
         },
@@ -309,8 +320,10 @@ def test_pipeline_engine_can_return_from_review_to_code_green(tmp_path: Path) ->
         "PLAN",
         "TEST_RED",
         "CODE_GREEN",
+        "QUALITY_GATE",
         "REVIEW",
         "CODE_GREEN",
+        "QUALITY_GATE",
         "REVIEW",
         "SECURITY",
     ]

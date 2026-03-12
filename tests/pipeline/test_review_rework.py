@@ -29,6 +29,7 @@ def _make_sm_at(state: str) -> AIgntStateMachine:
         "PLAN",
         "TEST_RED",
         "CODE_GREEN",
+        "QUALITY_GATE",
         "REVIEW",
         "SECURITY",
         "DOCUMENT",
@@ -41,8 +42,14 @@ def _make_sm_at(state: str) -> AIgntStateMachine:
     return sm
 
 
-def test_review_rework_code_green_transitions_to_review() -> None:
+def test_review_rework_code_green_transitions_to_quality_gate() -> None:
     sm = _make_sm_at("CODE_GREEN")
+    sm.advance_to("QUALITY_GATE")
+    assert sm.current_state == "QUALITY_GATE"
+
+
+def test_review_rework_quality_gate_transitions_to_review() -> None:
+    sm = _make_sm_at("QUALITY_GATE")
     sm.advance_to("REVIEW")
     assert sm.current_state == "REVIEW"
 
@@ -98,6 +105,7 @@ def test_review_rework_failed_is_terminal_no_further_transitions() -> None:
 
 def test_review_rework_full_path_code_green_through_security_to_complete() -> None:
     sm = _make_sm_at("CODE_GREEN")
+    sm.advance_to("QUALITY_GATE")
     sm.advance_to("REVIEW")
     sm.advance_to("SECURITY")
     sm.advance_to("DOCUMENT")

@@ -15,6 +15,7 @@ LINEAR_STATE_FLOW: tuple[str, ...] = (
     "PLAN",
     "TEST_RED",
     "CODE_GREEN",
+    "QUALITY_GATE",
     "REVIEW",
     "SECURITY",
     "DOCUMENT",
