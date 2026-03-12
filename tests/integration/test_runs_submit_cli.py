@@ -182,8 +182,8 @@ def test_runs_submit_fails_predictably_when_spec_is_missing(
     persistence = import_module("aignt_os.persistence")
     repository = persistence.RunRepository(tmp_path / "runs" / "runs.sqlite3")
 
-    assert result.exit_code == 1
-    assert "not found" in result.stdout.lower() or "not found" in result.stderr.lower()
+    assert result.exit_code == 3
+    assert "not found:" in result.stdout.lower() or "not found:" in result.stderr.lower()
     assert repository.list_runs() == []
 
 
@@ -204,6 +204,8 @@ def test_runs_submit_fails_predictably_when_spec_is_invalid(
     persistence = import_module("aignt_os.persistence")
     repository = persistence.RunRepository(tmp_path / "runs" / "runs.sqlite3")
 
-    assert result.exit_code == 1
-    assert "spec" in result.stdout.lower() or "spec" in result.stderr.lower()
+    assert result.exit_code == 4
+    assert (
+        "validation error:" in result.stdout.lower() or "validation error:" in result.stderr.lower()
+    )
     assert repository.list_runs() == []

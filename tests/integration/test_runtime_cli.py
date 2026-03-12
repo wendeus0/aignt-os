@@ -125,7 +125,11 @@ def test_runtime_start_rejects_second_active_process(tmp_path: Path) -> None:
 
     second_start = invoke_runtime_command(tmp_path, "start")
 
-    assert second_start.exit_code != 0
+    assert second_start.exit_code == 5
+    assert (
+        "environment error:" in second_start.stdout.lower()
+        or "environment error:" in second_start.stderr.lower()
+    )
     assert "already" in second_start.stdout.lower() or "already" in second_start.stderr.lower()
 
 
@@ -148,7 +152,11 @@ def test_runtime_stop_reports_predictable_error_when_runtime_is_not_running(
 ) -> None:
     result = invoke_runtime_command(tmp_path, "stop")
 
-    assert result.exit_code != 0
+    assert result.exit_code == 5
+    assert (
+        "environment error:" in result.stdout.lower()
+        or "environment error:" in result.stderr.lower()
+    )
     assert "not running" in result.stdout.lower() or "not running" in result.stderr.lower()
 
 
@@ -163,9 +171,10 @@ def test_runtime_status_reports_inconsistent_for_invalid_persisted_pid(
 
     result = invoke_runtime_command(tmp_path, "status")
 
-    assert result.exit_code != 0
+    assert result.exit_code == 5
     assert (
-        "aignt os runtime" in result.stderr.lower() or "aignt os runtime" in result.stdout.lower()
+        "environment error:" in result.stdout.lower()
+        or "environment error:" in result.stderr.lower()
     )
     assert "inconsistent" in result.stdout.lower() or "inconsistent" in result.stderr.lower()
 
@@ -195,7 +204,11 @@ def test_runtime_stop_refuses_to_signal_process_when_persisted_identity_mismatch
 
         result = invoke_runtime_command(tmp_path, "stop")
 
-        assert result.exit_code != 0
+        assert result.exit_code == 5
+        assert (
+            "environment error:" in result.stdout.lower()
+            or "environment error:" in result.stderr.lower()
+        )
         assert "inconsistent" in result.stdout.lower() or "inconsistent" in result.stderr.lower()
         assert arbitrary_process.poll() is None
     finally:
@@ -212,7 +225,11 @@ def test_runtime_start_rejects_untrusted_state_directory(tmp_path: Path) -> None
 
     result = runner.invoke(cli_module.app, ["runtime", "start"], env=env)
 
-    assert result.exit_code != 0
+    assert result.exit_code == 5
+    assert (
+        "environment error:" in result.stdout.lower()
+        or "environment error:" in result.stderr.lower()
+    )
     assert "state" in result.stdout.lower() or "state" in result.stderr.lower()
 
 
@@ -277,11 +294,19 @@ def test_runtime_ready_fails_when_foreground_identity_token_is_adulterated(
         ready_result = invoke_runtime_command(tmp_path, "ready")
         status_result = invoke_runtime_command(tmp_path, "status")
 
-        assert ready_result.exit_code != 0
+        assert ready_result.exit_code == 5
+        assert (
+            "environment error:" in ready_result.stdout.lower()
+            or "environment error:" in ready_result.stderr.lower()
+        )
         assert (
             "not ready" in ready_result.stdout.lower() or "not ready" in ready_result.stderr.lower()
         )
-        assert status_result.exit_code != 0
+        assert status_result.exit_code == 5
+        assert (
+            "environment error:" in status_result.stdout.lower()
+            or "environment error:" in status_result.stderr.lower()
+        )
         assert (
             "inconsistent" in status_result.stdout.lower()
             or "inconsistent" in status_result.stderr.lower()
@@ -293,5 +318,9 @@ def test_runtime_ready_fails_when_foreground_identity_token_is_adulterated(
 def test_runtime_ready_fails_when_runtime_is_not_running(tmp_path: Path) -> None:
     result = invoke_runtime_command(tmp_path, "ready")
 
-    assert result.exit_code != 0
+    assert result.exit_code == 5
+    assert (
+        "environment error:" in result.stdout.lower()
+        or "environment error:" in result.stderr.lower()
+    )
     assert "not ready" in result.stdout.lower() or "not ready" in result.stderr.lower()

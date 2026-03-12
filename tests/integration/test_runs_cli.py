@@ -194,6 +194,6 @@ def test_runs_show_fails_predictably_when_run_is_missing(
 ) -> None:
     result = cli_runner.invoke(cli_app, ["runs", "show", "missing-run"], env=_runs_env(tmp_path))
 
-    assert result.exit_code == 1
+    assert result.exit_code == 3
     assert "missing-run" in result.stdout or "missing-run" in result.stderr
-    assert "not found" in result.stdout.lower() or "not found" in result.stderr.lower()
+    assert "not found:" in result.stdout.lower() or "not found:" in result.stderr.lower()

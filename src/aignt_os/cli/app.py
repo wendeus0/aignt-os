@@ -5,10 +5,18 @@ from pathlib import Path
 from typing import Annotated
 
 import typer
-from rich.console import Console
 from sqlalchemy.exc import NoResultFound
 
 from aignt_os import __version__
+from aignt_os.cli.errors import (
+    CLIError,
+    environment_error,
+    execution_error,
+    exit_for_cli_error,
+    not_found_error,
+    usage_error,
+    validation_error,
+)
 from aignt_os.cli.rendering import (
     render_run_detail,
     render_run_submission,
@@ -48,7 +56,7 @@ def _runtime_service() -> RuntimeService:
             worker=build_runtime_worker(settings),
         )
     except ValueError as exc:
-        raise typer.BadParameter(str(exc)) from exc
+        raise environment_error(str(exc)) from exc
 
 
 def _run_repository() -> RunRepository:
@@ -79,24 +87,27 @@ def _dispatch_service() -> RunDispatchService:
 
 @runtime_app.command("start")
 def runtime_start() -> None:
-    service = _runtime_service()
     try:
+        service = _runtime_service()
         state = service.start()
+    except CLIError as exc:
+        exit_for_cli_error(exc)
     except RuntimeLifecycleError as exc:
-        typer.echo(str(exc), err=True)
-        raise typer.Exit(code=1) from exc
+        exit_for_cli_error(environment_error(str(exc)))
 
     typer.echo(f"Runtime status: {state.status} (pid={state.pid})")
 
 
 @runtime_app.command("status")
 def runtime_status() -> None:
-    service = _runtime_service()
-    state = service.status()
+    try:
+        service = _runtime_service()
+        state = service.status()
+    except CLIError as exc:
+        exit_for_cli_error(exc)
 
     if state.status == "inconsistent":
-        render_runtime_status(state, console=Console(stderr=True))
-        raise typer.Exit(code=1)
+        exit_for_cli_error(environment_error("Runtime state is inconsistent."))
 
     render_runtime_status(state)
 
@@ -123,33 +134,38 @@ def runtime_run(
             os.environ.copy(),
         )
 
-    service = _runtime_service()
     try:
+        service = _runtime_service()
         service.run_foreground(process_identity)
+    except CLIError as exc:
+        exit_for_cli_error(exc)
     except RuntimeLifecycleError as exc:
-        typer.echo(str(exc), err=True)
-        raise typer.Exit(code=1) from exc
+        exit_for_cli_error(environment_error(str(exc)))
 
 
 @runtime_app.command("ready")
 def runtime_ready() -> None:
-    service = _runtime_service()
+    try:
+        service = _runtime_service()
+    except CLIError as exc:
+        exit_for_cli_error(exc)
+
     if service.ready():
         typer.echo("Runtime ready")
         return
 
-    typer.echo("Runtime not ready", err=True)
-    raise typer.Exit(code=1)
+    exit_for_cli_error(environment_error("Runtime is not ready."))
 
 
 @runtime_app.command("stop")
 def runtime_stop() -> None:
-    service = _runtime_service()
     try:
+        service = _runtime_service()
         state = service.stop()
+    except CLIError as exc:
+        exit_for_cli_error(exc)
     except RuntimeLifecycleError as exc:
-        typer.echo(str(exc), err=True)
-        raise typer.Exit(code=1) from exc
+        exit_for_cli_error(environment_error(str(exc)))
 
     typer.echo(f"Runtime status: {state.status}")
 
@@ -164,14 +180,14 @@ def runs_list() -> None:
 def _validate_mode(mode: str) -> str:
     normalized = mode.strip().lower()
     if normalized not in {"auto", "sync", "async"}:
-        raise typer.BadParameter("mode must be one of: auto, sync, async.")
+        raise usage_error("mode must be one of: auto, sync, async.")
     return normalized
 
 
 def _validate_stop_at(stop_at: str) -> str:
     normalized = stop_at.strip().upper()
     if normalized not in PIPELINE_STOP_STATES:
-        raise typer.BadParameter("stop-at must be one of: " + ", ".join(PIPELINE_STOP_STATES) + ".")
+        raise usage_error("stop-at must be one of: " + ", ".join(PIPELINE_STOP_STATES) + ".")
     return normalized
 
 
@@ -181,17 +197,23 @@ def runs_submit(
     mode: Annotated[str, typer.Option("--mode")] = "auto",
     stop_at: Annotated[str, typer.Option("--stop-at")] = "SPEC_VALIDATION",
 ) -> None:
-    dispatch_service = _dispatch_service()
-
     try:
+        dispatch_service = _dispatch_service()
         result = dispatch_service.dispatch(
             spec_path,
             mode=_validate_mode(mode),  # type: ignore[arg-type]
             stop_at=_validate_stop_at(stop_at),
         )
-    except (FileNotFoundError, SpecValidationError, ValueError) as exc:
-        typer.echo(str(exc), err=True)
-        raise typer.Exit(code=1) from exc
+    except CLIError as exc:
+        exit_for_cli_error(exc)
+    except FileNotFoundError as exc:
+        exit_for_cli_error(not_found_error(str(exc)))
+    except SpecValidationError as exc:
+        exit_for_cli_error(validation_error(str(exc)))
+    except ValueError as exc:
+        exit_for_cli_error(usage_error(str(exc)))
+    except RuntimeError as exc:
+        exit_for_cli_error(execution_error(str(exc)))
 
     render_run_submission(result)
 
@@ -203,9 +225,8 @@ def runs_show(run_id: str) -> None:
 
     try:
         run = repository.get_run(run_id)
-    except NoResultFound as exc:
-        typer.echo(f"Run '{run_id}' not found.", err=True)
-        raise typer.Exit(code=1) from exc
+    except NoResultFound:
+        exit_for_cli_error(not_found_error(f"Run '{run_id}' not found."))
 
     render_run_detail(
         run,
