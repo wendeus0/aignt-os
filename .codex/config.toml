@@ -16,6 +16,7 @@ web_search = "cached"
 multi_agent = true
 prevent_idle_sleep = true
 runtime_metrics = true
+suppress_unstable_features_warning = true
 undo = true
 
 [sandbox_workspace_write]

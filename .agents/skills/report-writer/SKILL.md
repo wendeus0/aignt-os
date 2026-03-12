@@ -1,6 +1,6 @@
 ---
 name: report-writer
-description: Use esta skill depois de SECURITY_REVIEW para consolidar o resultado da feature ou da tarefa em um relatório curto e auditável: o que mudou, por que mudou, como foi validado, quais riscos restaram e quais são os próximos passos. Não use para commitar, revisar segurança ou executar automação operacional.
+description: "Use esta skill depois de SECURITY_REVIEW para consolidar o resultado da feature ou da tarefa em um relatório curto e auditável: o que mudou, por que mudou, como foi validado, quais riscos restaram e quais são os próximos passos. Não use para commitar, revisar segurança ou executar automação operacional."
 ---
 
 # Objetivo

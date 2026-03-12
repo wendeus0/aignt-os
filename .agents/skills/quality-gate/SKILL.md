@@ -1,6 +1,6 @@
 ---
 name: quality-gate
-description: Use esta skill depois de CODE_GREEN e REFACTOR para validar qualidade técnica não-segurança da mudança: testes relevantes, lint, typecheck, regressão funcional e aderência à SPEC. Ela produz um veredito claro antes de SECURITY_REVIEW, REPORT e COMMIT.
+description: "Use esta skill depois de CODE_GREEN e REFACTOR para validar qualidade técnica não-segurança da mudança: testes relevantes, lint, typecheck, regressão funcional e aderência à SPEC. Ela produz um veredito claro antes de SECURITY_REVIEW, REPORT e COMMIT."
 ---
 
 # Objetivo
