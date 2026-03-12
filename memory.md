@@ -10,7 +10,7 @@
 
 ## Local snapshot
 
-- `main` local esta limpa e `ahead=1` de `origin/main` apos o commit local da `F13-rich-cli-output`, sem nova branch de produto aberta para frente paralela.
+- `main` local esta limpa e a frente de `origin/main` apos o fechamento Git local da `F13-rich-cli-output`, sem nova branch de produto aberta para frente paralela.
 - A F13 fechou verde localmente com SPEC validada, testes focados de CLI/runtime e `security-gate`, sem exigir `DOCKER_PREFLIGHT`.
 - O MVP inicial de 10 features segue concluido, com `F12` mergeada e `F13` agora encerrada tambem no fechamento Git local como follow-up pequeno de UX na CLI.
 
