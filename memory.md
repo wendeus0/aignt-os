@@ -7,12 +7,13 @@
 - A governanca de prompts dos agents segue formato contextual explicito, com contexto, leituras obrigatorias, objetivo, escopo, nao-faca, criterios de aceite e formato de entrega.
 - O MVP de produto agora chega ate `DOCUMENT`: a F10 adicionou `RUN_REPORT.md` por run e o primeiro adapter real via `CodexCLIAdapter`.
 - A F13 introduziu a primeira saida enriquecida com Rich em `src/`, mantendo o AIgnt-Synapse-Flow como a engine propria de pipeline do AIgnt OS e limitando o recorte a `aignt runtime status`.
+- A F14 adicionou observabilidade CLI-first sobre runs persistidas com `aignt runs list` e `aignt runs show <run_id>`, reaproveitando `RunRepository` e `ArtifactStore` sem abrir TUI.
 
 ## Local snapshot
 
-- `main` local esta limpa e a frente de `origin/main` apos o fechamento Git local da `F13-rich-cli-output`, sem nova branch de produto aberta para frente paralela.
-- A F13 fechou verde localmente com SPEC validada, testes focados de CLI/runtime e `security-gate`, sem exigir `DOCKER_PREFLIGHT`.
-- O MVP inicial de 10 features segue concluido, com `F12` mergeada e `F13` agora encerrada tambem no fechamento Git local como follow-up pequeno de UX na CLI.
+- `main` local esta limpa apos o fechamento Git local da `F14-runs-observability-cli`, pronta para o fluxo de push/PR da feature.
+- A F14 fechou verde localmente com SPEC validada, testes focados de CLI/persistencia, `commit-check` e `security-gate`, sem exigir `DOCKER_PREFLIGHT`.
+- O MVP inicial de 10 features segue concluido, com F13 e F14 fechadas localmente como follow-ups pequenos de UX/observabilidade na CLI.
 
 # Stable decisions
 
@@ -28,12 +29,12 @@
 
 # Active fronts
 
-- Nenhuma nova frente foi aberta apos a F13; o repositório esta pronto para nova triagem de prioridade.
+- Nenhuma nova frente de produto esta aberta apos a F14; o repositório fica pronto para push/PR da feature e nova triagem depois disso.
 - Manter apenas follow-ups operacionais realmente bloqueantes fora da trilha principal de produto.
 
 # Open decisions
 
-- Decidir qual e a proxima frente apos a F13; `F14-tui-watch-command` continua apenas como candidata futura e nao deve ser aberta automaticamente.
+- Decidir qual e a proxima frente apos a F14; `F14-tui-watch-command` continua apenas como candidata futura e nao deve ser aberta automaticamente.
 - Decidir em momento futuro se o smoke autenticado do Codex deve virar gate obrigatorio; por ora o `401 Unauthorized` ficou classificado como bloqueio operacional externo e nao como requisito de produto.
 
 # Recurrent pitfalls
@@ -47,13 +48,13 @@
 
 # Next recommended steps
 
-- Retriajar a proxima frente a partir do estado real pos-F13 e decidir se ha motivo concreto para abrir produto novo ou fechar um ajuste pequeno de baseline.
-- Nao abrir `F14-tui-watch-command` antes de uma decisao explicita sobre observabilidade e recorte de TUI.
+- Executar o fluxo Git da `F14-runs-observability-cli` (push/PR) e retriajar a proxima frente a partir do estado pos-merge.
+- Nao abrir `F14-tui-watch-command` por inercia; a base de observabilidade CLI existe, mas watch/TUI ainda exigem decisao explicita de recorte.
 - Manter revisoes amplas de docs antigas fora do caminho critico, salvo quando bloquearem validacao real.
 
 # Last handoff summary
 
 - Read before acting: releia `AGENTS.md`, `CONTEXT.md`, `memory.md`, `PENDING_LOG.md`, `ERROR_LOG.md`, `git status` e `git diff --stat`.
-- Current state: a `F13-rich-cli-output` fechou em Git local com helper de rendering em Rich, ajuste de `runtime status` e testes verdes; o repositório esta limpo e pronto para reavaliar a fila.
-- Open points: escolher a proxima frente apos a F13 e manter o smoke autenticado do Codex como follow-up operacional nao bloqueante.
-- Recommended next front: executar nova triagem apos o handoff da F13; `F14-tui-watch-command` segue apenas como candidata futura.
+- Current state: a `F14-runs-observability-cli` fechou em Git local com novos comandos `runs list/show`, rendering Rich para listagem/detalhe e testes verdes; o repositório fica pronto para push/PR.
+- Open points: escolher a proxima frente apos a F14 e manter o smoke autenticado do Codex como follow-up operacional nao bloqueante.
+- Recommended next front: concluir o fluxo Git da F14 e retriajar a fila; `F14-tui-watch-command` segue apenas como candidata futura.
