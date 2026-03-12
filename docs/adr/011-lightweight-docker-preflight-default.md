@@ -20,7 +20,7 @@ Manter o `DOCKER_PREFLIGHT` leve por padrão:
 - reduz custo e tempo da automação operacional padrão;
 - diminui flakiness em CI e no fluxo local;
 - preserva o papel do Docker como isolamento sem transformar todo commit em validação pesada;
-- mantém `repo-automation` como dona do preflight operacional com menor privilégio por padrão.
+- mantém `repo-preflight` como dona do preflight operacional com menor privilégio por padrão.
 
 ### Negativas
 - parte dos problemas de runtime completo pode aparecer apenas no workflow dedicado ou na execução explícita;

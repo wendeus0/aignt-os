@@ -29,6 +29,7 @@ SPEC
 → TEST_RED
 → CODE_GREEN
 → REFACTOR
+→ QUALITY_GATE
 → SECURITY_REVIEW
 → REPORT
 → COMMIT
@@ -76,7 +77,7 @@ No MVP, a implementação prática continua linear, mas o operador deve seguir p
 - `DOCKER_PREFLIGHT` leve: padrão para CI e fluxo local, com `compose config` sem `up`; build fica explícito quando necessário
 - hook local leve: checks rápidos de repositório; não equivale ao `DOCKER_PREFLIGHT` operacional real
 - preflight completo de runtime: reservado para workflow dedicado ou pedido explícito em tarefas de boot/ciclo de vida/persistência/integração
-- `repo-automation`: skill responsável pelo preflight operacional em Docker/container
+- `repo-preflight`: skill responsável pelo preflight operacional em Docker/container
 - `security-review`: gate de segurança antes de `REPORT` e `COMMIT`
 - AIgnt-Synapse-Flow: engine própria de pipeline interna ao projeto, state-driven, linear no MVP
 
@@ -96,7 +97,7 @@ O ciclo ideal é:
 2. escrever testes `TEST_RED`
 3. implementar `CODE_GREEN`
 4. executar `REFACTOR`
-5. validar `DOCKER_PREFLIGHT` com `repo-automation` quando a feature exigir execução prática dependente de Docker
+5. validar `DOCKER_PREFLIGHT` com `repo-preflight` quando a feature exigir execução prática dependente de Docker
 6. rodar `SECURITY_REVIEW`
 7. gerar `REPORT`
 8. concluir `COMMIT`

@@ -9,7 +9,7 @@ O projeto já adotou o AIgnt-Synapse-Flow como conceito técnico central para co
 Ao mesmo tempo, o fluxo oficial do projeto passou a exigir a sequência:
 
 ```text
-SPEC → TEST_RED → CODE_GREEN → REFACTOR → SECURITY_REVIEW → REPORT → COMMIT
+SPEC → TEST_RED → CODE_GREEN → REFACTOR → QUALITY_GATE → SECURITY_REVIEW → REPORT → COMMIT
 ```
 
 Essa formalização aumenta a necessidade de um nome estável para o AIgnt-Synapse-Flow, a engine própria de pipeline do AIgnt OS.
@@ -26,7 +26,7 @@ Regras derivadas:
 ### Positivas
 - padroniza a comunicação entre arquitetura, skills e operação;
 - reduz ambiguidade em discussões sobre o runtime interno;
-- facilita rastreabilidade de responsabilidades entre `repo-automation`, `spec-editor` e `security-review`;
+- facilita rastreabilidade de responsabilidades entre `repo-preflight`, `spec-editor` e `security-review`;
 - melhora a clareza entre fluxo oficial da feature e estados internos da execução.
 
 ### Negativas

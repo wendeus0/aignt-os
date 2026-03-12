@@ -259,7 +259,7 @@ def test_pipeline_propagates_exception_from_failing_plan_executor(tmp_path: Path
 
 @pytest.mark.parametrize(
     "stop_at",
-    ["SPEC_VALIDATION", "PLAN", "TEST_RED", "CODE_GREEN", "REVIEW", "SECURITY"],
+    ["SPEC_VALIDATION", "PLAN", "TEST_RED", "CODE_GREEN", "QUALITY_GATE", "REVIEW", "SECURITY"],
 )
 def test_pipeline_accepts_supported_stop_at_values(tmp_path: Path, stop_at: str) -> None:
     pipeline = _pipeline_module()
@@ -267,6 +267,7 @@ def test_pipeline_accepts_supported_stop_at_values(tmp_path: Path, stop_at: str)
     plan_exec = _FakeExecutor(plan_md="# Plan")
     test_exec = _FakeExecutor(tests_md="# Tests")
     code_exec = _FakeExecutor(code_md="# Code")
+    quality_gate_exec = _FakeExecutor()
     review_exec = _FakeExecutor(review_md="# Review")
     security_exec = _FakeExecutor(security_md="# Security")
 
@@ -275,6 +276,7 @@ def test_pipeline_accepts_supported_stop_at_values(tmp_path: Path, stop_at: str)
             "PLAN": plan_exec,
             "TEST_RED": test_exec,
             "CODE_GREEN": code_exec,
+            "QUALITY_GATE": quality_gate_exec,
             "REVIEW": review_exec,
             "SECURITY": security_exec,
         }

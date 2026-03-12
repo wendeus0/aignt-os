@@ -25,6 +25,7 @@ def test_state_machine_follows_minimal_happy_path_to_complete() -> None:
     machine.advance_to("PLAN")
     machine.advance_to("TEST_RED")
     machine.advance_to("CODE_GREEN")
+    machine.advance_to("QUALITY_GATE")
     machine.advance_to("REVIEW")
     machine.advance_to("SECURITY")
     machine.advance_to("DOCUMENT")
@@ -77,6 +78,7 @@ def test_state_machine_allows_review_to_return_to_code_green() -> None:
         "PLAN",
         "TEST_RED",
         "CODE_GREEN",
+        "QUALITY_GATE",
         "REVIEW",
     ):
         machine.advance_to(state)
@@ -200,6 +202,7 @@ def test_state_machine_rejects_transition_after_terminal_complete() -> None:
 
     machine = state_machine_module.AIgntStateMachine()
 
+    machine = state_machine_module.AIgntStateMachine()
     for state in (
         "SPEC_DISCOVERY",
         "SPEC_NORMALIZATION",
@@ -207,6 +210,7 @@ def test_state_machine_rejects_transition_after_terminal_complete() -> None:
         "PLAN",
         "TEST_RED",
         "CODE_GREEN",
+        "QUALITY_GATE",
         "REVIEW",
         "SECURITY",
         "DOCUMENT",
@@ -252,6 +256,7 @@ def test_state_machine_rejects_all_transitions_after_complete(next_state: str) -
         "PLAN",
         "TEST_RED",
         "CODE_GREEN",
+        "QUALITY_GATE",
         "REVIEW",
         "SECURITY",
         "DOCUMENT",
@@ -261,3 +266,117 @@ def test_state_machine_rejects_all_transitions_after_complete(next_state: str) -
 
     with pytest.raises(state_machine_module.InvalidStateTransition):
         machine.advance_to(next_state)
+
+
+# ---------------------------------------------------------------------------
+# QUALITY_GATE — new state between CODE_GREEN and REVIEW (ADR-013)
+# ---------------------------------------------------------------------------
+
+
+def test_state_machine_includes_quality_gate_in_linear_flow() -> None:
+    """LINEAR_STATE_FLOW must contain QUALITY_GATE between CODE_GREEN and REVIEW."""
+    state_machine_module = _state_machine_module()
+
+    flow = state_machine_module.LINEAR_STATE_FLOW
+    cg_idx = flow.index("CODE_GREEN")
+    qg_idx = flow.index("QUALITY_GATE")
+    rv_idx = flow.index("REVIEW")
+
+    assert cg_idx < qg_idx < rv_idx
+
+
+def test_state_machine_transitions_from_code_green_to_quality_gate() -> None:
+    state_machine_module = _state_machine_module()
+
+    machine = state_machine_module.AIgntStateMachine()
+    for state in (
+        "SPEC_DISCOVERY",
+        "SPEC_NORMALIZATION",
+        "SPEC_VALIDATION",
+        "PLAN",
+        "TEST_RED",
+        "CODE_GREEN",
+    ):
+        machine.advance_to(state)
+
+    machine.advance_to("QUALITY_GATE")
+
+    assert machine.current_state == "QUALITY_GATE"
+
+
+def test_state_machine_transitions_from_quality_gate_to_review() -> None:
+    state_machine_module = _state_machine_module()
+
+    machine = state_machine_module.AIgntStateMachine()
+    for state in (
+        "SPEC_DISCOVERY",
+        "SPEC_NORMALIZATION",
+        "SPEC_VALIDATION",
+        "PLAN",
+        "TEST_RED",
+        "CODE_GREEN",
+        "QUALITY_GATE",
+    ):
+        machine.advance_to(state)
+
+    machine.advance_to("REVIEW")
+
+    assert machine.current_state == "REVIEW"
+
+
+def test_state_machine_cannot_skip_quality_gate_from_code_green_to_review() -> None:
+    """After CODE_GREEN the machine must go through QUALITY_GATE before REVIEW."""
+    state_machine_module = _state_machine_module()
+
+    machine = state_machine_module.AIgntStateMachine()
+    for state in (
+        "SPEC_DISCOVERY",
+        "SPEC_NORMALIZATION",
+        "SPEC_VALIDATION",
+        "PLAN",
+        "TEST_RED",
+        "CODE_GREEN",
+    ):
+        machine.advance_to(state)
+
+    with pytest.raises(state_machine_module.InvalidStateTransition):
+        machine.advance_to("REVIEW")
+
+
+def test_state_machine_cannot_skip_quality_gate_from_code_green_to_security() -> None:
+    """After CODE_GREEN jumping directly to SECURITY must be rejected."""
+    state_machine_module = _state_machine_module()
+
+    machine = state_machine_module.AIgntStateMachine()
+    for state in (
+        "SPEC_DISCOVERY",
+        "SPEC_NORMALIZATION",
+        "SPEC_VALIDATION",
+        "PLAN",
+        "TEST_RED",
+        "CODE_GREEN",
+    ):
+        machine.advance_to(state)
+
+    with pytest.raises(state_machine_module.InvalidStateTransition):
+        machine.advance_to("SECURITY")
+
+
+def test_state_machine_can_fail_from_quality_gate() -> None:
+    state_machine_module = _state_machine_module()
+
+    machine = state_machine_module.AIgntStateMachine()
+    for state in (
+        "SPEC_DISCOVERY",
+        "SPEC_NORMALIZATION",
+        "SPEC_VALIDATION",
+        "PLAN",
+        "TEST_RED",
+        "CODE_GREEN",
+        "QUALITY_GATE",
+    ):
+        machine.advance_to(state)
+
+    machine.fail()
+
+    assert machine.current_state == "FAILED"
