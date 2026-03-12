@@ -241,19 +241,28 @@ def _relative_artifact_path(artifact_store: ArtifactStore, artifact_path: Path) 
 
 def _read_text_preview(artifact_path: Path, *, max_lines: int = 40) -> tuple[str, bool]:
     try:
-        content = artifact_path.read_text(encoding="utf-8")
+        preview_lines: list[str] = []
+        truncated = False
+        with artifact_path.open("r", encoding="utf-8") as handle:
+            for index, line in enumerate(handle):
+                if index >= max_lines:
+                    truncated = True
+                    break
+                preview_lines.append(line)
     except FileNotFoundError as exc:
         raise not_found_error(
             f"Persisted artifact '{artifact_path.name}' is not available."
         ) from exc
+    except UnicodeDecodeError as exc:
+        raise execution_error(
+            f"Persisted artifact '{artifact_path.name}' is not decodable as UTF-8."
+        ) from exc
+    except OSError as exc:
+        raise execution_error(
+            f"Persisted artifact '{artifact_path.name}' could not be read."
+        ) from exc
 
-    lines = content.splitlines()
-    preview_lines = lines[:max_lines]
-    truncated = len(lines) > max_lines
-    preview_content = "\n".join(preview_lines)
-    if content.endswith("\n") and preview_lines:
-        preview_content += "\n"
-    return (preview_content, truncated)
+    return ("".join(preview_lines), truncated)
 
 
 def _resolve_run_preview(
@@ -270,6 +279,8 @@ def _resolve_run_preview(
         if relative_path not in artifact_store.list_artifact_paths(run_id):
             raise not_found_error(f"Run '{run_id}' does not have a persisted report preview.")
         artifact_path = artifact_store.base_path / Path(relative_path)
+        # Canonicalize the report path too so symlinked files cannot escape the run artifacts root.
+        _relative_artifact_path(artifact_store, artifact_path)
         content, truncated = _read_text_preview(artifact_path)
         return RunArtifactPreview(
             target="report",

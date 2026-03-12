@@ -342,3 +342,81 @@ def test_runs_show_preview_returns_not_found_when_requested_artifact_is_missing(
 
     assert result.exit_code == 3
     assert "not found:" in result.stdout.lower() or "not found:" in result.stderr.lower()
+
+
+def test_runs_show_preview_report_rejects_symlink_outside_artifacts_root(
+    tmp_path: Path,
+    cli_runner,
+    cli_app,
+) -> None:
+    persistence = import_module("aignt_os.persistence")
+
+    env = _runs_env(tmp_path)
+    repository = persistence.RunRepository(Path(env["AIGNT_OS_RUNS_DB_PATH"]))
+    artifact_store = persistence.ArtifactStore(Path(env["AIGNT_OS_ARTIFACTS_DIR"]))
+    spec_path = tmp_path / "SPEC.md"
+    spec_path.write_text("# Fixture\n", encoding="utf-8")
+    external_path = tmp_path / "outside-report.md"
+    external_path.write_text("outside\n", encoding="utf-8")
+
+    run_id = repository.create_run(
+        spec_path=spec_path,
+        initial_state="REQUEST",
+        stop_at="DOCUMENT",
+    )
+    repository.acquire_lock(run_id)
+    repository.mark_run_running(run_id, current_state="DOCUMENT")
+    report_path = artifact_store.run_directory(run_id) / "RUN_REPORT.md"
+    report_path.symlink_to(external_path)
+    repository.mark_run_completed(run_id, current_state="DOCUMENT")
+
+    result = cli_runner.invoke(cli_app, ["runs", "show", run_id, "--preview", "report"], env=env)
+
+    assert result.exit_code == 3
+    assert "not found:" in result.stdout.lower() or "not found:" in result.stderr.lower()
+    assert "outside" not in result.stdout
+
+
+def test_runs_show_preview_returns_execution_error_for_non_utf8_artifact(
+    tmp_path: Path,
+    cli_runner,
+    cli_app,
+) -> None:
+    persistence = import_module("aignt_os.persistence")
+
+    env = _runs_env(tmp_path)
+    repository = persistence.RunRepository(Path(env["AIGNT_OS_RUNS_DB_PATH"]))
+    artifact_store = persistence.ArtifactStore(Path(env["AIGNT_OS_ARTIFACTS_DIR"]))
+    spec_path = tmp_path / "SPEC.md"
+    spec_path.write_text("# Fixture\n", encoding="utf-8")
+
+    run_id = repository.create_run(
+        spec_path=spec_path,
+        initial_state="REQUEST",
+        stop_at="DOCUMENT",
+    )
+    repository.acquire_lock(run_id)
+    repository.mark_run_running(run_id, current_state="PLAN")
+    step_dir = artifact_store.run_directory(run_id) / "PLAN"
+    step_dir.mkdir(parents=True, exist_ok=True)
+    clean_path = step_dir / "clean.txt"
+    clean_path.write_bytes(b"\xff\xfe\xfd")
+    repository.record_step(
+        run_id,
+        state="PLAN",
+        status="completed",
+        clean_output_path=clean_path,
+    )
+    repository.mark_run_completed(run_id, current_state="DOCUMENT")
+
+    result = cli_runner.invoke(
+        cli_app,
+        ["runs", "show", run_id, "--preview", "PLAN.clean"],
+        env=env,
+    )
+
+    assert result.exit_code == 6
+    assert (
+        "execution error:" in result.stdout.lower()
+        or "execution error:" in result.stderr.lower()
+    )
