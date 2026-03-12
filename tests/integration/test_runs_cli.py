@@ -1,0 +1,146 @@
+from __future__ import annotations
+
+from importlib import import_module
+from pathlib import Path
+
+
+def _runs_env(tmp_path: Path) -> dict[str, str]:
+    return {
+        "AIGNT_OS_ENVIRONMENT": "test",
+        "AIGNT_OS_RUNS_DB_PATH": str(tmp_path / "runs.sqlite3"),
+        "AIGNT_OS_ARTIFACTS_DIR": str(tmp_path / "artifacts"),
+    }
+
+
+def _seed_run(tmp_path: Path, *, status: str, current_state: str) -> str:
+    persistence = import_module("aignt_os.persistence")
+
+    spec_path = tmp_path / f"{status}-{current_state}.md"
+    spec_path.write_text("# Fixture\n", encoding="utf-8")
+
+    repository = persistence.RunRepository(tmp_path / "runs.sqlite3")
+    run_id = repository.create_run(
+        spec_path=spec_path,
+        initial_state="REQUEST",
+        stop_at="DOCUMENT",
+    )
+
+    if status == "running":
+        repository.acquire_lock(run_id)
+        repository.mark_run_running(run_id, current_state=current_state)
+    elif status == "completed":
+        repository.acquire_lock(run_id)
+        repository.mark_run_running(run_id, current_state="PLAN")
+        repository.mark_run_completed(run_id, current_state=current_state)
+    elif status == "failed":
+        repository.acquire_lock(run_id)
+        repository.mark_run_running(run_id, current_state="PLAN")
+        repository.mark_run_failed(
+            run_id,
+            current_state=current_state,
+            failure_message="fixture failure",
+        )
+
+    return run_id
+
+
+def test_runs_list_reports_persisted_runs(
+    tmp_path: Path,
+    cli_runner,
+    cli_app,
+) -> None:
+    first_run_id = _seed_run(tmp_path, status="completed", current_state="DOCUMENT")
+    second_run_id = _seed_run(tmp_path, status="running", current_state="CODE_GREEN")
+
+    result = cli_runner.invoke(cli_app, ["runs", "list"], env=_runs_env(tmp_path))
+
+    assert result.exit_code == 0
+    assert "run id" in result.stdout.lower()
+    assert first_run_id in result.stdout
+    assert second_run_id in result.stdout
+    assert "completed" in result.stdout.lower()
+    assert "running" in result.stdout.lower()
+    assert "document" in result.stdout.lower()
+    assert "code_green" in result.stdout.lower()
+
+
+def test_runs_show_reports_run_metadata_steps_events_and_artifacts(
+    tmp_path: Path,
+    cli_runner,
+    cli_app,
+) -> None:
+    persistence = import_module("aignt_os.persistence")
+
+    env = _runs_env(tmp_path)
+    repository = persistence.RunRepository(Path(env["AIGNT_OS_RUNS_DB_PATH"]))
+    artifact_store = persistence.ArtifactStore(Path(env["AIGNT_OS_ARTIFACTS_DIR"]))
+    spec_path = tmp_path / "SPEC.md"
+    spec_path.write_text("# Fixture\n", encoding="utf-8")
+
+    run_id = repository.create_run(
+        spec_path=spec_path,
+        initial_state="REQUEST",
+        stop_at="DOCUMENT",
+    )
+    repository.acquire_lock(run_id)
+    repository.mark_run_running(run_id, current_state="CODE_GREEN")
+    saved_outputs = artifact_store.save_step_outputs(
+        run_id=run_id,
+        step_state="PLAN",
+        raw_output="RAW PLAN\n",
+        clean_output="# Plan\n",
+    )
+    artifact_store.save_named_artifact(
+        run_id=run_id,
+        step_state="PLAN",
+        artifact_name="plan_md",
+        content="# Plan\n",
+    )
+    artifact_store.save_run_report(run_id=run_id, content="# RUN_REPORT\n")
+    repository.record_step(
+        run_id,
+        state="PLAN",
+        status="completed",
+        raw_output_path=saved_outputs.raw_path,
+        clean_output_path=saved_outputs.clean_path,
+        tool_name="codex",
+        return_code=0,
+        duration_ms=45,
+        timed_out=False,
+    )
+    repository.record_event(
+        run_id,
+        state="PLAN",
+        event_type="step_completed",
+        message="Step PLAN completed.",
+    )
+    repository.mark_run_completed(run_id, current_state="DOCUMENT")
+
+    result = cli_runner.invoke(cli_app, ["runs", "show", run_id], env=env)
+
+    assert result.exit_code == 0
+    assert run_id in result.stdout
+    assert "spec path" in result.stdout.lower()
+    assert str(spec_path) in result.stdout
+    assert "completed" in result.stdout.lower()
+    assert "document" in result.stdout.lower()
+    assert "steps" in result.stdout.lower()
+    assert "plan" in result.stdout.lower()
+    assert "codex" in result.stdout.lower()
+    assert "events" in result.stdout.lower()
+    assert "step_completed" in result.stdout
+    assert "artifacts" in result.stdout.lower()
+    assert f"{run_id}/PLAN/plan_md.txt" in result.stdout
+    assert f"{run_id}/RUN_REPORT.md" in result.stdout
+
+
+def test_runs_show_fails_predictably_when_run_is_missing(
+    tmp_path: Path,
+    cli_runner,
+    cli_app,
+) -> None:
+    result = cli_runner.invoke(cli_app, ["runs", "show", "missing-run"], env=_runs_env(tmp_path))
+
+    assert result.exit_code == 1
+    assert "missing-run" in result.stdout or "missing-run" in result.stderr
+    assert "not found" in result.stdout.lower() or "not found" in result.stderr.lower()

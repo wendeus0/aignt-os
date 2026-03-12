@@ -1,9 +1,13 @@
 from __future__ import annotations
 
-from rich.console import Console, Group
+from collections.abc import Sequence
+
+from rich.console import Console, ConsoleRenderable, Group
 from rich.panel import Panel
+from rich.table import Table
 from rich.text import Text
 
+from aignt_os.persistence import RunEventRecord, RunRecord, RunStepRecord
 from aignt_os.runtime.state import RuntimeState
 
 
@@ -35,11 +39,143 @@ def render_runtime_status(
     )
 
 
+def render_runs_list(
+    runs: Sequence[RunRecord],
+    *,
+    console: Console | None = None,
+) -> None:
+    output_console = console or Console(width=160)
+    if not runs:
+        output_console.print(
+            Panel.fit(
+                "No runs found.",
+                border_style="yellow",
+                padding=(0, 1),
+                title="runs",
+            )
+        )
+        return
+
+    table = Table(title="Persisted Runs")
+    table.add_column("Run ID", style="bold")
+    table.add_column("Status")
+    table.add_column("Current State")
+    table.add_column("Stop At")
+    table.add_column("Updated At")
+
+    for run in runs:
+        table.add_row(
+            run.run_id,
+            Text(run.status, style=_status_style(run.status)),
+            run.current_state,
+            run.stop_at,
+            run.updated_at,
+        )
+
+    output_console.print(table)
+
+
+def render_run_detail(
+    run: RunRecord,
+    *,
+    steps: Sequence[RunStepRecord],
+    events: Sequence[RunEventRecord],
+    artifact_paths: Sequence[str],
+    console: Console | None = None,
+) -> None:
+    output_console = console or Console(width=160)
+    summary_table = Table.grid(expand=False)
+    summary_table.add_column(style="dim")
+    summary_table.add_column()
+    summary_table.add_row("Run ID", run.run_id)
+    summary_table.add_row("Status", Text(run.status, style=_status_style(run.status)))
+    summary_table.add_row("Current State", run.current_state)
+    summary_table.add_row("Stop At", run.stop_at)
+    summary_table.add_row("Spec Path", run.spec_path)
+    summary_table.add_row("Locked", "yes" if run.locked else "no")
+    summary_table.add_row("Created At", run.created_at)
+    summary_table.add_row("Updated At", run.updated_at)
+    if run.completed_at is not None:
+        summary_table.add_row("Completed At", run.completed_at)
+    if run.failure_message is not None:
+        summary_table.add_row("Failure", run.failure_message)
+
+    renderables: list[ConsoleRenderable] = [
+        Panel.fit(
+            summary_table,
+            border_style=_status_style(run.status),
+            padding=(0, 1),
+            title="Run Detail",
+        )
+    ]
+    renderables.append(_steps_table(steps))
+    renderables.append(_events_table(events))
+    renderables.append(_artifacts_table(artifact_paths))
+    output_console.print(Group(*renderables))
+
+
 def _status_style(status: str) -> str:
     if status == "running":
         return "green"
+    if status == "completed":
+        return "green"
+    if status == "failed":
+        return "red"
     if status == "stopped":
         return "yellow"
     if status == "inconsistent":
         return "red"
     return "cyan"
+
+
+def _steps_table(steps: Sequence[RunStepRecord]) -> Table:
+    table = Table(title="Steps")
+    table.add_column("State", style="bold")
+    table.add_column("Status")
+    table.add_column("Tool")
+    table.add_column("Return Code")
+    table.add_column("Duration (ms)")
+    table.add_column("Timed Out")
+
+    if not steps:
+        table.add_row("-", "No persisted steps.", "-", "-", "-", "-")
+        return table
+
+    for step in steps:
+        table.add_row(
+            step.state,
+            step.status,
+            step.tool_name or "-",
+            "-" if step.return_code is None else str(step.return_code),
+            "-" if step.duration_ms is None else str(step.duration_ms),
+            "-" if step.timed_out is None else ("yes" if step.timed_out else "no"),
+        )
+    return table
+
+
+def _events_table(events: Sequence[RunEventRecord]) -> Table:
+    table = Table(title="Events")
+    table.add_column("State", style="bold")
+    table.add_column("Event Type")
+    table.add_column("Message")
+
+    if not events:
+        table.add_row("-", "No persisted events.", "-")
+        return table
+
+    for event in events:
+        table.add_row(event.state, event.event_type, event.message)
+    return table
+
+
+def _artifacts_table(artifact_paths: Sequence[str]) -> Table:
+    table = Table(title="Artifacts")
+    table.add_column("Path")
+
+    if not artifact_paths:
+        table.add_row("No persisted artifacts.")
+        return table
+
+    for artifact_path in artifact_paths:
+        table.add_row(artifact_path)
+    return table

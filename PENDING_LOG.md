@@ -6,6 +6,10 @@
 - A F13 introduziu `src/aignt_os/cli/rendering.py` como helper minima de apresentacao e adicionou cobertura dedicada em `tests/unit/test_cli_rich_output.py` e `tests/integration/test_runtime_cli.py`.
 - A validacao local da F13 fechou verde com `validate_spec_file()` da SPEC, `pytest tests/unit/test_cli_rich_output.py tests/integration/test_runtime_cli.py`, `./scripts/commit-check.sh --no-sync --skip-branch-validation --skip-docker --skip-security` e `./scripts/security-gate.sh`.
 - O recorte da F13 permaneceu deliberadamente restrito a `aignt runtime status`, sem `Textual`, sem watch mode, sem novo subcomando publico e sem necessidade de `DOCKER_PREFLIGHT`.
+- A `F14-runs-observability-cli` foi concluida localmente como frente pequena de observabilidade CLI-first, adicionando `aignt runs list` e `aignt runs show <run_id>` sem abrir TUI.
+- A F14 reaproveitou `RunRepository` e `ArtifactStore`, estendeu `src/aignt_os/cli/rendering.py` para listagem/detalhe de runs e manteve o AIgnt-Synapse-Flow como a engine propria de pipeline do AIgnt OS.
+- A validacao local da F14 fechou verde com `validate_spec_file()` da SPEC, `pytest` focado de CLI/persistencia, `./scripts/commit-check.sh --no-sync --skip-branch-validation --skip-docker --skip-security` e `./scripts/security-gate.sh`.
+- O recorte da F14 permaneceu deliberadamente restrito a leitura de runs persistidas: sem watch mode, sem streaming, sem Textual e sem `DOCKER_PREFLIGHT`.
 
 - A `F10-run-report-one-real-adapter` foi concluida e mergeada em `main`, fechando o MVP inicial do AIgnt-Synapse-Flow com `DOCUMENT`, `RUN_REPORT.md` e o primeiro adapter real (`CodexCLIAdapter`).
 - A `F12-codex-adapter-operational-hardening` foi concluida e mergeada pela PR `#38`, com `main` local e `origin/main` sincronizados em `ahead=0 behind=0`.
@@ -97,7 +101,7 @@
 
 - Fixtures de testes aspiracionais marcadas como 🔜 no TDD.md: `tests/fixtures/worker/` (ainda ausente).
 - Property-based testing com `hypothesis` ainda não implementado (mencionado como evolução futura em TDD.md).
-- Retriajar a proxima frente agora que a F13 foi fechada em Git local; `F14-tui-watch-command` continua apenas como candidata futura e nao deve ser aberta por inercia.
+- Fechar o fluxo Git da `F14-runs-observability-cli` com push/PR antes de abrir a proxima frente.
 
 ## Pontos de atenção futuros
 
@@ -128,10 +132,11 @@
 ## TUI — Ideia de feature futura (análise de viabilidade concluída)
 
 - **Rich enriquecido (F13-rich-cli-output)**: concluida localmente como primeira adocao de Rich em `src/`, restrita a `aignt runtime status` e sem abrir TUI completa.
-- **TUI watch (F14-tui-watch-command)**: `aignt tui` como subcomando opcional usando Textual. Pré-requisito: F13 + implementação de `observability/` (diretório vazio). Hook ideal já existe: `PipelineObserver` em `pipeline.py`.
+- **Observabilidade CLI de runs (F14-runs-observability-cli)**: concluida localmente e fecha a lacuna minima de inspecao antes de qualquer TUI.
+- **TUI watch (F14-tui-watch-command)**: `aignt tui` como subcomando opcional usando Textual. Pré-requisito atualizado: F13 + F14 + implementação de `observability/` (diretório ainda vazio). Hook ideal já existe: `PipelineObserver` em `pipeline.py`.
 - **Constraint Typer×asyncio**: `asyncio.run(app.run_async())` dentro do comando Typer é a forma de coexistência; funcional mas exige cuidado com event loop.
 - **TTY em container**: Rich degrada automaticamente sem TTY; Textual exige guarda `sys.stdout.isatty()`.
-- **Não implementar antes**: observabilidade incompleta limita valor de TUI real; Rich básico tem valor imediato.
+- **Não implementar antes**: apesar da F14 resolver a observabilidade minima via CLI, TUI real continua dependendo de recorte proprio de watch/streaming e da camada `observability/`.
 
 ## Itens que podem virar novas features ou ajustes futuros
 
