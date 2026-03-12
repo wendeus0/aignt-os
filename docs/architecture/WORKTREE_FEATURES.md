@@ -89,9 +89,9 @@ Organizar o desenvolvimento do projeto em features pequenas, isoladas por branch
 **Entrega:** `aignt runs submit <spec_path>` com `--mode auto|sync|async` e `--stop-at`.
 **Branch/worktree:** `feature/f15-public-run-submission`
 
-## Próxima etapa pós-F14
+## Próxima etapa pós-F15
 
-A fila ativa do projeto deixou de ser o cronograma histórico do MVP inicial. A nova etapa segue o **cenário misto** definido na triagem e está detalhada em `docs/architecture/PHASE_2_ROADMAP.md`.
+A fila ativa do projeto deixou de ser o cronograma histórico do MVP inicial. A nova etapa segue o **cenário misto** definido na triagem, ja incorporou a `F15-public-run-submission` em `main` e esta detalhada em `docs/architecture/PHASE_2_ROADMAP.md`.
 
 ### Sequência oficial remanescente da etapa 2
 

@@ -18,7 +18,7 @@
 - O hardening principal da F15 ficou no proprio dispatch: a SPEC e validada antes de qualquer submit, inclusive em `async`, para evitar persistencia de runs invalidas.
 - A validacao local da F15 fechou verde com `validate_spec_file()` da SPEC, `pytest` focado de dispatch/runs/runtime, `./scripts/commit-check.sh --no-sync --skip-branch-validation --skip-docker --skip-security` e `./scripts/security-gate.sh`.
 - A PR `#43` da `F15-public-run-submission` foi mergeada em `main`, consolidando `aignt runs submit <spec_path>` como superficie publica atual junto de `aignt runs list/show`.
-- O passo seguinte deixou de ser fechar Git da F15 e passou a ser uma chore documental separada para promover o estado pos-F15 nas fontes de verdade do projeto.
+- A chore documental pos-F15 alinhou `README.md`, `WORKTREE_FEATURES.md`, `memory.md`, `PENDING_LOG.md` e `.github/copilot-instructions.md` ao baseline atual da etapa 2.
 
 - A `F10-run-report-one-real-adapter` foi concluida e mergeada em `main`, fechando o MVP inicial do AIgnt-Synapse-Flow com `DOCUMENT`, `RUN_REPORT.md` e o primeiro adapter real (`CodexCLIAdapter`).
 - A `F12-codex-adapter-operational-hardening` foi concluida e mergeada pela PR `#38`, com `main` local e `origin/main` sincronizados em `ahead=0 behind=0`.
@@ -110,9 +110,8 @@
 
 - Fixtures de testes aspiracionais marcadas como 🔜 no TDD.md: `tests/fixtures/worker/` (ainda ausente).
 - Property-based testing com `hypothesis` ainda não implementado (mencionado como evolução futura em TDD.md).
-- Manter a etapa 2 documentada de forma coerente em `PHASE_2_ROADMAP.md`, `WORKTREE_FEATURES.md`, `README.md`, `memory.md`, `PENDING_LOG.md` e `.github/copilot-instructions.md` agora que a `F15` ja foi mergeada.
 - Nao abrir o pacote de guardrails proposto como novas `F14`/`F15`; manter a numeracao e a fila oficial ja documentadas.
-- Fechar a chore documental pos-F15 antes de abrir a `F16`.
+- Abrir a `F16-run-detail-expansion` como proxima feature da fila oficial da etapa 2.
 
 ## Pontos de atenção futuros
 
