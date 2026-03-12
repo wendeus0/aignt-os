@@ -2,11 +2,10 @@
 
 ## Decisões incorporadas recentemente
 
-- A `F10-run-report-one-real-adapter` foi materializada com `SPEC.md`, `NOTES.md` e `CHECKLIST.md` proprios, mantendo o AIgnt-Synapse-Flow como a engine propria de pipeline do AIgnt OS e fechando o MVP com `DOCUMENT`, `RUN_REPORT.md` e um unico adapter real.
-- A pipeline e o runner persistido agora suportam `DOCUMENT`; `RUN_REPORT.md` passou a ser gerado de forma deterministica em `artifacts/<run_id>/RUN_REPORT.md`, e a persistencia ganhou metadados minimos por step (`tool_name`, `return_code`, `duration_ms`, `timed_out`).
-- O `CodexCLIAdapter` foi adotado como primeiro adapter real, encapsulando a execucao container-first via `./scripts/dev-codex.sh -- exec` sem usar shell.
-- A validacao local da `F10-run-report-one-real-adapter` fechou verde com `21` testes focados passando, `ruff check`, `mypy`, validacao da SPEC e `./scripts/security-gate.sh`.
-- A feature `F10-run-report-one-real-adapter` foi isolada na branch `feature/f10-run-report-one-real-adapter`, com commit `d3b732d feat(reporting): add run report generation and codex adapter`, push concluido e PR `#36` aberta contra `main`.
+- A `F10-run-report-one-real-adapter` foi concluida e mergeada em `main`, fechando o MVP inicial do AIgnt-Synapse-Flow com `DOCUMENT`, `RUN_REPORT.md` e o primeiro adapter real (`CodexCLIAdapter`).
+- A `F12-codex-adapter-operational-hardening` foi concluida e mergeada pela PR `#38`, com `main` local e `origin/main` sincronizados em `ahead=0 behind=0`.
+- O hardening da F12 manteve `CLIExecutionResult` como contrato de execucao e adicionou classificacao operacional explicita do Codex (`timeout`, `return_code_nonzero`, `launcher_unavailable`, `container_unavailable`, `authentication_unavailable`) sem reabrir a pipeline.
+- O `DOCKER_PREFLIGHT` real e o smoke container-first do Codex foram validados; o unico bloqueio observado foi autenticacao ausente (`401 Unauthorized`), tratado como bloqueio operacional externo e nao como defeito do adapter.
 
 - A chore `test-layout-typecheck-hardening` estabilizou a arvore `tests/` com package markers explicitos, removendo a colisao operacional entre `tests/unit/conftest.py` e `tests/integration/conftest.py`.
 - O repositório agora aceita `uv run mypy src tests`, mas isso foi fechado via override explícito do `mypy` para `tests` e `tests.*`, preservando o contrato strict no pacote `src/aignt_os`.
@@ -91,8 +90,8 @@
 
 ## Pendências abertas
 
-- Revisar e mergear a PR `#36` da `F10-run-report-one-real-adapter`.
-- Reexecutar `technical-triage` em `main` apos o merge da F10 para escolher a proxima frente de produto com o backlog ja alinhado ao estado real do repositório.
+- Promover a chore `chore/post-f12-handoff-logs-memory` para alinhar `PENDING_LOG.md`, `ERROR_LOG.md` e `memory.md` com o estado real pos-PR `#38`.
+- Abrir a proxima frente pequena de produto so depois desse handoff; a candidata principal no momento e `F13-rich-cli-output`.
 - Revisão dos `NOTES.md` de cada feature (F01–F07) para verificar se referenciam conceitos obsoletos (estados `INIT`/`RETRYING`, `parser_confidence`, `REQUEST.md` como artefato).
 - Verificar se SPECs F01–F05 usam `## 1. Contexto` (H2) em vez de `# Contexto` (H1) — o validator exige H1. Ainda não foi confirmado se esses SPECs passam no `validate_spec_file()`. Pode exigir atualização das SPECs ou confirmação de que a regra H1 se aplica apenas ao validator e não ao formato de seções do corpo da SPEC.
 - Fixtures de testes aspiracionais marcadas como 🔜 no TDD.md: `tests/fixtures/worker/` (ainda ausente).
@@ -100,7 +99,8 @@
 
 ## Pontos de atenção futuros
 
-- O caminho real nao mockado de `codex exec` dentro da pipeline continua fora do gate obrigatorio da F10; se isso virar exigencia operacional, tratar em frente separada ou follow-up pequeno apos o merge da PR `#36`.
+- O bloqueio operacional de autenticacao do Codex (`401 Unauthorized`) ficou explicitamente classificado na F12; revalidar esse smoke apenas quando houver credencial valida e necessidade real de uso autenticado.
+
 - Validar em momento futuro uma operacao real do MCP oficial do GitHub com credencial valida, pois a frente atual fechou apenas o startup path e a cobertura operacional do launcher.
 - Fixture `noisy_mixed_output.txt` e `noisy_no_code_block.txt` armazenam sequências ANSI como literais `\u001b`. Todo helper que os lê para testar comportamento de ANSI precisa de `unicode_escape=True`. Considerar adicionar comentário nos próprios arquivos de fixture documentando isso.
 - A ampliação de `TRANSPORT_NOISE_PREFIXES` para incluir prefixos como `[rpc]` deve ser decisão explícita documentada na SPEC da feature responsável — não uma adição silenciosa.
@@ -123,6 +123,14 @@
 - Na integracao futura do `SpecValidator`, o chamador deve restringir a leitura de `SPEC.md` a paths esperados do workspace para evitar ampliacao desnecessaria da superficie de entrada.
 - O `# type: ignore[import-untyped]` em `yaml` da F02 permanece como mitigacao minima de tipagem; reavaliar remocao quando houver frente dedicada de endurecimento ou tipagem de dependencias.
 - Na evolucao da state machine apos a F03, considerar encapsular estados em `Enum` ou aplicar `TERMINAL_STATES` de forma efetiva para reduzir risco de drift semantico sem ampliar esta feature.
+
+## TUI — Ideia de feature futura (análise de viabilidade concluída)
+
+- **Rich enriquecido (F13-rich-cli-output)**: Rich `>=13.9.4` já é dependência de produção e nunca foi usado em `src/`. Substituir `typer.echo()` por `Console`/`Table`/`Panel` em `aignt runtime status` é de baixo risco e sem nova dependência. Indicado como F13.
+- **TUI watch (F14-tui-watch-command)**: `aignt tui` como subcomando opcional usando Textual. Pré-requisito: F13 + implementação de `observability/` (diretório vazio). Hook ideal já existe: `PipelineObserver` em `pipeline.py`.
+- **Constraint Typer×asyncio**: `asyncio.run(app.run_async())` dentro do comando Typer é a forma de coexistência; funcional mas exige cuidado com event loop.
+- **TTY em container**: Rich degrada automaticamente sem TTY; Textual exige guarda `sys.stdout.isatty()`.
+- **Não implementar antes**: observabilidade incompleta limita valor de TUI real; Rich básico tem valor imediato.
 
 ## Itens que podem virar novas features ou ajustes futuros
 

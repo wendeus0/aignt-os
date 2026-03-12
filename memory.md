@@ -9,8 +9,9 @@
 
 ## Local snapshot
 
-- A PR `#36` (`feature/f10-run-report-one-real-adapter` -> `main`) esta aberta e ainda nao foi mergeada.
-- A worktree local desta sessao esta na branch `chore/post-f10-handoff-logs-memory`, criada para alinhar `PENDING_LOG.md` e `memory.md` sem contaminar a PR da F10.
+- `main` local esta limpo e sincronizado com `origin/main` apos o merge da PR `#38` da `F12-codex-adapter-operational-hardening`.
+- A worktree atual foi aberta na branch `chore/post-f12-handoff-logs-memory` apenas para consolidar `PENDING_LOG.md`, `ERROR_LOG.md` e `memory.md`.
+- O MVP inicial de 10 features foi concluido; o follow-up `F12` tambem foi mergeado, fechando o hardening operacional do primeiro adapter real.
 
 # Stable decisions
 
@@ -20,19 +21,18 @@
 - `memory.md` guarda memoria duravel e reaproveitavel; `PENDING_LOG.md` e `ERROR_LOG.md` guardam detalhe operacional da sessao.
 - O `memory-curator` pode ser acionado por `$memory-curator encerrar conversa` ou `$memory-curator close session` para atualizar `memory.md` e gerar handoff de encerramento.
 - Com `network-access = true`, `git push` e `gh pr create` devem ser tentados primeiro no sandbox; fallback fora do sandbox fica restrito a falha real de rede ou sandbox.
-- A F10 fecha o MVP de observabilidade local com `DOCUMENT`, `RUN_REPORT.md` deterministico e persistencia de metadados minimos por step.
-- O `CodexCLIAdapter` e o primeiro adapter real priorizado no happy path final do MVP.
+- O `CodexCLIAdapter` permanece o primeiro adapter real integrado; a F12 fixou classificacao operacional explicita para timeout, return code nao zero e bloqueios de launcher/container/autenticacao sem reabrir a pipeline.
 - Os artefatos operacionais padrao em `.aignt-os/` devem permanecer fora do versionamento.
 
 # Active fronts
 
-- Revisar e mergear a PR `#36` da `F10-run-report-one-real-adapter`.
-- Concluir a chore `post-f10-handoff-logs-memory`, mantendo os registros operacionais e a memoria duravel alinhados ao estado real do repositório.
+- Fechar a chore `post-f12-handoff-logs-memory` no fluxo Git.
+- Abrir a proxima frente pequena de produto depois do merge desta chore, com `F13-rich-cli-output` como candidata principal.
 
 # Open decisions
 
-- Definir qual sera a proxima frente de produto apos o merge da F10; a triagem deve ser refeita em `main` com backlog e memoria ja atualizados.
-- Decidir se o caminho real nao mockado de `codex exec` dentro da pipeline deve virar gate operacional obrigatorio ou permanecer como smoke opcional.
+- Decidir se `F13-rich-cli-output` fica restrita a enriquecer `aignt runtime status` com Rich ou se tambem inclui pequenos componentes visuais em outras saidas CLI.
+- Decidir em momento futuro se o smoke autenticado do Codex deve virar gate obrigatorio; por ora o `401 Unauthorized` ficou classificado como bloqueio operacional externo e nao como requisito de produto.
 
 # Recurrent pitfalls
 
@@ -41,16 +41,17 @@
 - `uv` pode falhar no sandbox por cache fora da workspace ou indisponibilidade de rede.
 - `branch-sync-update` nao e seguro com worktree suja, mesmo quando o drift contra `main` parece pequeno.
 - Subir `codex-dev` manualmente em paralelo ao launcher pode causar corrida operacional.
+- Smoke real do Codex sem credencial valida falha por autenticacao (`401 Unauthorized`) mesmo com launcher/container saudavel; isso deve ser tratado como bloqueio operacional externo.
 
 # Next recommended steps
 
-- Revisar e mergear a PR `#36`.
-- Depois do merge da F10, rerodar `technical-triage` em `main` para escolher a proxima frente de produto.
-- Manter limpezas amplas de docs/logs historicos fora do caminho critico ate a frente seguinte estar definida.
+- Promover a chore de handoff atual para alinhar logs e memoria com o estado pos-F12.
+- Depois disso, abrir a `F13-rich-cli-output` via `spec-editor` como proxima frente de produto de baixo risco.
+- Manter revisoes amplas de docs antigas fora do caminho critico, salvo quando bloquearem validacao real.
 
 # Last handoff summary
 
 - Read before acting: releia `AGENTS.md`, `CONTEXT.md`, `memory.md`, `PENDING_LOG.md`, `ERROR_LOG.md`, `git status` e `git diff --stat`.
-- Current state: a F10 foi implementada, validada e promovida para a PR `#36`, adicionando `DOCUMENT`, `RUN_REPORT.md` e `CodexCLIAdapter`; esta chore branch so alinha logs e memoria.
-- Open points: mergear a PR `#36`, decidir se o smoke real do Codex vira gate e escolher a proxima frente apos a F10.
-- Recommended next front: concluir o merge da F10 e so entao rerodar `technical-triage` em `main`.
+- Current state: `main` esta sincronizado apos o merge da PR `#38`; a worktree atual existe apenas para consolidar logs e memoria duravel.
+- Open points: promover a chore de handoff e, em seguida, abrir a proxima frente pequena de produto.
+- Recommended next front: `F13-rich-cli-output`, mantendo o recorte inicial pequeno e centrado em melhoria visual da CLI com Rich.
