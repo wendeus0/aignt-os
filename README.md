@@ -187,6 +187,34 @@ O roadmap completo e o contexto da etapa 2 seguem em `docs/architecture/PHASE_2_
 
 ---
 
+## Primeira Run Publica
+
+O caminho oficial atual da primeira run continua local e `sync-first`. Use esta sequencia curta para validar o ambiente minimo, submeter uma SPEC e inspecionar o resultado sem depender de runtime residente.
+
+### Quickstart oficial
+
+1. Diagnostique o ambiente local com `aignt doctor`.
+2. Se o doctor fechar sem falha bloqueante, envie a SPEC com `aignt runs submit <spec_path> --mode sync --stop-at SPEC_VALIDATION`.
+3. Capture o `run_id` retornado pelo submit.
+4. Inspecione o resultado com `aignt runs show <run_id>`.
+
+### Boundary operacional
+
+- `aignt doctor` e diagnostico local e advisory: ele verifica `runtime_state`, `runs_db` e `artifacts_dir` no ambiente atual.
+- O doctor nao substitui `repo-preflight` para cenarios com Docker, container, build de imagem, boot de runtime persistente, persistencia operacional ou integracao real.
+- Se a sua primeira execucao depender desses cenarios, saia do quickstart e rode o preflight operacional do projeto via `repo-preflight` (`./scripts/docker-preflight.sh`).
+- `runtime_state=warn` nao bloqueia o caminho minimo atual, porque a demonstracao oficial continua local e `sync-first`; o status `warn` e advisory, nao falha bloqueante.
+
+### Troubleshooting essencial
+
+| Sinal | Leitura | Proximo passo |
+|---|---|---|
+| `runtime_state = warn` | O runtime persistente esta parado, mas o fluxo minimo atual ainda pode seguir. | Continue no quickstart `sync-first`; so escale para preflight/runtime se precisar de modo operacional mais pesado. |
+| `runtime_state = fail` | O estado persistido do runtime esta inconsistente. | Corrija o estado local antes de prosseguir; se a execucao depender de runtime persistente ou container, use `repo-preflight`. |
+| `runs_db = fail` | O caminho de persistencia SQLite nao pode ser preparado pelo processo atual. | Ajuste permissao ou configuracao do path antes de rodar `aignt runs submit`. |
+| `artifacts_dir = fail` | O diretório de artifacts nao pode ser preparado pelo processo atual. | Ajuste permissao ou configuracao do path antes de inspecionar outputs persistidos. |
+| `SPEC invalida` no submit | A SPEC nao passou em `SPEC_VALIDATION`. | Corrija o front matter YAML e as secoes `# Contexto` e `# Objetivo` antes de reenviar. |
+
 ## Desenvolvimento por feature
 
 O desenvolvimento segue o ciclo **Spec → Red → Green → Refactor → Security Review → Report → Commit**, com uma feature por worktree.
