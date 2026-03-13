@@ -183,6 +183,10 @@ def test_runtime_worker_skips_incompatible_owner_and_processes_next_compatible(
     incompatible_run = repository.get_run(incompatible_run_id)
     assert incompatible_run.status == "pending"
     assert incompatible_run.locked is False
+    incompatible_events = repository.list_events(incompatible_run_id)
+    assert [event.event_type for event in incompatible_events] == ["runtime_owner_skip"]
+    assert "runtime_started_by=operator-a" in incompatible_events[0].message
+    assert "run_initiated_by=operator-b" in incompatible_events[0].message
 
 
 def test_runtime_worker_accepts_legacy_run_for_authenticated_runtime(tmp_path: Path) -> None:
@@ -220,3 +224,46 @@ def test_runtime_worker_accepts_legacy_run_for_authenticated_runtime(tmp_path: P
 
     assert processed_run_id == legacy_run_id
     assert repository.get_run(legacy_run_id).status == "completed"
+    assert "runtime_owner_skip" not in [
+        event.event_type for event in repository.list_events(legacy_run_id)
+    ]
+
+
+def test_runtime_worker_deduplicates_same_owner_skip_message(tmp_path: Path) -> None:
+    persistence = import_module("aignt_os.persistence")
+    worker_module = import_module("aignt_os.runtime.worker")
+    runtime_state_module = import_module("aignt_os.runtime.state")
+
+    repository = persistence.RunRepository(tmp_path / "runs.sqlite3")
+    artifact_store = persistence.ArtifactStore(tmp_path / "artifacts")
+    runner = persistence.PersistedPipelineRunner(
+        repository=repository,
+        artifact_store=artifact_store,
+    )
+    worker = worker_module.RuntimeWorker(
+        repository=repository,
+        runner=runner,
+        runtime_state_provider=lambda: runtime_state_module.RuntimeState(
+            status="running",
+            pid=1234,
+            process_identity="fixture-runtime",
+            started_by="operator-a",
+        ),
+    )
+
+    spec_path = tmp_path / "ONLY-INCOMPATIBLE.md"
+    _write_valid_spec(spec_path, "F36-incompatible")
+    incompatible_run_id = repository.create_run(
+        spec_path=spec_path,
+        initial_state="REQUEST",
+        stop_at="SPEC_VALIDATION",
+        initiated_by="operator-b",
+    )
+
+    first_processed = worker.poll_once()
+    second_processed = worker.poll_once()
+
+    incompatible_events = repository.list_events(incompatible_run_id)
+    assert first_processed is None
+    assert second_processed is None
+    assert [event.event_type for event in incompatible_events] == ["runtime_owner_skip"]
