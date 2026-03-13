@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+import hashlib
+import json
 import os
 import subprocess
 import sys
@@ -52,7 +54,43 @@ def _runtime_env(tmp_path: Path) -> dict[str, str]:
     return env
 
 
-def _spawn_runtime_foreground(tmp_path: Path) -> subprocess.Popen[str]:
+def _write_auth_registry(tmp_path: Path) -> None:
+    registry_path = tmp_path / "runtime" / "auth-registry.json"
+    registry_path.parent.mkdir(parents=True, exist_ok=True)
+    registry_path.write_text(
+        json.dumps(
+            {
+                "principals": [
+                    {"principal_id": "operator-a", "roles": ["operator"]},
+                    {"principal_id": "operator-b", "roles": ["operator"]},
+                ],
+                "tokens": [
+                    {
+                        "principal_id": "operator-a",
+                        "token_sha256": hashlib.sha256(b"operator-a-token").hexdigest(),
+                    },
+                    {
+                        "principal_id": "operator-b",
+                        "token_sha256": hashlib.sha256(b"operator-b-token").hexdigest(),
+                    },
+                ],
+            }
+        ),
+        encoding="utf-8",
+    )
+
+
+def _spawn_runtime_foreground(
+    tmp_path: Path,
+    *,
+    auth_enabled: bool = False,
+    auth_token: str | None = None,
+) -> subprocess.Popen[str]:
+    env = _runtime_env(tmp_path)
+    if auth_enabled:
+        env["AIGNT_OS_AUTH_ENABLED"] = "true"
+    if auth_token is not None:
+        env["AIGNT_OS_AUTH_TOKEN"] = auth_token
     return subprocess.Popen(
         [
             sys.executable,
@@ -62,7 +100,7 @@ def _spawn_runtime_foreground(tmp_path: Path) -> subprocess.Popen[str]:
             "run",
         ],
         cwd=REPO_ROOT,
-        env=_runtime_env(tmp_path),
+        env=env,
         stdin=subprocess.DEVNULL,
         stdout=subprocess.PIPE,
         stderr=subprocess.PIPE,
@@ -178,3 +216,78 @@ def test_run_dispatch_service_auto_queues_when_runtime_process_is_ready(
     assert result.status == "queued"
     assert result.dispatch_mode_resolved == "async"
     assert run_record.status == "pending"
+
+
+def test_authenticated_runtime_foreground_worker_skips_incompatible_run_and_processes_next_one(
+    tmp_path: Path,
+) -> None:
+    persistence = import_module("aignt_os.persistence")
+
+    _write_auth_registry(tmp_path)
+    repository = persistence.RunRepository(tmp_path / "runs" / "runs.sqlite3")
+    incompatible_spec = tmp_path / "INCOMPATIBLE.md"
+    compatible_spec = tmp_path / "COMPATIBLE.md"
+    _write_valid_spec(incompatible_spec)
+    _write_valid_spec(compatible_spec)
+
+    incompatible_run_id = repository.create_run(
+        spec_path=incompatible_spec,
+        initial_state="REQUEST",
+        stop_at="SPEC_VALIDATION",
+        initiated_by="operator-b",
+    )
+    compatible_run_id = repository.create_run(
+        spec_path=compatible_spec,
+        initial_state="REQUEST",
+        stop_at="SPEC_VALIDATION",
+        initiated_by="operator-a",
+    )
+
+    process = _spawn_runtime_foreground(
+        tmp_path,
+        auth_enabled=True,
+        auth_token="operator-a-token",
+    )
+    try:
+        _wait_for_runtime_ready(tmp_path, process)
+        _wait_for_run_status(repository, compatible_run_id, "completed")
+        time.sleep(0.2)
+    finally:
+        _terminate_process(process)
+
+    compatible_run = repository.get_run(compatible_run_id)
+    incompatible_run = repository.get_run(incompatible_run_id)
+
+    assert compatible_run.status == "completed"
+    assert incompatible_run.status == "pending"
+    assert incompatible_run.locked is False
+
+
+def test_authenticated_runtime_foreground_worker_processes_legacy_run(
+    tmp_path: Path,
+) -> None:
+    persistence = import_module("aignt_os.persistence")
+
+    _write_auth_registry(tmp_path)
+    repository = persistence.RunRepository(tmp_path / "runs" / "runs.sqlite3")
+    spec_path = tmp_path / "LEGACY.md"
+    _write_valid_spec(spec_path)
+    legacy_run_id = repository.create_run(
+        spec_path=spec_path,
+        initial_state="REQUEST",
+        stop_at="SPEC_VALIDATION",
+        initiated_by="local_cli",
+    )
+
+    process = _spawn_runtime_foreground(
+        tmp_path,
+        auth_enabled=True,
+        auth_token="operator-a-token",
+    )
+    try:
+        _wait_for_runtime_ready(tmp_path, process)
+        _wait_for_run_status(repository, legacy_run_id, "completed")
+    finally:
+        _terminate_process(process)
+
+    assert repository.get_run(legacy_run_id).status == "completed"

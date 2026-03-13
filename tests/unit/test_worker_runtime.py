@@ -132,3 +132,91 @@ def test_runtime_worker_fails_pending_run_when_spec_hash_changes(tmp_path: Path)
         "security_spec_hash_mismatch",
         "run_failed",
     ]
+
+
+def test_runtime_worker_skips_incompatible_owner_and_processes_next_compatible(
+    tmp_path: Path,
+) -> None:
+    persistence = import_module("aignt_os.persistence")
+    worker_module = import_module("aignt_os.runtime.worker")
+    runtime_state_module = import_module("aignt_os.runtime.state")
+
+    repository = persistence.RunRepository(tmp_path / "runs.sqlite3")
+    artifact_store = persistence.ArtifactStore(tmp_path / "artifacts")
+    runner = persistence.PersistedPipelineRunner(
+        repository=repository,
+        artifact_store=artifact_store,
+    )
+    worker = worker_module.RuntimeWorker(
+        repository=repository,
+        runner=runner,
+        runtime_state_provider=lambda: runtime_state_module.RuntimeState(
+            status="running",
+            pid=1234,
+            process_identity="fixture-runtime",
+            started_by="operator-a",
+        ),
+    )
+
+    first_spec = tmp_path / "FIRST.md"
+    second_spec = tmp_path / "SECOND.md"
+    _write_valid_spec(first_spec, "F35-first")
+    _write_valid_spec(second_spec, "F35-second")
+
+    incompatible_run_id = repository.create_run(
+        spec_path=first_spec,
+        initial_state="REQUEST",
+        stop_at="SPEC_VALIDATION",
+        initiated_by="operator-b",
+    )
+    compatible_run_id = repository.create_run(
+        spec_path=second_spec,
+        initial_state="REQUEST",
+        stop_at="SPEC_VALIDATION",
+        initiated_by="operator-a",
+    )
+
+    processed_run_id = worker.poll_once()
+
+    assert processed_run_id == compatible_run_id
+    assert repository.get_run(compatible_run_id).status == "completed"
+    incompatible_run = repository.get_run(incompatible_run_id)
+    assert incompatible_run.status == "pending"
+    assert incompatible_run.locked is False
+
+
+def test_runtime_worker_accepts_legacy_run_for_authenticated_runtime(tmp_path: Path) -> None:
+    persistence = import_module("aignt_os.persistence")
+    worker_module = import_module("aignt_os.runtime.worker")
+    runtime_state_module = import_module("aignt_os.runtime.state")
+
+    repository = persistence.RunRepository(tmp_path / "runs.sqlite3")
+    artifact_store = persistence.ArtifactStore(tmp_path / "artifacts")
+    runner = persistence.PersistedPipelineRunner(
+        repository=repository,
+        artifact_store=artifact_store,
+    )
+    worker = worker_module.RuntimeWorker(
+        repository=repository,
+        runner=runner,
+        runtime_state_provider=lambda: runtime_state_module.RuntimeState(
+            status="running",
+            pid=1234,
+            process_identity="fixture-runtime",
+            started_by="operator-a",
+        ),
+    )
+
+    spec_path = tmp_path / "LEGACY.md"
+    _write_valid_spec(spec_path, "F35-legacy")
+    legacy_run_id = repository.create_run(
+        spec_path=spec_path,
+        initial_state="REQUEST",
+        stop_at="SPEC_VALIDATION",
+        initiated_by="local_cli",
+    )
+
+    processed_run_id = worker.poll_once()
+
+    assert processed_run_id == legacy_run_id
+    assert repository.get_run(legacy_run_id).status == "completed"
