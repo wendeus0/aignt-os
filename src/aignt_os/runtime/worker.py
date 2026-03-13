@@ -13,6 +13,7 @@ from aignt_os.persistence import (
 from aignt_os.runtime.state import RuntimeState, RuntimeStateStore
 
 LEGACY_INITIATED_BY_VALUES = frozenset({"unknown", "system", "local_cli"})
+RUNTIME_OWNER_SKIP_EVENT = "runtime_owner_skip"
 
 
 class RuntimeWorker:
@@ -47,12 +48,17 @@ class RuntimeWorker:
         time.sleep(self.poll_interval_seconds)
 
     def _next_pending_run(self) -> RunRecord | None:
-        compatible_initiators = self._compatible_initiators()
-        if compatible_initiators is None:
+        runtime_owner = self._runtime_owner()
+        if runtime_owner is None:
             return self.repository.find_next_pending_run()
-        return self.repository.find_next_pending_run_for_initiators(compatible_initiators)
+        compatible_initiators = set(LEGACY_INITIATED_BY_VALUES | {runtime_owner})
+        for run_record in self.repository.list_unlocked_pending_runs():
+            if run_record.initiated_by in compatible_initiators:
+                return run_record
+            self._record_owner_skip_if_needed(run_record, runtime_owner=runtime_owner)
+        return None
 
-    def _compatible_initiators(self) -> set[str] | None:
+    def _runtime_owner(self) -> str | None:
         if self.runtime_state_provider is None:
             return None
 
@@ -60,7 +66,26 @@ class RuntimeWorker:
         if runtime_state.status != "running" or runtime_state.started_by is None:
             return None
 
-        return set(LEGACY_INITIATED_BY_VALUES | {runtime_state.started_by})
+        return runtime_state.started_by
+
+    def _record_owner_skip_if_needed(self, run_record: RunRecord, *, runtime_owner: str) -> None:
+        message = (
+            "Worker skipped pending run due to runtime ownership mismatch: "
+            f"runtime_started_by={runtime_owner} run_initiated_by={run_record.initiated_by}."
+        )
+        latest_event = self.repository.get_latest_event(run_record.run_id)
+        if (
+            latest_event is not None
+            and latest_event.event_type == RUNTIME_OWNER_SKIP_EVENT
+            and latest_event.message == message
+        ):
+            return
+        self.repository.record_event(
+            run_record.run_id,
+            state="REQUEST",
+            event_type=RUNTIME_OWNER_SKIP_EVENT,
+            message=message,
+        )
 
 
 def build_runtime_worker(settings: AppSettings) -> RuntimeWorker:

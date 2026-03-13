@@ -257,10 +257,14 @@ def test_authenticated_runtime_foreground_worker_skips_incompatible_run_and_proc
 
     compatible_run = repository.get_run(compatible_run_id)
     incompatible_run = repository.get_run(incompatible_run_id)
+    incompatible_events = repository.list_events(incompatible_run_id)
 
     assert compatible_run.status == "completed"
     assert incompatible_run.status == "pending"
     assert incompatible_run.locked is False
+    assert [event.event_type for event in incompatible_events] == ["runtime_owner_skip"]
+    assert "runtime_started_by=operator-a" in incompatible_events[0].message
+    assert "run_initiated_by=operator-b" in incompatible_events[0].message
 
 
 def test_authenticated_runtime_foreground_worker_processes_legacy_run(
@@ -291,3 +295,89 @@ def test_authenticated_runtime_foreground_worker_processes_legacy_run(
         _terminate_process(process)
 
     assert repository.get_run(legacy_run_id).status == "completed"
+    assert "runtime_owner_skip" not in [
+        event.event_type for event in repository.list_events(legacy_run_id)
+    ]
+
+
+def test_authenticated_runtime_foreground_worker_deduplicates_owner_skip_on_repeated_polls(
+    tmp_path: Path,
+) -> None:
+    persistence = import_module("aignt_os.persistence")
+
+    _write_auth_registry(tmp_path)
+    repository = persistence.RunRepository(tmp_path / "runs" / "runs.sqlite3")
+    spec_path = tmp_path / "ONLY-INCOMPATIBLE.md"
+    _write_valid_spec(spec_path)
+    incompatible_run_id = repository.create_run(
+        spec_path=spec_path,
+        initial_state="REQUEST",
+        stop_at="SPEC_VALIDATION",
+        initiated_by="operator-b",
+    )
+
+    process = _spawn_runtime_foreground(
+        tmp_path,
+        auth_enabled=True,
+        auth_token="operator-a-token",
+    )
+    try:
+        _wait_for_runtime_ready(tmp_path, process)
+        time.sleep(0.3)
+    finally:
+        _terminate_process(process)
+
+    incompatible_events = repository.list_events(incompatible_run_id)
+    assert [event.event_type for event in incompatible_events] == ["runtime_owner_skip"]
+
+
+def test_runs_show_surfaces_runtime_owner_skip_for_pending_run(
+    tmp_path: Path,
+    cli_runner,
+    cli_app,
+) -> None:
+    persistence = import_module("aignt_os.persistence")
+
+    env = {
+        "AIGNT_OS_ENVIRONMENT": "test",
+        "AIGNT_OS_RUNS_DB_PATH": str(tmp_path / "runs" / "runs.sqlite3"),
+        "AIGNT_OS_ARTIFACTS_DIR": str(tmp_path / "artifacts"),
+        "AIGNT_OS_WORKSPACE_ROOT": str(tmp_path),
+    }
+    _write_auth_registry(tmp_path)
+    repository = persistence.RunRepository(tmp_path / "runs" / "runs.sqlite3")
+    incompatible_spec = tmp_path / "INCOMPATIBLE.md"
+    compatible_spec = tmp_path / "COMPATIBLE.md"
+    _write_valid_spec(incompatible_spec)
+    _write_valid_spec(compatible_spec)
+    incompatible_run_id = repository.create_run(
+        spec_path=incompatible_spec,
+        initial_state="REQUEST",
+        stop_at="SPEC_VALIDATION",
+        initiated_by="operator-b",
+    )
+    repository.create_run(
+        spec_path=compatible_spec,
+        initial_state="REQUEST",
+        stop_at="SPEC_VALIDATION",
+        initiated_by="operator-a",
+    )
+
+    process = _spawn_runtime_foreground(
+        tmp_path,
+        auth_enabled=True,
+        auth_token="operator-a-token",
+    )
+    try:
+        _wait_for_runtime_ready(tmp_path, process)
+        time.sleep(0.3)
+    finally:
+        _terminate_process(process)
+
+    result = cli_runner.invoke(cli_app, ["runs", "show", incompatible_run_id], env=env)
+
+    assert result.exit_code == 0
+    assert "latest signal" in result.stdout.lower()
+    assert "runtime_owner_skip @ REQUEST" in result.stdout
+    assert "runtime_started_by=operator-a" in result.stdout
+    assert "run_initiated_by=operator-b" in result.stdout

@@ -285,6 +285,22 @@ class RunRepository:
             return None
         return _run_record_from_row(row)
 
+    def list_unlocked_pending_runs(self) -> list[RunRecord]:
+        with self.engine.begin() as connection:
+            rows = (
+                connection.execute(
+                    select(self.runs)
+                    .where(
+                        self.runs.c.status == "pending",
+                        self.runs.c.locked.is_(False),
+                    )
+                    .order_by(self.runs.c.created_at)
+                )
+                .mappings()
+                .all()
+            )
+        return [_run_record_from_row(row) for row in rows]
+
     def find_next_pending_run_for_initiators(
         self,
         initiated_by_values: set[str] | frozenset[str],
@@ -328,6 +344,22 @@ class RunRepository:
                 .order_by(self.run_events.c.event_id)
             ).mappings()
             return [_event_record_from_row(row) for row in rows]
+
+    def get_latest_event(self, run_id: str) -> RunEventRecord | None:
+        with self.engine.begin() as connection:
+            row = (
+                connection.execute(
+                    select(self.run_events)
+                    .where(self.run_events.c.run_id == run_id)
+                    .order_by(self.run_events.c.event_id.desc())
+                    .limit(1)
+                )
+                .mappings()
+                .first()
+            )
+        if row is None:
+            return None
+        return _event_record_from_row(row)
 
     def _update_run(self, run_id: str, **values: object) -> None:
         with self.engine.begin() as connection:
