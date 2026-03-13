@@ -64,6 +64,11 @@ Mandatory skill usage
 
 Use as skills abaixo como padrão operacional do repositório:
 
+session-primer
+
+Use no início de cada sessão para orientar o trabalho lendo memória persistente, estado do branch e feature atual.
+Não substitui technical-triage para priorização de backlog.
+
 technical-triage
 
 Use quando o pedido ainda estiver difuso, amplo ou mal classificado.
@@ -74,10 +79,20 @@ spec-editor
 Use quando a demanda ainda não estiver convertida em SPEC.md clara, estável e validável.
 Não implementa código de produção.
 
+spec-validator
+
+Use quando a SPEC.md já estiver escrita e precisar de validação programática antes de passar para TDD.
+Não edita a SPEC nem implementa código.
+
 test-red
 
 Use quando a SPEC.md já estiver estável e for hora de escrever testes que falham.
 Não implementa código de produção.
+
+task-planner
+
+Use quando a feature tiver 3 ou mais passos independentes e for necessário decompor em tasks atômicas rastreáveis.
+Não substitui session-primer nem se aplica a hotfixes simples.
 
 green-refactor
 
@@ -269,11 +284,17 @@ Alternativas de operação
 
 Se multi-agent não estiver disponível:
 
+execute session-primer no início da sessão
+
 execute technical-triage quando a demanda ainda estiver difusa
 
 execute spec-editor
 
+execute spec-validator após estabilizar a SPEC
+
 execute test-red
+
+execute task-planner se a feature tiver 3+ passos independentes
 
 execute green-refactor
 
@@ -291,11 +312,17 @@ execute session-logger e memory-curator quando necessário
 
 Se multi-agent estiver disponível:
 
+session-primer orienta o início da sessão com memória persistente e estado do branch
+
 explorer pode abrir a frente e estabilizar contexto, arquivos afetados e evidências
 
 spec-editor estabiliza a SPEC sem depender de preflight inicial
 
+spec-validator valida programaticamente a SPEC antes de avançar para TDD
+
 test-red e leituras auxiliares podem rodar em paralelo apenas quando a SPEC estiver estável
+
+task-planner decompõe a feature em tasks atômicas quando houver 3+ passos independentes
 
 worker só começa após a etapa RED estar validada
 
