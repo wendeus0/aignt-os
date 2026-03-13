@@ -182,7 +182,7 @@ em `F23 -> F27`; os itens remanescentes continuam candidatos a novas SPECs próp
 | G-08 | Audit trail com `initiated_by` e security events | medium | M | absorbed em `F26` | — |
 | G-09 | Circuit breaker para adapters (estado persistido entre runs) | medium | L | absorbed em `F28` | — |
 | G-10 | Log sanitization de artefatos em disco | low | S | absorbed em `F24` | — |
-| G-11 | Autenticação e autorização (fundacao local absorvida; transporte autenticado residente e operacao remota ainda pendentes) | low | XL | decomposed em `F31`; fundacao local absorvida em `F29`/`F30` | pós-F27 |
+| G-11 | Autenticação e autorização (fundacao local absorvida; primeiro slice residente absorvido; operacao remota ainda pendente) | low | XL | decomposed em `F31`; local absorvido em `F29`/`F30`; primeiro slice residente absorvido em `F32` | pós-F27 |
 
 ### Problema
 
@@ -220,13 +220,14 @@ Absorções já concluídas no baseline atual:
 - `F29`: fundacao local opt-in de auth/RBAC para comandos mutaveis
 - `F30`: provisionamento local do auth registry (`init`, `issue`, `disable`)
 - `F31`: decomposicao formal de `G-11` em buckets local, residente e remoto
+- `F32`: primeiro slice de `resident_transport_auth` com binding local de `started_by` no lifecycle do runtime
 
 Centralização técnica já realizada:
 - `src/aignt_os/security.py` foi criado como módulo de segurança compartilhado
 - a sanitização pública passou a reutilizar helpers compartilhados no baseline atual
 
 Boundary ainda adiado:
-- `resident_transport_auth`: ainda sem SPEC de codigo propria; segue apenas como bucket futuro pequeno
+- `resident_transport_auth`: ainda parcial; a `F32` cobriu apenas o binding local do principal que inicia o runtime residente
 - `remote_multi_host_auth`: continua sem transporte em rede, operacao entre hosts ou coordenacao remota
 
 ### Impacto arquitetural
