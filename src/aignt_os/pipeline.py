@@ -5,6 +5,7 @@ from typing import Protocol
 
 from pydantic import BaseModel, ConfigDict, Field, StrictStr
 
+from aignt_os.config import AppSettings
 from aignt_os.specs import (
     SpecDocument,
     validate_spec_file,
@@ -13,7 +14,11 @@ from aignt_os.specs import (
     SpecValidationError as _SpecValidationError,
 )
 from aignt_os.state_machine import LINEAR_STATE_FLOW, AIgntStateMachine
-from aignt_os.supervisor import Supervisor, SupervisorDecision
+from aignt_os.supervisor import (
+    RetryableStepError,
+    Supervisor,
+    SupervisorDecision,
+)
 
 PRIMARY_EXECUTOR_ROUTE = "primary"
 PIPELINE_STOP_STATES = (
@@ -155,15 +160,22 @@ class PipelineEngine:
     def __init__(
         self,
         *,
+        settings: AppSettings | None = None,
         executors: dict[str, StepExecutor | dict[str, StepExecutor]] | None = None,
         state_machine: AIgntStateMachine | None = None,
         observer: PipelineObserver | None = None,
         supervisor: Supervisor | None = None,
     ) -> None:
+        self.settings = settings or AppSettings()
         self.executors = self._normalize_executors(executors or {})
         self.state_machine = state_machine or AIgntStateMachine()
         self.observer = observer
-        self.supervisor = supervisor
+
+        if supervisor is None:
+            # Create default supervisor using settings
+            self.supervisor = Supervisor(max_retries=self.settings.max_retries)
+        else:
+            self.supervisor = supervisor
 
     def run(
         self,
@@ -268,7 +280,19 @@ class PipelineEngine:
             raise PipelineExecutionError(
                 f"Missing executor for pipeline step '{step.state}' on route '{route}'."
             )
-        return executor.execute(step, context)
+
+        # We use a ThreadPoolExecutor to enforce timeout on synchronous executors
+        from concurrent.futures import ThreadPoolExecutor, TimeoutError
+
+        with ThreadPoolExecutor(max_workers=1) as pool:
+            future = pool.submit(executor.execute, step, context)
+            try:
+                return future.result(timeout=self.settings.execution_timeout_seconds)
+            except TimeoutError as exc:
+                raise RetryableStepError(
+                    f"Step '{step.state}' exceeded timeout of "
+                    f"{self.settings.execution_timeout_seconds}s."
+                ) from exc
 
     def _run_runtime_step(
         self,

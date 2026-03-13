@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+from typing import Any
+
 from textual.app import App, ComposeResult
 from textual.containers import Horizontal, Vertical
 from textual.reactive import reactive
@@ -12,10 +14,12 @@ from textual.widgets import (
     ListView,
     RichLog,
     Static,
+    TabbedContent,
+    TabPane,
 )
 
 from aignt_os.config import AppSettings
-from aignt_os.persistence import RunRecord, RunRepository, RunStepRecord
+from aignt_os.persistence import ArtifactStore, RunRecord, RunRepository, RunStepRecord
 
 
 class LogViewer(ModalScreen[None]):
@@ -55,10 +59,11 @@ class LogViewer(ModalScreen[None]):
 
     BINDINGS = [("escape", "app.pop_screen", "Close")]
 
-    def __init__(self, title: str, content: str) -> None:
+    def __init__(self, title: str, content: str, path: str | None = None) -> None:
         super().__init__()
         self.dialog_title = title
         self.log_content = content
+        self.log_path = path
 
     def compose(self) -> ComposeResult:
         yield Vertical(
@@ -71,6 +76,35 @@ class LogViewer(ModalScreen[None]):
     def on_mount(self) -> None:
         log_widget = self.query_one("#log_content", RichLog)
         log_widget.write(self.log_content)
+        if self.log_path:
+            self.set_interval(1.0, self.refresh_log)
+
+    def refresh_log(self) -> None:
+        if not self.log_path:
+            return
+
+        try:
+            from pathlib import Path
+
+            from aignt_os.cli.rendering import truncate_logs
+            from aignt_os.config import AppSettings
+
+            settings = AppSettings()
+            p = Path(self.log_path)
+            if p.exists():
+                current_size = p.stat().st_size
+                if not hasattr(self, "_last_size"):
+                    self._last_size = -1
+
+                if current_size != self._last_size:
+                    new_content = p.read_text(encoding="utf-8", errors="replace")
+                    truncated = truncate_logs(new_content, settings.tui_log_buffer_lines)
+                    log_widget = self.query_one("#log_content", RichLog)
+                    log_widget.clear()
+                    log_widget.write(truncated)
+                    self._last_size = current_size
+        except Exception:
+            pass
 
 
 class RunHeader(Static):
@@ -220,6 +254,94 @@ class StepDetail(Static):
             content.mount(Label("Timed Out: Yes", classes="detail_row error"))
 
 
+class ArtifactExplorer(Static):
+    """Explorador de artefatos da run."""
+
+    def compose(self) -> ComposeResult:
+        with Horizontal(id="artifact_container"):
+            with Vertical(id="artifact_list_container"):
+                yield Label("Artifacts", classes="header_label")
+                yield ListView(id="artifact_list")
+            with Vertical(id="artifact_preview_container"):
+                yield Label("Preview", classes="header_label")
+                yield Static(id="artifact_content")
+
+    def load_artifacts(self) -> None:
+        """Carrega a lista de artefatos."""
+        try:
+            app: Any = self.app
+            if not hasattr(app, "artifact_store"):
+                return
+
+            paths = app.artifact_store.list_artifact_paths(app.run_id)
+            list_view = self.query_one("#artifact_list", ListView)
+            list_view.clear()
+
+            for path in paths:
+                list_view.append(ListItem(Label(path)))
+
+        except Exception:
+            # Silently fail if not ready (e.g. during startup tests)
+            pass
+
+    def on_list_view_selected(self, message: ListView.Selected) -> None:
+        """Exibe o conteúdo do artefato selecionado."""
+        if message.list_view.id != "artifact_list":
+            return
+
+        label = message.item.query_one(Label)
+        path_str = str(label.renderable)  # type: ignore[attr-defined]
+        self.show_artifact(path_str)
+
+    def show_artifact(self, path_str: str) -> None:
+        """Carrega e exibe o conteúdo do artefato."""
+        try:
+            app: Any = self.app
+            if not hasattr(app, "settings"):
+                return
+
+            full_path = app.settings.artifacts_dir_resolved / path_str
+            content_view = self.query_one("#artifact_content", Static)
+
+            if not full_path.exists() or not full_path.is_file():
+                content_view.update("File not found.")
+                return
+
+            # Check if likely text
+            suffix = full_path.suffix.lower()
+            text_extensions = {
+                ".txt",
+                ".md",
+                ".json",
+                ".yaml",
+                ".yml",
+                ".py",
+                ".log",
+                ".csv",
+                ".xml",
+                ".html",
+                ".css",
+                ".js",
+            }
+
+            if suffix in text_extensions:
+                try:
+                    content = full_path.read_text(encoding="utf-8", errors="replace")
+                    content_view.update(content)
+                except Exception as e:
+                    content_view.update(f"Error reading text file: {e}")
+            else:
+                stat = full_path.stat()
+                content_view.update(
+                    f"Binary file or unsupported format.\n\n"
+                    f"Path: {full_path}\n"
+                    f"Size: {stat.st_size} bytes"
+                )
+
+        except Exception as e:
+            self.query_one("#artifact_content", Static).update(f"Error: {e}")
+
+
 class RunDashboard(App[None]):
     """Dashboard TUI Moderno para AIgnt OS."""
 
@@ -260,21 +382,34 @@ class RunDashboard(App[None]):
     .status-running { color: $warning; }
 
     /* Main Layout */
-    #main_container {
+    TabbedContent {
+        height: 1fr;
+    }
+    
+    #steps_container, #artifact_container {
         height: 1fr;
         width: 1fr;
     }
-    #sidebar {
+    
+    #sidebar, #artifact_list_container {
         width: 30%;
         height: 100%;
         border-right: solid $primary;
         background: $surface-darken-2;
     }
-    #content {
+    
+    #content, #artifact_preview_container {
         width: 70%;
         height: 100%;
         padding: 1 2;
         background: $surface;
+    }
+    
+    #artifact_content {
+        height: 1fr;
+        overflow-y: scroll;
+        border: solid $secondary;
+        padding: 1;
     }
 
     /* Steps List */
@@ -326,21 +461,32 @@ class RunDashboard(App[None]):
     BINDINGS = [
         ("q", "quit", "Quit"),
         ("enter", "show_logs", "Show Logs"),
+        ("a", "show_artifacts", "Artifacts"),
     ]
 
     def __init__(self, run_id: str, refresh_interval: float = 1.0) -> None:
         super().__init__()
         self.run_id = run_id
         self.refresh_interval = refresh_interval
-        settings = AppSettings()
-        self.repository = RunRepository(settings.runs_db_path_resolved)
+        self.settings = AppSettings()
+        self.repository = RunRepository(self.settings.runs_db_path_resolved)
+        self.artifact_store = ArtifactStore(self.settings.artifacts_dir_resolved)
+
         self.run_header = RunHeader()
         self.step_list = ListView(id="step_list")
         self.step_detail = StepDetail()
+        self.artifact_explorer = ArtifactExplorer()
+
         self.steps_count = 0
+
+    def action_show_artifacts(self) -> None:
+        """Switch to artifacts tab."""
+        self.query_one(TabbedContent).active = "tab_artifacts"
 
     def action_show_logs(self) -> None:
         """Show logs for the selected step."""
+        # If in artifacts tab, maybe do something else?
+        # For now keep step behavior or ignore
         if self.step_detail.step:
             step = self.step_detail.step
             log_content = "No logs available."
@@ -351,13 +497,22 @@ class RunDashboard(App[None]):
             if step.raw_output_path:
                 paths_to_check.append(step.raw_output_path)
 
+            from aignt_os.cli.rendering import truncate_logs
+            from aignt_os.config import AppSettings
+
+            settings = AppSettings()
+            log_path = None
+            log_content = "No logs available."
+
             for path_str in paths_to_check:
                 try:
                     from pathlib import Path
 
                     p = Path(path_str)
                     if p.exists():
-                        log_content = p.read_text(encoding="utf-8", errors="replace")
+                        full_content = p.read_text(encoding="utf-8", errors="replace")
+                        log_content = truncate_logs(full_content, settings.tui_log_buffer_lines)
+                        log_path = path_str
                         break
                 except Exception as e:
                     log_content = f"Error reading log file: {e}"
@@ -366,7 +521,9 @@ class RunDashboard(App[None]):
             # Persistence model relies on files.
 
             self.push_screen(
-                LogViewer(f"Logs: Step {step.step_id} ({step.tool_name})", log_content)
+                LogViewer(
+                    f"Logs: Step {step.step_id} ({step.tool_name})", log_content, path=log_path
+                )
             )
         else:
             self.notify("Select a step first.", severity="warning")
@@ -374,12 +531,19 @@ class RunDashboard(App[None]):
     def compose(self) -> ComposeResult:
         yield Header(show_clock=True)
         yield self.run_header
-        with Horizontal(id="main_container"):
-            with Vertical(id="sidebar"):
-                yield Label("Steps", classes="header_label")
-                yield self.step_list
-            with Vertical(id="content"):
-                yield self.step_detail
+
+        with TabbedContent(initial="tab_steps"):
+            with TabPane("Steps", id="tab_steps"):
+                with Horizontal(id="steps_container"):
+                    with Vertical(id="sidebar"):
+                        yield Label("Steps", classes="header_label")
+                        yield self.step_list
+                    with Vertical(id="content"):
+                        yield self.step_detail
+
+            with TabPane("Artifacts", id="tab_artifacts"):
+                yield self.artifact_explorer
+
         yield Footer()
 
     def on_mount(self) -> None:
@@ -388,17 +552,22 @@ class RunDashboard(App[None]):
         self.refresh_data()
 
     def on_list_view_highlighted(self, message: ListView.Highlighted) -> None:
-        if isinstance(message.item, StepItem):
-            self.step_detail.step = message.item.step
+        if message.list_view.id == "step_list":
+            if isinstance(message.item, StepItem):
+                self.step_detail.step = message.item.step
 
     def on_list_view_selected(self, message: ListView.Selected) -> None:
-        if isinstance(message.item, StepItem):
-            self.step_detail.step = message.item.step
-            self.action_show_logs()
+        if message.list_view.id == "step_list":
+            if isinstance(message.item, StepItem):
+                self.step_detail.step = message.item.step
+                self.action_show_logs()
 
     def refresh_data(self) -> None:
         """Atualiza dados do banco."""
         try:
+            # Refresh artifacts
+            self.artifact_explorer.load_artifacts()
+
             try:
                 run = self.repository.get_run(self.run_id)
                 self.run_header.update_info(run)

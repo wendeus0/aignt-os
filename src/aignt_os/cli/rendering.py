@@ -21,6 +21,21 @@ class RunArtifactPreview:
     truncated: bool
 
 
+def truncate_logs(text: str, max_lines: int) -> str:
+    if not text:
+        return ""
+
+    lines = text.splitlines(keepends=True)
+    if len(lines) <= max_lines:
+        return text
+
+    truncated_count = len(lines) - max_lines
+    kept_lines = lines[-max_lines:]
+
+    marker = f"\n... {truncated_count} lines truncated ...\n"
+    return marker + "".join(kept_lines)
+
+
 def render_runtime_status(
     state: RuntimeState,
     *,
