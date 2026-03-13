@@ -150,6 +150,9 @@ aignt-os/
 │       ├── 011-lightweight-docker-preflight-default.md
 │       └── 012-mandatory-integration-tests.md
 │
+│   └── operations/        # Manuais operacionais e lifecycle
+│       └── LIFECYCLE.md      # Guia de bootstrap, runtime e pipeline
+│
 ├── features/              # SPECs e notas por feature
 │   └── init_feature_worktrees.sh  # Script para criar worktrees das features
 │
@@ -171,6 +174,7 @@ aignt-os/
 4. **Entender a estratégia de testes** → leia `docs/architecture/TDD.md`
 5. **Ver o roadmap do MVP inicial** → `docs/architecture/CRONOGRAMA_10_DIAS.md`
 6. **Ver o fechamento da etapa 2 e a transição pós-release** → `docs/architecture/PHASE_2_ROADMAP.md`
+7. **Operar o sistema** → consulte `docs/operations/LIFECYCLE.md`
 
 ## Etapa 2 do projeto
 
