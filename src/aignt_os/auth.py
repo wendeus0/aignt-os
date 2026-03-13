@@ -4,6 +4,7 @@ import hashlib
 import hmac
 import json
 import os
+import secrets
 import tempfile
 from pathlib import Path
 from typing import Literal
@@ -35,6 +36,7 @@ class AuthPrincipal(BaseModel):
 class AuthTokenRecord(BaseModel):
     model_config = ConfigDict(strict=True)
 
+    token_id: str | None = Field(default=None, min_length=1)
     principal_id: str = Field(min_length=1)
     token_sha256: str = Field(pattern=r"^[a-f0-9]{64}$")
     disabled: bool = False
@@ -52,6 +54,15 @@ class AuthenticatedPrincipal(BaseModel):
 
     principal_id: str = Field(min_length=1)
     roles: tuple[Role, ...]
+
+
+class IssuedAuthToken(BaseModel):
+    model_config = ConfigDict(strict=True)
+
+    principal_id: str = Field(min_length=1)
+    role: Role
+    token_id: str = Field(min_length=1)
+    token: str = Field(min_length=1)
 
 
 class AuthRegistryStore:
@@ -77,6 +88,7 @@ class AuthRegistryStore:
             raise AuthConfigurationError("Auth registry is invalid.") from exc
 
     def write_registry(self, registry: AuthRegistry) -> None:
+        normalized_registry = self._normalized_registry(registry)
         self.path.parent.mkdir(parents=True, exist_ok=True, mode=STATE_DIR_MODE)
         os.chmod(self.path.parent, STATE_DIR_MODE)
 
@@ -88,12 +100,78 @@ class AuthRegistryStore:
             suffix=".tmp",
             delete=False,
         ) as temporary_file:
-            temporary_file.write(registry.model_dump_json())
+            temporary_file.write(normalized_registry.model_dump_json())
             temporary_path = Path(temporary_file.name)
 
         os.chmod(temporary_path, STATE_FILE_MODE)
         os.replace(temporary_path, self.path)
         os.chmod(self.path, STATE_FILE_MODE)
+
+    def initialize_registry(self, *, principal_id: str, role: Role = "operator") -> IssuedAuthToken:
+        if self.path.exists():
+            raise AuthConfigurationError("Auth registry is already configured.")
+
+        issued_token = self._issue_token(principal_id=principal_id, role=role)
+        registry = AuthRegistry(
+            principals=[AuthPrincipal(principal_id=principal_id, roles=[role])],
+            tokens=[
+                AuthTokenRecord(
+                    token_id=issued_token.token_id,
+                    principal_id=principal_id,
+                    token_sha256=hash_token(issued_token.token),
+                )
+            ],
+        )
+        self.write_registry(registry)
+        return issued_token
+
+    def issue_token(self, *, principal_id: str, role: Role | None = None) -> IssuedAuthToken:
+        registry = self.load_registry()
+
+        principal = next(
+            (
+                candidate
+                for candidate in registry.principals
+                if candidate.principal_id == principal_id
+            ),
+            None,
+        )
+        resolved_role: Role
+        if principal is None:
+            if role is None:
+                raise ValueError("Role is required when issuing a token for a new principal.")
+            resolved_role = role
+            registry.principals.append(
+                AuthPrincipal(principal_id=principal_id, roles=[resolved_role])
+            )
+        else:
+            resolved_role = principal.roles[0]
+            if role is not None and role not in principal.roles:
+                raise ValueError(
+                    "Role conflicts with the principal already stored in the auth registry."
+                )
+
+        issued_token = self._issue_token(principal_id=principal_id, role=resolved_role)
+        registry.tokens.append(
+            AuthTokenRecord(
+                token_id=issued_token.token_id,
+                principal_id=principal_id,
+                token_sha256=hash_token(issued_token.token),
+            )
+        )
+        self.write_registry(registry)
+        return issued_token
+
+    def disable_token(self, *, token_id: str) -> None:
+        registry = self.load_registry()
+
+        for token_record in registry.tokens:
+            if token_record.token_id == token_id:
+                token_record.disabled = True
+                self.write_registry(registry)
+                return
+
+        raise LookupError("Auth token was not found.")
 
     def authenticate(self, token: str) -> AuthenticatedPrincipal | None:
         normalized_token = token.strip()
@@ -122,6 +200,30 @@ class AuthRegistryStore:
             )
 
         return None
+
+    def _normalized_registry(self, registry: AuthRegistry) -> AuthRegistry:
+        principals = [principal.model_copy(deep=True) for principal in registry.principals]
+        tokens = []
+        for token in registry.tokens:
+            token_copy = token.model_copy(deep=True)
+            if token_copy.token_id is None:
+                token_copy.token_id = self._generate_token_id()
+            tokens.append(token_copy)
+        return AuthRegistry(principals=principals, tokens=tokens)
+
+    def _issue_token(self, *, principal_id: str, role: Role) -> IssuedAuthToken:
+        return IssuedAuthToken(
+            principal_id=principal_id,
+            role=role,
+            token_id=self._generate_token_id(),
+            token=self._generate_token(),
+        )
+
+    def _generate_token(self) -> str:
+        return secrets.token_urlsafe(24)
+
+    def _generate_token_id(self) -> str:
+        return secrets.token_hex(8)
 
 
 def hash_token(token: str) -> str:

@@ -216,6 +216,24 @@ Limites do recorte atual:
 - nao ha leitura arbitraria de path informado pelo usuario;
 - se o artifact ainda nao existir, a CLI retorna `Not found:` conforme o contrato da F21.
 
+## Auth Registry Local
+
+A `F29` introduziu auth opt-in para os comandos mutaveis da CLI e a `F30` adiciona o provisionamento local desse registry sem editar JSON manualmente. O AIgnt-Synapse-Flow continua sendo a engine propria de pipeline do AIgnt OS; esta capacidade continua estritamente local e nao abre socket, auth remota ou RBAC distribuido.
+
+Fluxo minimo de provisionamento:
+
+1. Inicialize o registry com `aignt auth init --principal-id local-operator`.
+2. Emita um token adicional com `aignt auth issue --principal-id local-operator`.
+3. Se precisar revogar um token emitido, use `aignt auth disable --token-id <token_id>`.
+
+Boundary do recorte atual:
+
+- o token bruto aparece apenas no stdout nominal de `init` e `issue`;
+- o arquivo persistido guarda apenas `token_sha256`, `token_id`, `principal_id` e `disabled`;
+- `runs submit` e `runtime start|run|stop` continuam exigindo token somente quando `auth_enabled=true`;
+- comandos de leitura publica continuam sem token;
+- operacao remota e rotacao distribuida continuam fora de escopo.
+
 ### Troubleshooting essencial
 
 | Sinal | Leitura | Proximo passo |

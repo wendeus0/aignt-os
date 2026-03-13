@@ -13,6 +13,7 @@ from aignt_os.auth import (
     AuthConfigurationError,
     AuthRegistryStore,
     Permission,
+    Role,
     is_authorized,
 )
 from aignt_os.cli.errors import (
@@ -46,8 +47,10 @@ from aignt_os.specs import SpecValidationError
 app = typer.Typer(help="AIgnt OS CLI")
 runtime_app = typer.Typer(help="Manage the minimal persistent runtime.")
 runs_app = typer.Typer(help="Inspect persisted runs and artifacts.")
+auth_app = typer.Typer(help="Manage the local auth registry.")
 app.add_typer(runtime_app, name="runtime")
 app.add_typer(runs_app, name="runs")
+app.add_typer(auth_app, name="auth")
 
 
 @app.callback()
@@ -334,6 +337,27 @@ def _dispatch_service(*, initiated_by: str | None = None) -> RunDispatchService:
     )
 
 
+def _auth_registry_store() -> AuthRegistryStore:
+    settings = AppSettings()
+    return AuthRegistryStore(settings.auth_registry_file)
+
+
+def _validate_role(role: str) -> Role:
+    normalized = role.strip().lower()
+    if normalized not in {"viewer", "operator"}:
+        raise usage_error("role must be one of: viewer, operator.")
+    return normalized  # type: ignore[return-value]
+
+
+def _render_issued_auth_token(*, status: str, registry_path: Path, issued_token) -> None:  # type: ignore[no-untyped-def]
+    typer.echo(f"Status: {status}")
+    typer.echo(f"Principal ID: {issued_token.principal_id}")
+    typer.echo(f"Role: {issued_token.role}")
+    typer.echo(f"Token ID: {issued_token.token_id}")
+    typer.echo(f"Auth Token: {issued_token.token}")
+    typer.echo(f"Registry Path: {registry_path}")
+
+
 def _resolve_principal_id(
     *,
     permission: Permission,
@@ -357,6 +381,67 @@ def _resolve_principal_id(
     if not is_authorized(principal, permission=permission):
         raise authorization_error("Authenticated principal is not allowed to execute this command.")
     return principal.principal_id
+
+
+@auth_app.command("init")
+def auth_init(
+    principal_id: Annotated[str, typer.Option("--principal-id")] = "",
+    role: Annotated[str, typer.Option("--role")] = "operator",
+) -> None:
+    try:
+        issued_token = _auth_registry_store().initialize_registry(
+            principal_id=principal_id.strip(),
+            role=_validate_role(role),
+        )
+    except AuthConfigurationError as exc:
+        exit_for_cli_error(environment_error(str(exc)))
+    except ValueError as exc:
+        exit_for_cli_error(usage_error(str(exc)))
+
+    _render_issued_auth_token(
+        status="initialized",
+        registry_path=AppSettings().auth_registry_file,
+        issued_token=issued_token,
+    )
+
+
+@auth_app.command("issue")
+def auth_issue(
+    principal_id: Annotated[str, typer.Option("--principal-id")] = "",
+    role: Annotated[str | None, typer.Option("--role")] = None,
+) -> None:
+    try:
+        issued_token = _auth_registry_store().issue_token(
+            principal_id=principal_id.strip(),
+            role=_validate_role(role) if role is not None else None,
+        )
+    except AuthConfigurationError as exc:
+        exit_for_cli_error(environment_error(str(exc)))
+    except ValueError as exc:
+        exit_for_cli_error(usage_error(str(exc)))
+
+    _render_issued_auth_token(
+        status="issued",
+        registry_path=AppSettings().auth_registry_file,
+        issued_token=issued_token,
+    )
+
+
+@auth_app.command("disable")
+def auth_disable(
+    token_id: Annotated[str, typer.Option("--token-id")] = "",
+) -> None:
+    try:
+        _auth_registry_store().disable_token(token_id=token_id.strip())
+    except AuthConfigurationError as exc:
+        exit_for_cli_error(environment_error(str(exc)))
+    except LookupError as exc:
+        exit_for_cli_error(not_found_error(str(exc)))
+    except ValueError as exc:
+        exit_for_cli_error(usage_error(str(exc)))
+
+    typer.echo("Status: disabled")
+    typer.echo(f"Token ID: {token_id.strip()}")
 
 
 @runtime_app.command("start")

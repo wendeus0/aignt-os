@@ -16,11 +16,8 @@ nem feature aberta na fila ativa.
 
 ### Relação com PHASE_2_ROADMAP.md
 
-O `docs/architecture/PHASE_2_ROADMAP.md` é a fonte de verdade da fila ativa:
-
-```
-F16 → F21 → F18 → F19 → F20 → F17 → F22
-```
+O `docs/architecture/PHASE_2_ROADMAP.md` é a fonte de verdade da fila ativa.
+No baseline atual, a Etapa 2 ja foi concluida e a fila passou a ser definida por novas SPECs pos-`F27`.
 
 As ideias aqui registradas **não entram na fila automaticamente**. Elas aguardam a feature
 de absorção correspondente ser alcançada. A decisão do `PHASE_2_ROADMAP.md` é explícita:
@@ -68,7 +65,7 @@ de absorção correspondente ser alcançada. A decisão do `PHASE_2_ROADMAP.md` 
 
 Indica em qual feature da fila ativa a ideia faz mais sentido entrar.
 
-Valores válidos: `F16`, `F17`, `F18`, `F19`, `F20`, `F21`, `F22`, `pós-F27`, `imediato`.
+Valores válidos: `F16`, `F17`, `F18`, `F19`, `F20`, `F21`, `F22`, `F28`, `F29`, `F30`, `pós-F27`, `imediato`.
 
 ---
 
@@ -183,9 +180,9 @@ em `F23 -> F27`; os itens remanescentes continuam candidatos a novas SPECs próp
 | G-06 | Integridade da SPEC por hash SHA-256 | medium | M | absorbed em `F26` | — |
 | G-07 | Rate limiting via `asyncio.Semaphore` no adapter layer | medium | M | absorbed em `F27` | — |
 | G-08 | Audit trail com `initiated_by` e security events | medium | M | absorbed em `F26` | — |
-| G-09 | Circuit breaker para adapters (estado persistido entre runs) | medium | L | open | pós-F27 |
+| G-09 | Circuit breaker para adapters (estado persistido entre runs) | medium | L | absorbed em `F28` | — |
 | G-10 | Log sanitization de artefatos em disco | low | S | absorbed em `F24` | — |
-| G-11 | Autenticação e autorização (socket + RBAC) | low | XL | open | pós-F27 |
+| G-11 | Autenticação e autorização (socket + RBAC) | low | XL | in_progress via `F29` e `F30`; operacao remota segue adiada | pós-F27 |
 
 ### Problema
 
@@ -202,9 +199,9 @@ ataque crescente à medida que a Fase 2 amplia a interface pública (`runs submi
 - **Ausência de rastreabilidade**: `RunRecord` não tem `initiated_by` nem events tipados
   como `security_failure`, dificultando auditoria e resposta a incidentes (G-08)
 
-Gaps secundários ainda em aberto no médio prazo: circuit breaker (G-09) e autenticação
-(G-11). Boundary check, integridade da SPEC, rate limiting, audit trail mínimo e
-sanitização pública já foram absorvidos no baseline atual.
+O unico gap remanescente desta IDEA no baseline atual e o follow-up grande de operacao
+remota de `G-11`. Circuit breaker, boundary check, integridade da SPEC, rate limiting,
+audit trail minimo e sanitizacao publica ja foram absorvidos no baseline atual.
 
 ### Solução proposta
 
@@ -217,10 +214,16 @@ Absorções já concluídas no baseline atual:
 - `F25`: `G-03`
 - `F26`: `G-06` e `G-08`
 - `F27`: `G-07`
+- `F28`: `G-09`
+- `F29`: fundacao local opt-in de auth/RBAC para comandos mutaveis
+- `F30`: provisionamento local do auth registry (`init`, `issue`, `disable`)
 
 Centralização técnica já realizada:
 - `src/aignt_os/security.py` foi criado como módulo de segurança compartilhado
 - a sanitização pública passou a reutilizar helpers compartilhados no baseline atual
+
+Boundary ainda adiado:
+- `G-11` continua sem socket autenticado, operacao remota ou coordenacao entre hosts
 
 ### Impacto arquitetural
 
