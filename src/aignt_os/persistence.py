@@ -285,6 +285,32 @@ class RunRepository:
             return None
         return _run_record_from_row(row)
 
+    def find_next_pending_run_for_initiators(
+        self,
+        initiated_by_values: set[str] | frozenset[str],
+    ) -> RunRecord | None:
+        if not initiated_by_values:
+            return None
+
+        with self.engine.begin() as connection:
+            row = (
+                connection.execute(
+                    select(self.runs)
+                    .where(
+                        self.runs.c.status == "pending",
+                        self.runs.c.locked.is_(False),
+                        self.runs.c.initiated_by.in_(sorted(initiated_by_values)),
+                    )
+                    .order_by(self.runs.c.created_at)
+                    .limit(1)
+                )
+                .mappings()
+                .first()
+            )
+        if row is None:
+            return None
+        return _run_record_from_row(row)
+
     def list_steps(self, run_id: str) -> list[RunStepRecord]:
         with self.engine.begin() as connection:
             rows = connection.execute(
