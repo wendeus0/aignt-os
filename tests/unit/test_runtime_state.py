@@ -18,6 +18,41 @@ def test_runtime_state_store_persists_minimum_runtime_metadata(tmp_path: Path) -
     assert persisted.status == "running"
     assert persisted.pid == 12345
     assert persisted.started_at
+    assert persisted.started_by is None
+
+
+def test_runtime_state_store_persists_started_by_when_provided(tmp_path: Path) -> None:
+    state_module = import_module("aignt_os.runtime.state")
+
+    store = state_module.RuntimeStateStore(tmp_path / "runtime-state.json")
+    store.write_running(pid=12345, started_by="operator-user")
+
+    persisted = store.read()
+
+    assert persisted.status == "running"
+    assert persisted.started_by == "operator-user"
+
+
+def test_runtime_state_store_accepts_legacy_running_state_without_started_by(
+    tmp_path: Path,
+) -> None:
+    state_module = import_module("aignt_os.runtime.state")
+
+    state_file = tmp_path / "runtime-state.json"
+    state_file.write_text(
+        (
+            '{"status": "running", "pid": 12345, '
+            '"started_at": "2026-03-13T00:00:00+00:00", '
+            '"process_identity": "legacy-process"}'
+        ),
+        encoding="utf-8",
+    )
+
+    store = state_module.RuntimeStateStore(state_file)
+    persisted = store.read()
+
+    assert persisted.status == "running"
+    assert persisted.started_by is None
 
 
 def test_runtime_state_store_reports_stopped_when_state_file_is_missing(tmp_path: Path) -> None:

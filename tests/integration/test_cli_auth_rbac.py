@@ -277,6 +277,109 @@ def test_runtime_start_and_stop_accept_operator_token(
     assert "stopped" in stop_result.stdout.lower()
 
 
+def test_runtime_status_shows_started_by_for_authenticated_runtime(
+    tmp_path: Path,
+    cli_runner,
+    cli_app,
+) -> None:
+    _write_auth_registry(tmp_path)
+    env = _auth_env(tmp_path)
+    env["AIGNT_OS_AUTH_TOKEN"] = "operator-token"
+
+    start_result = cli_runner.invoke(cli_app, ["runtime", "start"], env=env)
+    status_result = cli_runner.invoke(cli_app, ["runtime", "status"], env=env)
+    stop_result = cli_runner.invoke(cli_app, ["runtime", "stop"], env=env)
+
+    assert start_result.exit_code == 0
+    assert status_result.exit_code == 0
+    assert "started by" in status_result.stdout.lower()
+    assert "operator-user" in status_result.stdout
+    assert stop_result.exit_code == 0
+
+
+def test_runtime_stop_rejects_different_operator_when_binding_exists(
+    tmp_path: Path,
+    cli_runner,
+    cli_app,
+) -> None:
+    registry_path = tmp_path / "runtime" / "auth-registry.json"
+    registry_path.parent.mkdir(parents=True, exist_ok=True)
+    registry_path.write_text(
+        json.dumps(
+            {
+                "principals": [
+                    {"principal_id": "operator-a", "roles": ["operator"]},
+                    {"principal_id": "operator-b", "roles": ["operator"]},
+                ],
+                "tokens": [
+                    {
+                        "principal_id": "operator-a",
+                        "token_sha256": hashlib.sha256(b"operator-a-token").hexdigest(),
+                    },
+                    {
+                        "principal_id": "operator-b",
+                        "token_sha256": hashlib.sha256(b"operator-b-token").hexdigest(),
+                    },
+                ],
+            }
+        ),
+        encoding="utf-8",
+    )
+    env = _auth_env(tmp_path)
+
+    start_result = cli_runner.invoke(
+        cli_app,
+        ["runtime", "start", "--auth-token", "operator-a-token"],
+        env=env,
+    )
+    stop_result = cli_runner.invoke(
+        cli_app,
+        ["runtime", "stop", "--auth-token", "operator-b-token"],
+        env=env,
+    )
+    cleanup_result = cli_runner.invoke(
+        cli_app,
+        ["runtime", "stop", "--auth-token", "operator-a-token"],
+        env=env,
+    )
+
+    assert start_result.exit_code == 0
+    assert stop_result.exit_code == 8
+    assert (
+        "authorization error:" in stop_result.stdout.lower()
+        or "authorization error:" in stop_result.stderr.lower()
+    )
+    assert cleanup_result.exit_code == 0
+
+
+def test_runtime_status_marks_legacy_binding_unavailable_under_auth(
+    tmp_path: Path,
+    cli_runner,
+    cli_app,
+) -> None:
+    _write_auth_registry(tmp_path)
+    env = _auth_env(tmp_path)
+    env["AIGNT_OS_AUTH_TOKEN"] = "operator-token"
+
+    start_result = cli_runner.invoke(cli_app, ["runtime", "start"], env=env)
+    runtime_state_path = tmp_path / "runtime" / "runtime-state.json"
+    legacy_payload = json.loads(runtime_state_path.read_text(encoding="utf-8"))
+    legacy_payload.pop("started_by", None)
+    runtime_state_path.write_text(
+        json.dumps(legacy_payload),
+        encoding="utf-8",
+    )
+
+    status_result = cli_runner.invoke(cli_app, ["runtime", "status"], env=env)
+    stop_result = cli_runner.invoke(cli_app, ["runtime", "stop"], env=env)
+
+    assert start_result.exit_code == 0
+    assert status_result.exit_code == 0
+    assert "started by" in status_result.stdout.lower()
+    assert "unavailable" in status_result.stdout.lower()
+    assert stop_result.exit_code == 0
+
+
 def test_runtime_run_requires_authentication_without_reaching_foreground_exec(
     tmp_path: Path,
     cli_runner,

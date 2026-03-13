@@ -18,6 +18,7 @@ class RuntimeState:
     pid: int | None = None
     started_at: str | None = None
     process_identity: str | None = None
+    started_by: str | None = None
 
 
 class RuntimeStateStore:
@@ -39,6 +40,7 @@ class RuntimeStateStore:
         pid = payload.get("pid")
         started_at = payload.get("started_at")
         process_identity = payload.get("process_identity")
+        started_by = payload.get("started_by")
 
         if status == "running":
             if (
@@ -47,6 +49,7 @@ class RuntimeStateStore:
                 or pid > PID_MAX
                 or not isinstance(process_identity, str)
                 or not process_identity
+                or (started_by is not None and (not isinstance(started_by, str) or not started_by))
             ):
                 return RuntimeState(status="inconsistent")
             return RuntimeState(
@@ -54,6 +57,7 @@ class RuntimeStateStore:
                 pid=pid,
                 started_at=started_at,
                 process_identity=process_identity,
+                started_by=started_by,
             )
 
         if status == "stopped":
@@ -61,12 +65,19 @@ class RuntimeStateStore:
 
         return RuntimeState(status="inconsistent")
 
-    def write_running(self, pid: int, process_identity: str = "local-runtime") -> RuntimeState:
+    def write_running(
+        self,
+        pid: int,
+        process_identity: str = "local-runtime",
+        *,
+        started_by: str | None = None,
+    ) -> RuntimeState:
         state = RuntimeState(
             status="running",
             pid=pid,
             started_at=datetime.now(UTC).isoformat(),
             process_identity=process_identity,
+            started_by=started_by,
         )
         self._write(state)
         return state
@@ -86,6 +97,7 @@ class RuntimeStateStore:
                 "pid": state.pid,
                 "started_at": state.started_at,
                 "process_identity": state.process_identity,
+                "started_by": state.started_by,
             }
         )
 

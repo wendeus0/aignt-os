@@ -35,7 +35,7 @@ class RuntimeService:
         self.state_store = RuntimeStateStore(state_file)
         self.worker = worker
 
-    def start(self) -> RuntimeState:
+    def start(self, *, started_by: str | None = None) -> RuntimeState:
         self._require_runnable_state()
 
         process_identity = secrets.token_hex(16)
@@ -53,7 +53,11 @@ class RuntimeService:
             start_new_session=True,
         )
         time.sleep(0.05)
-        return self.state_store.write_running(process.pid, process_identity)
+        return self.state_store.write_running(
+            process.pid,
+            process_identity,
+            started_by=started_by,
+        )
 
     def status(self) -> RuntimeState:
         return self.current_state()
@@ -61,7 +65,7 @@ class RuntimeService:
     def ready(self) -> bool:
         return self.current_state().status == "running"
 
-    def run_foreground(self, process_identity: str) -> None:
+    def run_foreground(self, process_identity: str, *, started_by: str | None = None) -> None:
         self._require_runnable_state()
 
         running = True
@@ -75,7 +79,11 @@ class RuntimeService:
         previous_sigint = signal.signal(signal.SIGINT, handle_shutdown)
 
         # This is the minimal resident process for the AIgnt-Synapse-Flow runtime.
-        self.state_store.write_running(os.getpid(), process_identity)
+        self.state_store.write_running(
+            os.getpid(),
+            process_identity,
+            started_by=started_by,
+        )
 
         try:
             while running:
@@ -114,6 +122,7 @@ class RuntimeService:
                 pid=state.pid,
                 started_at=state.started_at,
                 process_identity=state.process_identity,
+                started_by=state.started_by,
             )
         return state
 

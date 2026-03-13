@@ -25,6 +25,7 @@ def render_runtime_status(
     state: RuntimeState,
     *,
     console: Console | None = None,
+    show_started_by: bool = False,
 ) -> None:
     output_console = console or Console()
     status_style = _status_style(state.status)
@@ -38,6 +39,9 @@ def render_runtime_status(
 
     if state.started_at:
         lines.append(Text.assemble(("Started at: ", "dim"), state.started_at))
+    if show_started_by:
+        started_by_value = state.started_by or "unavailable"
+        lines.append(Text.assemble(("Started by: ", "dim"), started_by_value))
 
     output_console.print(
         Panel.fit(

@@ -23,3 +23,35 @@ def test_render_runtime_status_is_legible_without_tty() -> None:
     assert "running" in rendered.lower()
     assert "PID" in rendered
     assert "4321" in rendered
+
+
+def test_render_runtime_status_shows_started_by_when_requested() -> None:
+    cli_rendering = __import__("aignt_os.cli.rendering", fromlist=["render_runtime_status"])
+    output = StringIO()
+    console = Console(file=output, force_terminal=False, color_system=None, width=80)
+
+    cli_rendering.render_runtime_status(
+        RuntimeState(status="running", pid=4321, started_by="operator-user"),
+        console=console,
+        show_started_by=True,
+    )
+
+    rendered = output.getvalue()
+    assert "Started by" in rendered
+    assert "operator-user" in rendered
+
+
+def test_render_runtime_status_marks_legacy_binding_unavailable_when_requested() -> None:
+    cli_rendering = __import__("aignt_os.cli.rendering", fromlist=["render_runtime_status"])
+    output = StringIO()
+    console = Console(file=output, force_terminal=False, color_system=None, width=80)
+
+    cli_rendering.render_runtime_status(
+        RuntimeState(status="running", pid=4321),
+        console=console,
+        show_started_by=True,
+    )
+
+    rendered = output.getvalue()
+    assert "Started by" in rendered
+    assert "unavailable" in rendered.lower()
