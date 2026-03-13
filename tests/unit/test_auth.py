@@ -80,6 +80,80 @@ def test_auth_registry_store_authenticates_known_token(tmp_path: Path) -> None:
     assert principal.roles == ("operator",)
 
 
+def test_auth_registry_store_init_creates_initial_operator_token(tmp_path: Path) -> None:
+    auth_module = import_module("aignt_os.auth")
+
+    registry_path = tmp_path / "auth-registry.json"
+    store = auth_module.AuthRegistryStore(registry_path)
+
+    issued_token = store.initialize_registry(principal_id="local-operator", role="operator")
+    persisted = json.loads(registry_path.read_text(encoding="utf-8"))
+
+    assert issued_token.principal_id == "local-operator"
+    assert issued_token.role == "operator"
+    assert issued_token.token
+    assert issued_token.token_id
+    assert persisted["principals"] == [{"principal_id": "local-operator", "roles": ["operator"]}]
+    assert persisted["tokens"][0]["principal_id"] == "local-operator"
+    assert persisted["tokens"][0]["token_id"] == issued_token.token_id
+    assert persisted["tokens"][0]["disabled"] is False
+    assert issued_token.token not in registry_path.read_text(encoding="utf-8")
+
+
+def test_auth_registry_store_issue_token_creates_new_principal_when_role_is_provided(
+    tmp_path: Path,
+) -> None:
+    auth_module = import_module("aignt_os.auth")
+
+    registry_path = tmp_path / "auth-registry.json"
+    store = auth_module.AuthRegistryStore(registry_path)
+    store.write_registry(auth_module.AuthRegistry(principals=[], tokens=[]))
+
+    issued_token = store.issue_token(principal_id="viewer-user", role="viewer")
+    registry = store.load_registry()
+
+    assert issued_token.principal_id == "viewer-user"
+    assert issued_token.role == "viewer"
+    assert any(principal.principal_id == "viewer-user" for principal in registry.principals)
+    assert any(token.token_id == issued_token.token_id for token in registry.tokens)
+
+
+def test_auth_registry_store_issue_token_rejects_role_conflict(tmp_path: Path) -> None:
+    auth_module = import_module("aignt_os.auth")
+
+    registry_path = tmp_path / "auth-registry.json"
+    store = auth_module.AuthRegistryStore(registry_path)
+    store.write_registry(
+        auth_module.AuthRegistry(
+            principals=[auth_module.AuthPrincipal(principal_id="viewer-user", roles=["viewer"])],
+            tokens=[],
+        )
+    )
+
+    try:
+        store.issue_token(principal_id="viewer-user", role="operator")
+    except ValueError as exc:
+        assert "role" in str(exc).lower()
+    else:
+        raise AssertionError("Expected role conflict to raise ValueError.")
+
+
+def test_auth_registry_store_disable_token_revokes_authentication(tmp_path: Path) -> None:
+    auth_module = import_module("aignt_os.auth")
+
+    registry_path = tmp_path / "auth-registry.json"
+    store = auth_module.AuthRegistryStore(registry_path)
+    issued_token = store.initialize_registry(principal_id="ops", role="operator")
+
+    assert store.authenticate(issued_token.token) is not None
+
+    store.disable_token(token_id=issued_token.token_id)
+    registry = store.load_registry()
+
+    assert store.authenticate(issued_token.token) is None
+    assert registry.tokens[0].disabled is True
+
+
 def test_auth_registry_store_rejects_unknown_token(tmp_path: Path) -> None:
     auth_module = import_module("aignt_os.auth")
 
