@@ -93,14 +93,17 @@ No MVP, a implementação prática continua linear, mas o operador deve seguir p
 O trabalho deve acontecer por feature.
 Cada feature tem sua própria pasta em `features/` e sua própria `SPEC.md`.
 O ciclo ideal é:
-1. escrever/refinar a `SPEC` com `spec-editor`
-2. escrever testes `TEST_RED`
-3. implementar `CODE_GREEN`
-4. executar `REFACTOR`
-5. validar `DOCKER_PREFLIGHT` com `repo-preflight` quando a feature exigir execução prática dependente de Docker
-6. rodar `SECURITY_REVIEW`
-7. gerar `REPORT`
-8. concluir `COMMIT`
+1. iniciar sessão com `session-primer`
+2. escrever/refinar a `SPEC` com `spec-editor`
+3. validar a `SPEC` com `spec-validator`
+4. escrever testes `TEST_RED`
+5. decompor em tasks com `task-planner` se 3+ passos
+6. implementar `CODE_GREEN`
+7. executar `REFACTOR`
+8. validar `DOCKER_PREFLIGHT` com `repo-preflight` quando a feature exigir execução prática dependente de Docker
+9. rodar `SECURITY_REVIEW`
+10. gerar `REPORT`
+11. concluir `COMMIT`
 
 Checks locais de hook podem rodar antes do commit para feedback rápido, mas a execução prática dependente de Docker só pode começar após o `DOCKER_PREFLIGHT` operacional real.
 

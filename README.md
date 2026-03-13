@@ -255,7 +255,7 @@ Boundary do recorte atual:
 
 ## Desenvolvimento por feature
 
-O desenvolvimento segue o ciclo **Spec → Red → Green → Refactor → Security Review → Report → Commit**, com uma feature por worktree.
+O desenvolvimento segue o ciclo **Session Primer → Spec → Spec Validation → Red → Task Planning (se 3+ passos) → Green → Refactor → Security Review → Report → Commit**, com uma feature por worktree.
 
 ### Features do MVP (concluídas)
 

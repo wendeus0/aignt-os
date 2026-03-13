@@ -1,0 +1,34 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(./scripts/commit-check.sh*)",
+      "Bash(./scripts/docker-preflight.sh*)",
+      "Bash(./scripts/branch-sync-check.sh*)",
+      "Bash(./scripts/branch-sync-update.sh*)",
+      "Bash(./scripts/security-gate.sh*)",
+      "Bash(./scripts/docker-build.sh*)",
+      "Bash(./scripts/docker-up.sh*)",
+      "Bash(uv run --no-sync ruff format*)",
+      "Bash(uv run --no-sync ruff check*)",
+      "Bash(uv run --no-sync python -m mypy*)",
+      "Bash(uv run --no-sync python -m pytest*)",
+      "Bash(uv run --no-sync python -c*)",
+      "Bash(git status*)",
+      "Bash(git diff*)",
+      "Bash(git log*)",
+      "Bash(git fetch*)",
+      "Bash(git branch*)",
+      "Bash(git stash list*)",
+      "Bash(gh pr view*)",
+      "Bash(gh pr list*)",
+      "Bash(docker compose config*)",
+      "Bash(docker compose ps*)",
+      "Bash(docker compose logs*)"
+    ],
+    "deny": [
+      "Bash(git push --force*)",
+      "Bash(git reset --hard*)",
+      "Bash(git clean -f*)"
+    ]
+  }
+}
