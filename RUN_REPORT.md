@@ -1,32 +1,35 @@
-# Relatório de Execução - Feature F39: Dashboard Logs
+# Relatório de Execução - Feature F40: Cancelamento Local de Runs
 
 ## Resumo
-Adição da funcionalidade de visualização de logs (`stdout`/`stderr`) no dashboard TUI (`aignt runs watch`), permitindo a inspeção detalhada de steps executados. (Anteriormente referenciada como F34, regularizada para F39).
+Implementação do mecanismo de cancelamento local de runs (`local_cancellation`), permitindo a interrupção graciosa da execução do pipeline via CLI (`aignt runs cancel`) e TUI (atalho `k`).
 
 ## Escopo Entregue
-- **Interface TUI**:
-    - Novo componente `LogViewer` (Modal) acionado pela tecla `Enter` na lista de steps.
-    - Exibição de conteúdo de texto longo com suporte a rolagem (widget `RichLog`).
-- **Lógica de Negócio**:
-    - Leitura segura de arquivos de log associados aos steps (`clean_output_path` ou `raw_output_path`).
-    - Tratamento de erro para arquivos inexistentes ou ilegíveis.
-- **Refatoração**:
-    - Correção na renderização de `StepDetail` para evitar problemas de concorrência com o gerenciamento de contexto do `textual`.
+- **Core Pipeline**:
+    - Suporte a `PipelineCancelledError` no engine.
+    - Protocolo `CancellationChecker` para injeção de verificação externa.
+- **Persistence & Runtime**:
+    - Transição de estado `running` -> `cancelling` -> `cancelled`.
+    - Método `cancel_run` no `RunRepository` e `RuntimeService`.
+    - `PersistedPipelineRunner` agora injeta um checker que consulta o banco de dados.
+- **Interface**:
+    - Comando CLI: `aignt runs cancel <run_id>`.
+    - Dashboard TUI: Tecla `k` aciona cancelamento da run selecionada.
 
 ## Alterações Técnicas
-- Arquivo modificado: `src/aignt_os/cli/dashboard.py` (adição de `LogViewer` e `action_show_logs`).
-- Testes adicionados: `tests/unit/test_dashboard_logic.py` (focados na lógica de controle e acesso a arquivos).
-- Testes removidos: `tests/unit/test_dashboard_ui.py` (substituídos por testes de lógica mais robustos e menos propensos a flakiness em CI).
+- Arquivos modificados: `src/aignt_os/pipeline.py`, `src/aignt_os/persistence.py`, `src/aignt_os/cli/app.py`, `src/aignt_os/cli/dashboard.py`.
+- Novos testes:
+    - `tests/unit/test_pipeline_cancellation.py`: Validação da lógica do engine.
+    - `tests/integration/test_cli_cancellation.py`: Teste end-to-end do comando CLI.
+    - `tests/integration/test_runtime_cancellation.py`: Teste de integração do runner com sinal de cancelamento.
 
 ## Revisão de Segurança
-- **Leitura de Arquivos**: Restrita aos caminhos validados e persistidos no banco de dados (`RunStepRecord`).
-- **Sanitização**: O conteúdo é lido como texto e renderizado em widget seguro (`RichLog`), mitigando injeção de terminal.
-- **Path Traversal**: Risco mitigado pelo uso de `pathlib` e origem confiável dos caminhos (gerados pelo runtime).
-- **Performance**: Leitura síncrona de arquivos pode impactar a UI em logs muito grandes (>10MB), mas é aceitável para o escopo local atual.
+- **Controle de Acesso**: Cancelamento restrito a runs locais geridas pelo mesmo usuário/processo (implícito pelo acesso ao arquivo SQLite).
+- **Graceful Shutdown**: O cancelamento ocorre entre steps, garantindo que nenhum step seja interrompido no meio de uma operação crítica de I/O (exceto se o step implementar seu próprio timeout/cancelamento, o que é futuro).
+- **Integridade de Estado**: O estado `cancelled` é terminal e persistido, impedindo retomada acidental.
 
 ## Próximos Passos
-- Implementar filtros de steps (F42).
-- Controle de cancelamento (F40).
+- Refinar UX do cancelamento no Dashboard (feedback visual imediato).
+- Implementar timeout de steps (futuro).
 
 ## Conclusão
-Feature F39 implementada e validada, resolvendo o débito técnico de colisão de ID da F34.
+Feature F40 implementada e validada, cobrindo todos os critérios de aceitação da SPEC. Pull Request #87 criado.
