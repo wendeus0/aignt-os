@@ -452,9 +452,9 @@ def runtime_start(
     ] = None,
 ) -> None:
     try:
-        _resolve_principal_id(permission="runtime.manage", auth_token=auth_token)
+        principal_id = _resolve_principal_id(permission="runtime.manage", auth_token=auth_token)
         service = _runtime_service()
-        state = service.start()
+        state = service.start(started_by=principal_id)
     except CLIError as exc:
         exit_for_cli_error(exc)
     except RuntimeLifecycleError as exc:
@@ -468,13 +468,14 @@ def runtime_status() -> None:
     try:
         service = _runtime_service()
         state = service.status()
+        settings = AppSettings()
     except CLIError as exc:
         exit_for_cli_error(exc)
 
     if state.status == "inconsistent":
         exit_for_cli_error(environment_error("Runtime state is inconsistent."))
 
-    render_runtime_status(state)
+    render_runtime_status(state, show_started_by=settings.auth_enabled)
 
 
 @runtime_app.command("run")
@@ -489,7 +490,7 @@ def runtime_run(
     ] = None,
 ) -> None:
     try:
-        _resolve_principal_id(permission="runtime.manage", auth_token=auth_token)
+        principal_id = _resolve_principal_id(permission="runtime.manage", auth_token=auth_token)
     except CLIError as exc:
         exit_for_cli_error(exc)
 
@@ -513,7 +514,7 @@ def runtime_run(
 
     try:
         service = _runtime_service()
-        service.run_foreground(process_identity)
+        service.run_foreground(process_identity, started_by=principal_id)
     except CLIError as exc:
         exit_for_cli_error(exc)
     except RuntimeLifecycleError as exc:
@@ -542,8 +543,19 @@ def runtime_stop(
     ] = None,
 ) -> None:
     try:
-        _resolve_principal_id(permission="runtime.manage", auth_token=auth_token)
+        principal_id = _resolve_principal_id(permission="runtime.manage", auth_token=auth_token)
         service = _runtime_service()
+        state = service.status()
+        if (
+            principal_id is not None
+            and state.status == "running"
+            and state.started_by is not None
+            and principal_id != state.started_by
+        ):
+            raise authorization_error(
+                "Authenticated principal is not allowed to stop a runtime "
+                "started by another principal."
+            )
         state = service.stop()
     except CLIError as exc:
         exit_for_cli_error(exc)
