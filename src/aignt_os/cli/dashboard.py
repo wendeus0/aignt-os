@@ -476,7 +476,9 @@ class RunDashboard(App[None]):
                 except Exception as e:
                     log_content = f"Error reading log file: {e}"
 
-            self.push_screen(LogViewer(f"Logs: Step {step.step_id} ({step.tool_name})", log_content))
+            self.push_screen(
+                LogViewer(f"Logs: Step {step.step_id} ({step.tool_name})", log_content)
+            )
         else:
             self.notify("Select a step first.", severity="warning")
 
