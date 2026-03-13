@@ -28,6 +28,9 @@ class AppSettings(BaseSettings):
     auth_provider: Literal["file"] = "file"
     secret_mask_patterns: list[str] = list(DEFAULT_SECRET_MASK_PATTERNS)
 
+    execution_timeout_seconds: float = Field(default=300.0, gt=0)
+    max_retries: int = Field(default=3, ge=0)
+
     @property
     def runtime_state_dir_resolved(self) -> Path:
         return resolve_path_within_root(self.runtime_state_dir, root=self.workspace_root)
