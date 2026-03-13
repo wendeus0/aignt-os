@@ -1,14 +1,14 @@
 # ERROR_LOG
 
-## 2026-03-13 - PR `#65` da F30 mergeada com `repo-checks` ainda falhando por formatacao global
+## 2026-03-13 - PR `#65` da F30 mergeada com `repo-checks` falhando por formatacao global, depois resolvido pela `#66`
 
 - Contexto: fechamento Git da `F30-auth-registry-cli` apos quality gate local e abertura da PR `#65`.
 - Ação/comando relacionado: `gh pr checks 65`, `gh run view 23034742953 --job 66900277313 --log-failed` e revalidacao local com `env UV_CACHE_DIR=/home/g0dsssp33d/work/projects/aignt-os/.cache/uv uv run --no-sync ruff format --check .`.
 - Erro observado: o job `repo-checks` da PR falhou porque `ruff format --check .` ainda listava 6 arquivos fora do padrao (`src/aignt_os/persistence.py`, `tests/integration/test_runs_cli.py`, `tests/unit/test_cli_adapter.py`, `tests/unit/test_parsing_engine.py`, `tests/unit/test_persistence.py`, `tests/unit/test_security.py`).
 - Causa identificada: divida de formatacao preexistente na baseline atual, fora do diff funcional da `F30`.
 - Ação tomada: a PR foi mergeada com aprovacao explicita por excecao; a correcao do gate virou a proxima frente prioritaria de estabilizacao da baseline.
-- Status: aberto como bloqueio operacional de baseline.
-- Observação futura: enquanto `ruff format --check .` nao voltar a fechar verde, evitar depender de merge administrativo como caminho normal de conclusao de PR.
+- Status: resolvido; a baseline foi restaurada na PR `#66` e o handoff pos-`F32` nao deve mais tratar este incidente como bloqueio aberto.
+- Observação futura: manter a checagem local equivalente do `repo-checks` antes de concluir PRs novas, para evitar depender de merge administrativo por debt global fora do diff.
 
 ## 2026-03-12 - Regressao de compatibilidade no monkeypatch de `_dispatch_service` durante a F29
 

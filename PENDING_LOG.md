@@ -2,6 +2,12 @@
 
 ## Decisões incorporadas recentemente
 
+- Em 2026-03-13, a `F32-runtime-resident-principal-binding` foi mergeada em `main` pela PR `#68`, entregando o primeiro slice concreto do bucket `resident_transport_auth` sem abrir socket, IPC ou operacao remota.
+- A `F32` persistiu `started_by` no estado do runtime quando auth local esta habilitada, passou a exibir esse binding em `aignt runtime status` e endureceu `aignt runtime stop` contra operador diferente quando o binding existe.
+- Com a `F32`, o residual de `G-11` deixa de ser apenas fundacao local absorvida versus backlog futuro: o bucket `resident_transport_auth` ja tem um primeiro slice entregue, enquanto operacao remota/multi-host continua explicitamente adiada.
+- A frente ativa imediata deixou de ser feature de produto e passou a ser chore doc-only de handoff: `F33-post-f32-handoff-sync`, para alinhar memoria operacional e backlog ao estado pos-`#68` antes da proxima triagem.
+- A proxima decisao de produto fica bloqueada ate `PENDING_LOG.md`, `ERROR_LOG.md`, `memory.md` e `docs/IDEAS.md` refletirem o baseline real pos-`F32`.
+
 - Em 2026-03-13, a baseline voltou a ficar estavel apos a merge da PR `#66`, com `repo-checks` e `security-review` verdes na checagem remota e `ruff format --check .` restaurado como gate verde local.
 - Com a baseline estabilizada, a frente ativa deixou de ser operacional e voltou a ser backlog de produto: `F31-g11-remote-auth-decomposition`.
 - A `F31` foi aberta como frente doc-only para decompor formalmente o residual de `G-11` em `local_cli_auth` ja absorvido, `resident_transport_auth` ainda pendente e `remote_multi_host_auth` explicitamente adiado.
@@ -143,10 +149,9 @@
 
 - Fixtures de testes aspiracionais marcadas como 🔜 no TDD.md: `tests/fixtures/worker/` (ainda ausente).
 - Property-based testing com `hypothesis` ainda não implementado (mencionado como evolução futura em TDD.md).
-- Restaurar `ruff format --check .` na baseline atual; hoje 6 arquivos ainda bloqueiam o `repo-checks`.
-- Sincronizar `PENDING_LOG.md`, `ERROR_LOG.md` e `memory.md` ao estado pos-F30 e ao incidente operacional da PR `#65`.
-- Promover a próxima feature apenas com SPEC própria pós-`F27`, sem reaproveitar backlog textual como fila automática, mas somente depois de o baseline voltar a passar no `repo-checks`.
-- Manter o residual de `G-11` limitado a operacao remota/socket como frente futura propria; nao reabrir follow-up local de auth agora.
+- Sincronizar `PENDING_LOG.md`, `ERROR_LOG.md`, `memory.md` e `docs/IDEAS.md` ao estado pos-F32; a `F33` foi aberta exatamente para fechar esse drift documental.
+- Decidir, em triagem posterior a `F33`, se ainda existe outro slice local-only de `resident_transport_auth` que caiba em 1 a 3 dias.
+- Se a triagem concluir que o restante de `resident_transport_auth` ja exige transporte novo ou ADR, adiar esse bucket explicitamente e promover um hardening menor fora dele.
 
 ## Pontos de atenção futuros
 
