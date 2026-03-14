@@ -5,7 +5,7 @@ import re
 
 from pydantic import BaseModel, ConfigDict, Field
 
-from aignt_os.security import (
+from synapse_os.security import (
     mask_secrets,
     normalize_unicode,
     strip_ansi_sequences,

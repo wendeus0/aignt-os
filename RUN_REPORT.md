@@ -1,7 +1,7 @@
 # Relatório de Execução - Feature F39: Dashboard Logs
 
 ## Resumo
-Adição da funcionalidade de visualização de logs (`stdout`/`stderr`) no dashboard TUI (`aignt runs watch`), permitindo a inspeção detalhada de steps executados. (Anteriormente referenciada como F34, regularizada para F39).
+Adição da funcionalidade de visualização de logs (`stdout`/`stderr`) no dashboard TUI (`synapse runs watch`), permitindo a inspeção detalhada de steps executados. (Anteriormente referenciada como F34, regularizada para F39).
 
 ## Escopo Entregue
 - **Interface TUI**:
@@ -14,7 +14,7 @@ Adição da funcionalidade de visualização de logs (`stdout`/`stderr`) no dash
     - Correção na renderização de `StepDetail` para evitar problemas de concorrência com o gerenciamento de contexto do `textual`.
 
 ## Alterações Técnicas
-- Arquivo modificado: `src/aignt_os/cli/dashboard.py` (adição de `LogViewer` e `action_show_logs`).
+- Arquivo modificado: `src/synapse_os/cli/dashboard.py` (adição de `LogViewer` e `action_show_logs`).
 - Testes adicionados: `tests/unit/test_dashboard_logic.py` (focados na lógica de controle e acesso a arquivos).
 - Testes removidos: `tests/unit/test_dashboard_ui.py` (substituídos por testes de lógica mais robustos e menos propensos a flakiness em CI).
 

@@ -46,12 +46,12 @@ def _runtime_env(tmp_path: Path) -> dict[str, str]:
     python_path = str(REPO_ROOT / "src")
     existing = env.get("PYTHONPATH")
     env["PYTHONPATH"] = f"{python_path}{os.pathsep}{existing}" if existing else python_path
-    env["AIGNT_OS_ENVIRONMENT"] = "test"
-    env["AIGNT_OS_RUNTIME_STATE_DIR"] = str(tmp_path / "runtime")
-    env["AIGNT_OS_RUNS_DB_PATH"] = str(tmp_path / "runs" / "runs.sqlite3")
-    env["AIGNT_OS_ARTIFACTS_DIR"] = str(tmp_path / "artifacts")
-    env["AIGNT_OS_WORKSPACE_ROOT"] = str(tmp_path)
-    env["AIGNT_OS_RUNTIME_POLL_INTERVAL_SECONDS"] = "0.05"
+    env["SYNAPSE_OS_ENVIRONMENT"] = "test"
+    env["SYNAPSE_OS_RUNTIME_STATE_DIR"] = str(tmp_path / "runtime")
+    env["SYNAPSE_OS_RUNS_DB_PATH"] = str(tmp_path / "runs" / "runs.sqlite3")
+    env["SYNAPSE_OS_ARTIFACTS_DIR"] = str(tmp_path / "artifacts")
+    env["SYNAPSE_OS_WORKSPACE_ROOT"] = str(tmp_path)
+    env["SYNAPSE_OS_RUNTIME_POLL_INTERVAL_SECONDS"] = "0.05"
     return env
 
 
@@ -89,14 +89,14 @@ def _spawn_runtime_foreground(
 ) -> subprocess.Popen[str]:
     env = _runtime_env(tmp_path)
     if auth_enabled:
-        env["AIGNT_OS_AUTH_ENABLED"] = "true"
+        env["SYNAPSE_OS_AUTH_ENABLED"] = "true"
     if auth_token is not None:
-        env["AIGNT_OS_AUTH_TOKEN"] = auth_token
+        env["SYNAPSE_OS_AUTH_TOKEN"] = auth_token
     return subprocess.Popen(
         [
             sys.executable,
             "-c",
-            "from aignt_os.cli.app import app; app()",
+            "from synapse_os.cli.app import app; app()",
             "runtime",
             "run",
         ],
@@ -110,7 +110,7 @@ def _spawn_runtime_foreground(
 
 
 def _wait_for_runtime_ready(tmp_path: Path, process: subprocess.Popen[str]) -> None:
-    cli_module = import_module("aignt_os.cli.app")
+    cli_module = import_module("synapse_os.cli.app")
     runner = CliRunner()
     deadline = time.monotonic() + 5.0
     env = _runtime_env(tmp_path)
@@ -152,7 +152,7 @@ def _terminate_process(process: subprocess.Popen[str]) -> None:
 
 
 def test_runtime_foreground_worker_consumes_pending_run(tmp_path: Path) -> None:
-    persistence = import_module("aignt_os.persistence")
+    persistence = import_module("synapse_os.persistence")
 
     spec_path = tmp_path / "SPEC.md"
     _write_valid_spec(spec_path)
@@ -185,9 +185,9 @@ def test_runtime_foreground_worker_consumes_pending_run(tmp_path: Path) -> None:
 def test_run_dispatch_service_auto_queues_when_runtime_process_is_ready(
     tmp_path: Path,
 ) -> None:
-    persistence = import_module("aignt_os.persistence")
-    dispatch_module = import_module("aignt_os.runtime.dispatch")
-    runtime_service_module = import_module("aignt_os.runtime.service")
+    persistence = import_module("synapse_os.persistence")
+    dispatch_module = import_module("synapse_os.runtime.dispatch")
+    runtime_service_module = import_module("synapse_os.runtime.service")
 
     spec_path = tmp_path / "SPEC.md"
     _write_valid_spec(spec_path)
@@ -222,7 +222,7 @@ def test_run_dispatch_service_auto_queues_when_runtime_process_is_ready(
 def test_authenticated_runtime_foreground_worker_skips_incompatible_run_and_processes_next_one(
     tmp_path: Path,
 ) -> None:
-    persistence = import_module("aignt_os.persistence")
+    persistence = import_module("synapse_os.persistence")
 
     _write_auth_registry(tmp_path)
     repository = persistence.RunRepository(tmp_path / "runs" / "runs.sqlite3")
@@ -271,7 +271,7 @@ def test_authenticated_runtime_foreground_worker_skips_incompatible_run_and_proc
 def test_authenticated_runtime_foreground_worker_processes_legacy_run(
     tmp_path: Path,
 ) -> None:
-    persistence = import_module("aignt_os.persistence")
+    persistence = import_module("synapse_os.persistence")
 
     _write_auth_registry(tmp_path)
     repository = persistence.RunRepository(tmp_path / "runs" / "runs.sqlite3")
@@ -304,7 +304,7 @@ def test_authenticated_runtime_foreground_worker_processes_legacy_run(
 def test_authenticated_runtime_foreground_worker_deduplicates_owner_skip_on_repeated_polls(
     tmp_path: Path,
 ) -> None:
-    persistence = import_module("aignt_os.persistence")
+    persistence = import_module("synapse_os.persistence")
 
     _write_auth_registry(tmp_path)
     repository = persistence.RunRepository(tmp_path / "runs" / "runs.sqlite3")
@@ -337,13 +337,13 @@ def test_runs_show_surfaces_runtime_owner_skip_for_pending_run(
     cli_runner,
     cli_app,
 ) -> None:
-    persistence = import_module("aignt_os.persistence")
+    persistence = import_module("synapse_os.persistence")
 
     env = {
-        "AIGNT_OS_ENVIRONMENT": "test",
-        "AIGNT_OS_RUNS_DB_PATH": str(tmp_path / "runs" / "runs.sqlite3"),
-        "AIGNT_OS_ARTIFACTS_DIR": str(tmp_path / "artifacts"),
-        "AIGNT_OS_WORKSPACE_ROOT": str(tmp_path),
+        "SYNAPSE_OS_ENVIRONMENT": "test",
+        "SYNAPSE_OS_RUNS_DB_PATH": str(tmp_path / "runs" / "runs.sqlite3"),
+        "SYNAPSE_OS_ARTIFACTS_DIR": str(tmp_path / "artifacts"),
+        "SYNAPSE_OS_WORKSPACE_ROOT": str(tmp_path),
     }
     _write_auth_registry(tmp_path)
     repository = persistence.RunRepository(tmp_path / "runs" / "runs.sqlite3")

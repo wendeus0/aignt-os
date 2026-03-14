@@ -1,7 +1,7 @@
 ---
 id: F10-run-report-one-real-adapter
 type: feature
-summary: Fechar o MVP com geracao de RUN_REPORT.md e integracao minima do Codex CLI como primeiro adapter real do AIgnt-Synapse-Flow.
+summary: Fechar o MVP com geracao de RUN_REPORT.md e integracao minima do Codex CLI como primeiro adapter real do Synapse-Flow.
 inputs:
   - CONTEXT.md
   - docs/architecture/SDD.md
@@ -14,7 +14,7 @@ outputs:
   - pipeline_document_step
   - report_and_adapter_tests
 constraints:
-  - manter o AIgnt-Synapse-Flow como engine propria de pipeline do AIgnt OS
+  - manter o Synapse-Flow como engine propria de pipeline do SynapseOS
   - manter o recorte em um unico adapter real
   - reutilizar o fluxo container-first ja existente via ./scripts/dev-codex.sh
   - nao introduzir novos adapters reais, scheduler complexo ou CLI publica adicional nesta feature
@@ -38,7 +38,7 @@ dependencies:
 
 # Contexto
 
-Depois da F09, o AIgnt-Synapse-Flow, a engine propria de pipeline do AIgnt OS, ja consegue executar a run linear ate `SECURITY` com retry e rework deterministico. O gap restante do MVP esta no fechamento auditavel da run e na prova de que o runtime realmente consegue integrar pelo menos uma ferramenta externa de forma controlada.
+Depois da F09, o Synapse-Flow, a engine propria de pipeline do SynapseOS, ja consegue executar a run linear ate `SECURITY` com retry e rework deterministico. O gap restante do MVP esta no fechamento auditavel da run e na prova de que o runtime realmente consegue integrar pelo menos uma ferramenta externa de forma controlada.
 
 O repositório ja tem a fixture de `RUN_REPORT.md`, o launcher container-first `./scripts/dev-codex.sh` e a base abstrata para adapters CLI. Falta conectar essas peças ao fluxo persistido, expandir a pipeline ate `DOCUMENT` e materializar um caminho minimo de ponta a ponta com um adapter real.
 

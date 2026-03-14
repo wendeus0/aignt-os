@@ -23,5 +23,5 @@ RUN python -m pip install --upgrade pip \
 
 USER appuser
 
-ENTRYPOINT ["aignt"]
+ENTRYPOINT ["synapse"]
 CMD ["--help"]

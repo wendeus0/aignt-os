@@ -31,7 +31,7 @@ non_goals:
 
 O `AGENTS.md` foi atualizado para incluir `QUALITY_GATE` como passo formal entre `REFACTOR` e `SECURITY_REVIEW`. O ADR-013 formalizou a decisão. Os documentos centrais (CONTEXT.md, SDD.md, TDD.md) foram atualizados.
 
-O único artefato de código ainda não atualizado é a `LINEAR_STATE_FLOW` em `src/aignt_os/state_machine.py`, que atualmente define:
+O único artefato de código ainda não atualizado é a `LINEAR_STATE_FLOW` em `src/synapse_os/state_machine.py`, que atualmente define:
 
 ```python
 LINEAR_STATE_FLOW: tuple[str, ...] = (
@@ -47,7 +47,7 @@ Adicionar `"QUALITY_GATE"` à `LINEAR_STATE_FLOW` entre `"CODE_GREEN"` e `"REVIE
 # Escopo
 
 ## Incluído
-- Edição de `src/aignt_os/state_machine.py`: inserir `"QUALITY_GATE"` em `LINEAR_STATE_FLOW`
+- Edição de `src/synapse_os/state_machine.py`: inserir `"QUALITY_GATE"` em `LINEAR_STATE_FLOW`
 - Edição de `tests/unit/test_state_machine.py`: adicionar testes de transição para `QUALITY_GATE`
 
 ## Fora de escopo

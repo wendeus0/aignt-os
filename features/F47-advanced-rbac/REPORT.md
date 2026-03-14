@@ -24,7 +24,7 @@ security_review:
 
 ## Contexto
 
-The AIgnt OS CLI previously operated with a flat authorization model (all valid tokens had full access). As the system scales to support different user personas (viewers vs operators vs admins), a more granular permission system was required.
+The SynapseOS CLI previously operated with a flat authorization model (all valid tokens had full access). As the system scales to support different user personas (viewers vs operators vs admins), a more granular permission system was required.
 
 ## Mudanças Realizadas
 

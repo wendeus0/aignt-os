@@ -3,7 +3,7 @@ id: F42-tui-filters
 type: feature
 summary: "Filtros de visualização de steps no dashboard TUI para facilitar análise de runs longas ou com falhas."
 inputs:
-  - "Interação via teclado no dashboard TUI (aignt runs watch)"
+  - "Interação via teclado no dashboard TUI (synapse runs watch)"
 outputs:
   - "Lista de steps filtrada na interface"
   - "Indicador visual do filtro ativo"
@@ -22,7 +22,7 @@ non_goals:
 
 # Contexto
 
-O dashboard TUI (`aignt runs watch`) atualmente exibe uma lista linear de todos os steps executados em uma run. Em pipelines longos ou com muitas iterações (ex: loops de `worker`), essa lista pode crescer significativamente, dificultando a identificação rápida de falhas ou o acompanhamento dos steps ativos. A necessidade de "rolar" manualmente para encontrar erros é um ponto de atrito na UX, especialmente para triagem de falhas.
+O dashboard TUI (`synapse runs watch`) atualmente exibe uma lista linear de todos os steps executados em uma run. Em pipelines longos ou com muitas iterações (ex: loops de `worker`), essa lista pode crescer significativamente, dificultando a identificação rápida de falhas ou o acompanhamento dos steps ativos. A necessidade de "rolar" manualmente para encontrar erros é um ponto de atrito na UX, especialmente para triagem de falhas.
 
 # Objetivo
 

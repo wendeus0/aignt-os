@@ -40,7 +40,7 @@ dependencies:
 
 # Contexto
 
-O AIgnt OS trata parsing como preocupacao arquitetural central porque as ferramentas CLI produzem saidas textuais ruidosas, misturando texto util, ruido operacional, codigos ANSI e blocos de artefatos. Depois da F02 e da F03, o proximo incremento natural do nucleo e criar o primeiro Parsing Engine executavel para preparar hand-offs confiaveis no AIgnt-Synapse-Flow, a engine propria de pipeline do AIgnt OS.
+O SynapseOS trata parsing como preocupacao arquitetural central porque as ferramentas CLI produzem saidas textuais ruidosas, misturando texto util, ruido operacional, codigos ANSI e blocos de artefatos. Depois da F02 e da F03, o proximo incremento natural do nucleo e criar o primeiro Parsing Engine executavel para preparar hand-offs confiaveis no Synapse-Flow, a engine propria de pipeline do SynapseOS.
 
 O recorte desta feature precisa permanecer pequeno: limpar texto, extrair blocos relevantes e validar artefatos basicos sem antecipar adapter async, supervisor, reroute ou suporte detalhado por ferramenta.
 

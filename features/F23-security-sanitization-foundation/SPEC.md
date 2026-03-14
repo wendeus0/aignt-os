@@ -8,16 +8,16 @@ inputs:
   - docs/architecture/TDD.md
   - docs/architecture/SPEC_FORMAT.md
   - docs/IDEAS.md
-  - src/aignt_os/config.py
-  - src/aignt_os/adapters.py
-  - src/aignt_os/parsing.py
-  - src/aignt_os/persistence.py
+  - src/synapse_os/config.py
+  - src/synapse_os/adapters.py
+  - src/synapse_os/parsing.py
+  - src/synapse_os/persistence.py
 outputs:
   - security_sanitization_module
   - security_sanitization_tests
   - feature_notes
 constraints:
-  - "manter o AIgnt-Synapse-Flow como a engine propria de pipeline do AIgnt OS"
+  - "manter o Synapse-Flow como a engine propria de pipeline do SynapseOS"
   - "trabalhar apenas o recorte de G-01, G-02 e G-04"
   - "preservar `stdout_raw`, `stderr_raw`, `raw_output` e qualquer output bruto intactos"
   - "aplicar strip de bidi controls, normalizacao NFKC e masking apenas em campos `*_clean` e artefatos publicos"
@@ -49,7 +49,7 @@ dependencies:
 
 # Contexto
 
-Depois do fechamento da etapa 2, o AIgnt OS ja expoe uma superficie publica CLI-first com submit, diagnostico, detail, preview e release readiness, enquanto o AIgnt-Synapse-Flow continua sendo a engine propria de pipeline do AIgnt OS. Porem, a IDEA-001 registrou que ainda faltam guardrails basicos de sanitizacao antes de avancar para endurecimentos maiores.
+Depois do fechamento da etapa 2, o SynapseOS ja expoe uma superficie publica CLI-first com submit, diagnostico, detail, preview e release readiness, enquanto o Synapse-Flow continua sendo a engine propria de pipeline do SynapseOS. Porem, a IDEA-001 registrou que ainda faltam guardrails basicos de sanitizacao antes de avancar para endurecimentos maiores.
 
 Os riscos mais imediatos neste recorte sao:
 

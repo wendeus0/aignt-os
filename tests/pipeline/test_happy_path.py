@@ -1,7 +1,7 @@
 """End-to-end pipeline tests using fake executors.
 
-These tests exercise the full AIgnt-Synapse-Flow pipeline — the engine própria
-de pipeline do AIgnt OS — from SPEC validation through to TEST_RED, using
+These tests exercise the full Synapse-Flow pipeline — the engine própria
+de pipeline do SynapseOS — from SPEC validation through to TEST_RED, using
 in-memory fake executors and temporary SPEC files. No real subprocesses or
 external tools are invoked.
 """
@@ -32,7 +32,7 @@ non_goals:
 
 # Contexto
 
-Fixture para testes end-to-end da pipeline AIgnt-Synapse-Flow.
+Fixture para testes end-to-end da pipeline Synapse-Flow.
 
 # Objetivo
 
@@ -52,7 +52,7 @@ def _make_spec(tmp_path: Path, content: str) -> Path:
 def _pipeline_module():
     from importlib import import_module
 
-    return import_module("aignt_os.pipeline")
+    return import_module("synapse_os.pipeline")
 
 
 class _FakeExecutor:

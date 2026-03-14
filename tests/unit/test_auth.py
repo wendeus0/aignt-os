@@ -9,7 +9,7 @@ from pathlib import Path
 def test_auth_registry_store_persists_atomically_with_restricted_permissions(
     tmp_path: Path, monkeypatch
 ) -> None:  # type: ignore[no-untyped-def]
-    auth_module = import_module("aignt_os.auth")
+    auth_module = import_module("synapse_os.auth")
 
     registry_path = tmp_path / "auth-registry.json"
     store = auth_module.AuthRegistryStore(registry_path)
@@ -50,7 +50,7 @@ def test_auth_registry_store_persists_atomically_with_restricted_permissions(
 
 
 def test_auth_registry_store_authenticates_known_token(tmp_path: Path) -> None:
-    auth_module = import_module("aignt_os.auth")
+    auth_module = import_module("synapse_os.auth")
 
     registry_path = tmp_path / "auth-registry.json"
     store = auth_module.AuthRegistryStore(registry_path)
@@ -81,7 +81,7 @@ def test_auth_registry_store_authenticates_known_token(tmp_path: Path) -> None:
 
 
 def test_auth_registry_store_init_creates_initial_operator_token(tmp_path: Path) -> None:
-    auth_module = import_module("aignt_os.auth")
+    auth_module = import_module("synapse_os.auth")
 
     registry_path = tmp_path / "auth-registry.json"
     store = auth_module.AuthRegistryStore(registry_path)
@@ -103,7 +103,7 @@ def test_auth_registry_store_init_creates_initial_operator_token(tmp_path: Path)
 def test_auth_registry_store_issue_token_creates_new_principal_when_role_is_provided(
     tmp_path: Path,
 ) -> None:
-    auth_module = import_module("aignt_os.auth")
+    auth_module = import_module("synapse_os.auth")
 
     registry_path = tmp_path / "auth-registry.json"
     store = auth_module.AuthRegistryStore(registry_path)
@@ -119,7 +119,7 @@ def test_auth_registry_store_issue_token_creates_new_principal_when_role_is_prov
 
 
 def test_auth_registry_store_issue_token_rejects_role_conflict(tmp_path: Path) -> None:
-    auth_module = import_module("aignt_os.auth")
+    auth_module = import_module("synapse_os.auth")
 
     registry_path = tmp_path / "auth-registry.json"
     store = auth_module.AuthRegistryStore(registry_path)
@@ -139,7 +139,7 @@ def test_auth_registry_store_issue_token_rejects_role_conflict(tmp_path: Path) -
 
 
 def test_auth_registry_store_disable_token_revokes_authentication(tmp_path: Path) -> None:
-    auth_module = import_module("aignt_os.auth")
+    auth_module = import_module("synapse_os.auth")
 
     registry_path = tmp_path / "auth-registry.json"
     store = auth_module.AuthRegistryStore(registry_path)
@@ -155,7 +155,7 @@ def test_auth_registry_store_disable_token_revokes_authentication(tmp_path: Path
 
 
 def test_auth_registry_store_rejects_unknown_token(tmp_path: Path) -> None:
-    auth_module = import_module("aignt_os.auth")
+    auth_module = import_module("synapse_os.auth")
 
     registry_path = tmp_path / "auth-registry.json"
     store = auth_module.AuthRegistryStore(registry_path)
@@ -175,7 +175,7 @@ def test_auth_registry_store_rejects_unknown_token(tmp_path: Path) -> None:
 
 
 def test_auth_registry_store_raises_for_missing_registry(tmp_path: Path) -> None:
-    auth_module = import_module("aignt_os.auth")
+    auth_module = import_module("synapse_os.auth")
 
     store = auth_module.AuthRegistryStore(tmp_path / "auth-registry.json")
 
@@ -188,7 +188,7 @@ def test_auth_registry_store_raises_for_missing_registry(tmp_path: Path) -> None
 
 
 def test_authorize_requires_operator_for_mutating_permissions() -> None:
-    auth_module = import_module("aignt_os.auth")
+    auth_module = import_module("synapse_os.auth")
 
     viewer = auth_module.AuthenticatedPrincipal(
         principal_id="viewer", roles=("viewer",), permissions=frozenset(["run:read"])

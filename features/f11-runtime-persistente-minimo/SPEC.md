@@ -15,7 +15,7 @@ related_adrs:
   - docs/adr/002-python-orchestrator.md
   - docs/adr/003-state-machine-pipeline-engine.md
   - docs/adr/009-runtime-dual-cli-worker.md
-  - docs/adr/010-adopt-aignt-synapse-flow-name.md
+  - docs/adr/010-adopt-synapse-synapse-flow-name.md
   - docs/adr/011-lightweight-docker-preflight-default.md
 inputs:
   - CLI atual do projeto
@@ -30,9 +30,9 @@ outputs:
   - persistencia local endurecida do estado do runtime
   - testes automatizados da feature
 acceptance_criteria:
-  - Existe exatamente um processo residente local do AIgnt OS por workspace durante o MVP desta feature.
+  - Existe exatamente um processo residente local do SynapseOS por workspace durante o MVP desta feature.
   - A CLI expõe comandos mínimos de lifecycle para start, status e stop do runtime persistente.
-  - Existe um modo legitimo de execucao persistente do runtime do AIgnt OS que pode ser usado pelo `compose` como processo principal do container sem recorrer a keepalive artificial.
+  - Existe um modo legitimo de execucao persistente do runtime do SynapseOS que pode ser usado pelo `compose` como processo principal do container sem recorrer a keepalive artificial.
   - O comando start cria o processo residente e persiste estado local suficiente para identificar pid, status e metadados mínimos que permitam validar a identidade do processo antes do stop.
   - O comando status informa de forma verificável se o runtime está ativo, parado ou inconsistente.
   - O modo persistente do runtime permanece em execucao ate receber sinal de encerramento ou erro real do processo.
@@ -58,13 +58,13 @@ dependencies:
 
 # Contexto
 
-O AIgnt OS ja adota um runtime dual no nivel arquitetural, mas ainda precisa do primeiro incremento pratico desse modelo. Esta feature cria apenas o degrau minimo para que a CLI consiga iniciar, inspecionar e parar um processo residente unico, preservando o foco do MVP e sem expandir o escopo para distribuicao, scheduler ou rede.
+O SynapseOS ja adota um runtime dual no nivel arquitetural, mas ainda precisa do primeiro incremento pratico desse modelo. Esta feature cria apenas o degrau minimo para que a CLI consiga iniciar, inspecionar e parar um processo residente unico, preservando o foco do MVP e sem expandir o escopo para distribuicao, scheduler ou rede.
 
-O runtime interno continua sendo coordenado pelo AIgnt-Synapse-Flow, a engine propria de pipeline do AIgnt OS, mas esta feature nao implementa a pipeline completa do worker. Ela apenas estabelece o lifecycle minimo do processo residente.
+O runtime interno continua sendo coordenado pelo Synapse-Flow, a engine propria de pipeline do SynapseOS, mas esta feature nao implementa a pipeline completa do worker. Ela apenas estabelece o lifecycle minimo do processo residente.
 
 Como o runtime opera por processo residente local, o hardening minimo do controle por PID e do arquivo de estado faz parte do proprio contrato da feature. O objetivo nao e adicionar um subsistema completo de seguranca, mas evitar que `stop` confie apenas em PID persistido ou em estado facilmente adulteravel.
 
-O `DOCKER_PREFLIGHT` real em host ja validou `compose config` e `build`, mas evidenciou que o container atual apenas executa `aignt --help`, sai com codigo `0` e nao permanece vivo. Portanto, o bloqueio de `CONTAINER_UP/HEALTHY` nao e de Docker nem do host: ele decorre da ausencia de um runtime persistente legitimo da aplicacao para ser usado como processo principal do container.
+O `DOCKER_PREFLIGHT` real em host ja validou `compose config` e `build`, mas evidenciou que o container atual apenas executa `synapse --help`, sai com codigo `0` e nao permanece vivo. Portanto, o bloqueio de `CONTAINER_UP/HEALTHY` nao e de Docker nem do host: ele decorre da ausencia de um runtime persistente legitimo da aplicacao para ser usado como processo principal do container.
 
 # Objetivo
 

@@ -3,14 +3,14 @@ from __future__ import annotations
 import time
 from collections.abc import Callable
 
-from aignt_os.config import AppSettings
-from aignt_os.persistence import (
+from synapse_os.config import AppSettings
+from synapse_os.persistence import (
     ArtifactStore,
     PersistedPipelineRunner,
     RunRecord,
     RunRepository,
 )
-from aignt_os.runtime.state import RuntimeState, RuntimeStateStore
+from synapse_os.runtime.state import RuntimeState, RuntimeStateStore
 
 LEGACY_INITIATED_BY_VALUES = frozenset({"unknown", "system", "local_cli"})
 RUNTIME_OWNER_SKIP_EVENT = "runtime_owner_skip"

@@ -1,7 +1,7 @@
 ---
 id: F01-bootstrap-contracts
 type: feature
-summary: Estabelecer o bootstrap mínimo em Python do AIgnt OS com CLI básica, contratos iniciais, configuração base e testes iniciais.
+summary: Estabelecer o bootstrap mínimo em Python do SynapseOS com CLI básica, contratos iniciais, configuração base e testes iniciais.
 workspace: .
 inputs:
   - user_request
@@ -41,11 +41,11 @@ security_notes:
 
 # Contexto
 
-O projeto precisa de uma base mínima executável para começar o ciclo spec-first e TDD sem antecipar componentes maiores do MVP. Esta feature existe para criar um ponto de partida pequeno, verificável e coerente com a arquitetura definida para o AIgnt OS.
+O projeto precisa de uma base mínima executável para começar o ciclo spec-first e TDD sem antecipar componentes maiores do MVP. Esta feature existe para criar um ponto de partida pequeno, verificável e coerente com a arquitetura definida para o SynapseOS.
 
 # Objetivo
 
-Entregar o menor bootstrap útil em Python para o AIgnt OS com:
+Entregar o menor bootstrap útil em Python para o SynapseOS com:
 - pacote Python inicial;
 - CLI mínima funcional;
 - contratos/modelos iniciais com Pydantic;
@@ -124,7 +124,7 @@ Fica explicitamente fora desta feature:
 ## 8. Artefatos Esperados
 
 - `features/F01-bootstrap-contracts/SPEC.md`
-- código inicial em `src/aignt_os/`
+- código inicial em `src/synapse_os/`
 - testes iniciais em `tests/`
 - `features/F01-bootstrap-contracts/NOTES.md` apenas se surgir lacuna relevante durante RED/GREEN
 

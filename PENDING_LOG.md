@@ -3,7 +3,7 @@
 ## Decisões incorporadas recentemente
 
 - Em 2026-03-13, `origin/main` absorveu a merge de `F42-tui-filters` pela PR `#86`, adicionando filtros visuais locais no dashboard TUI para falhas (`f`), atividade (`r`) e restauracao da lista completa (`x`).
-- Em 2026-03-13, `origin/main` absorveu a merge de `F40-local-cancellation` pela PR `#87`, consolidando `aignt runs cancel <run_id>` e o atalho `k` no dashboard como cancelamento local e gracioso de runs.
+- Em 2026-03-13, `origin/main` absorveu a merge de `F40-local-cancellation` pela PR `#87`, consolidando `synapse runs cancel <run_id>` e o atalho `k` no dashboard como cancelamento local e gracioso de runs.
 - Com `F42` e `F40`, a TUI local atual passa a cobrir watch, logs por `Enter`, explorer de artifacts por `a`, filtros visuais e cancelamento local, sem abrir scheduler, fila remota ou cancelamento distribuido.
 - O drift remanescente voltou a ser documental: `memory.md`, `PENDING_LOG.md`, `ERROR_LOG.md`, `README.md` e `CHANGELOG.md` ficaram atrasados em relacao ao baseline real pos-`F42`/`F40`, e `features/F40-local-cancellation/` e `features/F42-tui-filters/` ficaram sem artefatos minimos de fechamento.
 - A frente ativa imediata passa a ser a chore doc-only `chore-post-f40-f42-baseline-sync`, para consolidar handoff e documentacao publica antes da proxima decisao de produto.
@@ -22,13 +22,13 @@
 
 - Em 2026-03-13, a `F34-async-submit-runtime-ownership` foi mergeada em `main` pela PR `#70`, fazendo `runs submit` autenticado aceitar dispatch resolvido para `async` apenas quando o runtime residente pertence ao mesmo principal, preservando fallback legado sem `started_by`.
 - Em 2026-03-13, a `F35-worker-runtime-ownership-filter` foi mergeada em `main` pela PR `#71`, fazendo o worker do runtime residente consumir apenas runs compativeis com o principal que iniciou o runtime, sem falhar nem lockar runs incompatíveis.
-- Em 2026-03-13, a `F36-worker-owner-skip-observability` foi mergeada em `main` pela PR `#72`, tornando auditavel o skip do worker com evento `runtime_owner_skip` nas runs incompatíveis e mantendo o AIgnt-Synapse-Flow como a engine propria de pipeline do AIgnt OS.
+- Em 2026-03-13, a `F36-worker-owner-skip-observability` foi mergeada em `main` pela PR `#72`, tornando auditavel o skip do worker com evento `runtime_owner_skip` nas runs incompatíveis e mantendo o Synapse-Flow como a engine propria de pipeline do SynapseOS.
 - Com `F32`, `F34`, `F35` e `F36`, o bucket local de `resident_transport_auth` deixa de ser backlog funcional aberto e passa a ser baseline absorvido; o residual real de `G-11` fica restrito a operacao remota/multi-host.
 - A frente ativa imediata deixa de ser triagem de produto e passa a ser a chore doc-only `F37-post-f36-g11-sync`, para alinhar handoff e backlog ao estado pos-`#72` antes da proxima decisao de produto.
 - A proxima decisao de produto fica bloqueada ate `PENDING_LOG.md`, `memory.md` e `docs/IDEAS.md` refletirem o baseline real pos-`F36`.
 
 - Em 2026-03-13, a `F32-runtime-resident-principal-binding` foi mergeada em `main` pela PR `#68`, entregando o primeiro slice concreto do bucket `resident_transport_auth` sem abrir socket, IPC ou operacao remota.
-- A `F32` persistiu `started_by` no estado do runtime quando auth local esta habilitada, passou a exibir esse binding em `aignt runtime status` e endureceu `aignt runtime stop` contra operador diferente quando o binding existe.
+- A `F32` persistiu `started_by` no estado do runtime quando auth local esta habilitada, passou a exibir esse binding em `synapse runtime status` e endureceu `synapse runtime stop` contra operador diferente quando o binding existe.
 - Com a `F32`, o residual de `G-11` deixa de ser apenas fundacao local absorvida versus backlog futuro: o bucket `resident_transport_auth` ja tem um primeiro slice entregue, enquanto operacao remota/multi-host continua explicitamente adiada.
 - A frente ativa imediata deixou de ser feature de produto e passou a ser chore doc-only de handoff: `F33-post-f32-handoff-sync`, para alinhar memoria operacional e backlog ao estado pos-`#68` antes da proxima triagem.
 - A proxima decisao de produto fica bloqueada ate `PENDING_LOG.md`, `ERROR_LOG.md`, `memory.md` e `docs/IDEAS.md` refletirem o baseline real pos-`F32`.
@@ -38,7 +38,7 @@
 - A `F31` foi aberta como frente doc-only para decompor formalmente o residual de `G-11` em `local_cli_auth` ja absorvido, `resident_transport_auth` ainda pendente e `remote_multi_host_auth` explicitamente adiado.
 - O proximo trabalho de codigo fica bloqueado ate essa decomposicao documental fechar uma SPEC pequena e verificavel para o bucket `resident_transport_auth`.
 
-- Em 2026-03-13, a `F30-auth-registry-cli` foi mergeada em `main` pela PR `#65`, adicionando `aignt auth init|issue|disable`, `token_id` no registry local e alinhamento de `docs/IDEAS.md`/README ao baseline pos-F30.
+- Em 2026-03-13, a `F30-auth-registry-cli` foi mergeada em `main` pela PR `#65`, adicionando `synapse auth init|issue|disable`, `token_id` no registry local e alinhamento de `docs/IDEAS.md`/README ao baseline pos-F30.
 - A `F30` fechou o follow-up local de auth iniciado pela `F29`; o residual real de `G-11` ficou reduzido ao recorte grande de operacao remota/socket, explicitamente adiado.
 - O fechamento Git da `F30` exigiu merge explicito porque o job `repo-checks` permaneceu vermelho por `ruff format --check .` em 6 arquivos preexistentes fora do diff funcional da feature.
 - Com isso, a proxima frente logica deixou de ser backlog de produto e passou a ser estabilizacao da baseline: restaurar `repo-checks` e sincronizar o handoff pos-F30 antes de abrir nova SPEC.
@@ -52,48 +52,48 @@
 - O backlog remanescente da `IDEA-001` ficou reduzido principalmente a `G-09` (circuit breaker para adapters) e `G-11` (autenticação/autorização), com `G-09` como menor recorte técnico natural para a próxima triagem.
 
 - Em 2026-03-12, o baseline documental foi realinhado ao estado real do repositório: `main` já incorpora `F17-artifact-preview` e `F22-release-readiness`, fechando a etapa 2 no código, na CLI pública e na release técnica.
-- A `F17-artifact-preview` foi mergeada em `main`, consolidando `aignt runs show <run_id> --preview report` e `--preview <STEP_STATE>.clean` com leitura textual truncada e sem abrir leitura arbitrária do host.
+- A `F17-artifact-preview` foi mergeada em `main`, consolidando `synapse runs show <run_id> --preview report` e `--preview <STEP_STATE>.clean` com leitura textual truncada e sem abrir leitura arbitrária do host.
 - A `F22-release-readiness` foi mergeada em `main`, consolidando `CHANGELOG.md`, `docs/release/phase-2-technical-release.md`, README alinhado ao quickstart `sync-first` e boundary explícito para artifact preview.
 - A próxima decisão do projeto deixou de ser fechar PRs da etapa 2 e passou a ser abrir a primeira SPEC pós-`F22`; `docs/IDEAS.md` permanece como backlog candidato, com `IDEA-001 / G-02` como menor recorte imediato se houver risco real em observabilidade pública.
 
-- A `F13-rich-cli-output` foi concluida localmente como frente pequena de UX na CLI, sem ampliar a arquitetura: `aignt runtime status` passou a renderizar painel Rich com status e PID, mantendo `stderr` e exit code de falha no estado inconsistente.
-- A F13 introduziu `src/aignt_os/cli/rendering.py` como helper minima de apresentacao e adicionou cobertura dedicada em `tests/unit/test_cli_rich_output.py` e `tests/integration/test_runtime_cli.py`.
+- A `F13-rich-cli-output` foi concluida localmente como frente pequena de UX na CLI, sem ampliar a arquitetura: `synapse runtime status` passou a renderizar painel Rich com status e PID, mantendo `stderr` e exit code de falha no estado inconsistente.
+- A F13 introduziu `src/synapse_os/cli/rendering.py` como helper minima de apresentacao e adicionou cobertura dedicada em `tests/unit/test_cli_rich_output.py` e `tests/integration/test_runtime_cli.py`.
 - A validacao local da F13 fechou verde com `validate_spec_file()` da SPEC, `pytest tests/unit/test_cli_rich_output.py tests/integration/test_runtime_cli.py`, `./scripts/commit-check.sh --no-sync --skip-branch-validation --skip-docker --skip-security` e `./scripts/security-gate.sh`.
-- O recorte da F13 permaneceu deliberadamente restrito a `aignt runtime status`, sem `Textual`, sem watch mode, sem novo subcomando publico e sem necessidade de `DOCKER_PREFLIGHT`.
-- A `F14-runs-observability-cli` foi concluida localmente como frente pequena de observabilidade CLI-first, adicionando `aignt runs list` e `aignt runs show <run_id>` sem abrir TUI.
-- A F14 reaproveitou `RunRepository` e `ArtifactStore`, estendeu `src/aignt_os/cli/rendering.py` para listagem/detalhe de runs e manteve o AIgnt-Synapse-Flow como a engine propria de pipeline do AIgnt OS.
+- O recorte da F13 permaneceu deliberadamente restrito a `synapse runtime status`, sem `Textual`, sem watch mode, sem novo subcomando publico e sem necessidade de `DOCKER_PREFLIGHT`.
+- A `F14-runs-observability-cli` foi concluida localmente como frente pequena de observabilidade CLI-first, adicionando `synapse runs list` e `synapse runs show <run_id>` sem abrir TUI.
+- A F14 reaproveitou `RunRepository` e `ArtifactStore`, estendeu `src/synapse_os/cli/rendering.py` para listagem/detalhe de runs e manteve o Synapse-Flow como a engine propria de pipeline do SynapseOS.
 - A validacao local da F14 fechou verde com `validate_spec_file()` da SPEC, `pytest` focado de CLI/persistencia, `./scripts/commit-check.sh --no-sync --skip-branch-validation --skip-docker --skip-security` e `./scripts/security-gate.sh`.
 - O recorte da F14 permaneceu deliberadamente restrito a leitura de runs persistidas: sem watch mode, sem streaming, sem Textual e sem `DOCKER_PREFLIGHT`.
-- A PR `#42` da `F14-runs-observability-cli` foi mergeada em `main`, consolidando `aignt runs list` e `aignt runs show <run_id>` como superficie publica atual do projeto.
+- A PR `#42` da `F14-runs-observability-cli` foi mergeada em `main`, consolidando `synapse runs list` e `synapse runs show <run_id>` como superficie publica atual do projeto.
 - A etapa seguinte do projeto foi definida e documentada como fila oficial em `docs/architecture/PHASE_2_ROADMAP.md`, seguindo o cenario misto: `F15 -> F16 -> F21 -> F18 -> F19 -> F20 -> F17 -> F22`.
 - Uma proposta posterior de guardrails pre-etapa-2 (input, secrets, rate limiting e audit trail) foi triada e nao foi promovida a duas features autonomas; o backlog oficial preserva a etapa 2 como proxima trilha principal.
 - O unico recorte excepcional aceito antes da etapa 2, se houver risco real, e mascaramento de secrets em campos `_clean` e artifacts de leitura publica; o restante deve ser absorvido em `F15` e `F21`.
-- A `F15-public-run-submission` foi implementada localmente com `aignt runs submit <spec_path>`, `--mode auto|sync|async` e `--stop-at`, reaproveitando o `RunDispatchService` interno e fixando `SPEC_VALIDATION` como default operacional seguro.
+- A `F15-public-run-submission` foi implementada localmente com `synapse runs submit <spec_path>`, `--mode auto|sync|async` e `--stop-at`, reaproveitando o `RunDispatchService` interno e fixando `SPEC_VALIDATION` como default operacional seguro.
 - O hardening principal da F15 ficou no proprio dispatch: a SPEC e validada antes de qualquer submit, inclusive em `async`, para evitar persistencia de runs invalidas.
 - A validacao local da F15 fechou verde com `validate_spec_file()` da SPEC, `pytest` focado de dispatch/runs/runtime, `./scripts/commit-check.sh --no-sync --skip-branch-validation --skip-docker --skip-security` e `./scripts/security-gate.sh`.
-- A PR `#43` da `F15-public-run-submission` foi mergeada em `main`, consolidando `aignt runs submit <spec_path>` como superficie publica atual junto de `aignt runs list/show`.
+- A PR `#43` da `F15-public-run-submission` foi mergeada em `main`, consolidando `synapse runs submit <spec_path>` como superficie publica atual junto de `synapse runs list/show`.
 - A chore documental pos-F15 alinhou `README.md`, `WORKTREE_FEATURES.md`, `memory.md`, `PENDING_LOG.md` e `.github/copilot-instructions.md` ao baseline atual da etapa 2.
 - O baseline real atual tambem ja incorpora a `F16-run-detail-expansion`, a `F21-cli-error-model-and-exit-codes` e a `F18-canonical-happy-path`: as tres frentes tem `SPEC.md` propria, notes/checklists, comportamento materializado na CLI e cobertura dedicada em testes unitarios e de integracao.
 - A revalidacao focada do baseline da etapa 2 fechou verde com `uv run --no-sync python -m pytest tests/unit/test_cli_runs_rendering.py tests/integration/test_runs_submit_cli.py tests/integration/test_cli_error_model.py -q`, totalizando `12 passed`.
 - O handoff operacional foi realinhado para refletir a fila remanescente correta da etapa 2: `F19 -> F20 -> F17 -> F22`.
-- A `F19-environment-doctor` foi concluida e mergeada pela PR `#51`, consolidando `aignt doctor` como diagnostico local e advisory do fluxo publico atual.
-- A `F20-public-onboarding` foi concluida e mergeada pela PR `#52`, consolidando o quickstart publico sync-first e o boundary entre `aignt doctor` e `repo-preflight`.
+- A `F19-environment-doctor` foi concluida e mergeada pela PR `#51`, consolidando `synapse doctor` como diagnostico local e advisory do fluxo publico atual.
+- A `F20-public-onboarding` foi concluida e mergeada pela PR `#52`, consolidando o quickstart publico sync-first e o boundary entre `synapse doctor` e `repo-preflight`.
 - Com a merge de `F19` e `F20`, a fila remanescente real da etapa 2 passou a ser `F17 -> F22`.
-- A `F17-artifact-preview` foi concluida localmente com preview textual controlado em `aignt runs show <run_id> --preview <target>`, suportando `report` e `<STEP_STATE>.clean` sem abrir leitura arbitraria do host.
+- A `F17-artifact-preview` foi concluida localmente com preview textual controlado em `synapse runs show <run_id> --preview <target>`, suportando `report` e `<STEP_STATE>.clean` sem abrir leitura arbitraria do host.
 - O delta da F17 manteve o contrato de erros da F21 (`Usage error:`/`2`, `Not found:`/`3`) e limitou a leitura ao inicio do artifact, com truncamento explicito apos no maximo 40 linhas.
 - A PR `#53` da `F17-artifact-preview` foi aberta contra `main`, deixando a frente pronta para revisao sem merge antecipado.
 - A `F22-release-readiness` foi concluida localmente como frente documental e de validacao final, adicionando `CHANGELOG.md`, release notes versionada e boundary explicito entre quickstart sync-first e artifact preview.
 
-- A `F10-run-report-one-real-adapter` foi concluida e mergeada em `main`, fechando o MVP inicial do AIgnt-Synapse-Flow com `DOCUMENT`, `RUN_REPORT.md` e o primeiro adapter real (`CodexCLIAdapter`).
+- A `F10-run-report-one-real-adapter` foi concluida e mergeada em `main`, fechando o MVP inicial do Synapse-Flow com `DOCUMENT`, `RUN_REPORT.md` e o primeiro adapter real (`CodexCLIAdapter`).
 - A `F12-codex-adapter-operational-hardening` foi concluida e mergeada pela PR `#38`, com `main` local e `origin/main` sincronizados em `ahead=0 behind=0`.
 - O hardening da F12 manteve `CLIExecutionResult` como contrato de execucao e adicionou classificacao operacional explicita do Codex (`timeout`, `return_code_nonzero`, `launcher_unavailable`, `container_unavailable`, `authentication_unavailable`) sem reabrir a pipeline.
 - O `DOCKER_PREFLIGHT` real e o smoke container-first do Codex foram validados; o unico bloqueio observado foi autenticacao ausente (`401 Unauthorized`), tratado como bloqueio operacional externo e nao como defeito do adapter.
 
 - A chore `test-layout-typecheck-hardening` estabilizou a arvore `tests/` com package markers explicitos, removendo a colisao operacional entre `tests/unit/conftest.py` e `tests/integration/conftest.py`.
-- O repositório agora aceita `uv run mypy src tests`, mas isso foi fechado via override explícito do `mypy` para `tests` e `tests.*`, preservando o contrato strict no pacote `src/aignt_os`.
+- O repositório agora aceita `uv run mypy src tests`, mas isso foi fechado via override explícito do `mypy` para `tests` e `tests.*`, preservando o contrato strict no pacote `src/synapse_os`.
 
-- A `F09-supervisor-mvp` foi materializada com `SPEC.md`, `NOTES.md` e `CHECKLIST.md` proprios, mantendo o AIgnt-Synapse-Flow como a engine propria de pipeline do AIgnt OS e limitando o recorte a supervisor deterministico, pipeline linear ate `SECURITY` e persistencia de decisoes do supervisor.
-- A pipeline agora suporta `CODE_GREEN`, `REVIEW` e `SECURITY`; a state machine passou a aceitar `REVIEW -> CODE_GREEN` para rework, e o novo modulo `aignt_os.supervisor` decide entre `retry`, `reroute`, `return_to_code_green` e `fail` de forma deterministica.
+- A `F09-supervisor-mvp` foi materializada com `SPEC.md`, `NOTES.md` e `CHECKLIST.md` proprios, mantendo o Synapse-Flow como a engine propria de pipeline do SynapseOS e limitando o recorte a supervisor deterministico, pipeline linear ate `SECURITY` e persistencia de decisoes do supervisor.
+- A pipeline agora suporta `CODE_GREEN`, `REVIEW` e `SECURITY`; a state machine passou a aceitar `REVIEW -> CODE_GREEN` para rework, e o novo modulo `synapse_os.supervisor` decide entre `retry`, `reroute`, `return_to_code_green` e `fail` de forma deterministica.
 - A persistencia de runs da F09 passou a registrar eventos `supervisor_decision`, e a validacao local da feature fechou verde com `233` testes passando, `ruff check`, `uv run --no-sync python -m mypy`, `./scripts/security-gate.sh` e `./scripts/commit-check.sh --skip-docker`.
 - O recorte da F09 manteve `retry` e `reroute` dentro da mesma execucao da pipeline; nao houve retomada persistida entre polls do worker nem ampliacao para `DOCUMENT` ou `RUN_REPORT.md`.
 
@@ -104,14 +104,14 @@
 - Fixtures novas criadas: `tests/fixtures/docker/valid_compose_config.txt`, `invalid_compose_config.txt`, `tests/fixtures/reports/expected_run_report.md`, `tests/fixtures/cli_outputs/gemini_plan.txt`, `codex_tests.txt`, `claude_review.txt`.
 - Security review da branch `chore/tdd-integration-hardening` foi aprovado sem ressalvas: zero mudanças em código de produção, todos os padrões de subprocess existentes são legítimos, uso de `unicode_escape` em fixtures é controlado e sem risco de injeção.
 
-- A correcao de follow-up da `F06-pipeline-engine-linear` reexportou `SpecValidationError` em `aignt_os.pipeline`, alinhando a API publica da engine com o teste de bloqueio por SPEC invalida e restaurando o `repo-checks` local no mesmo caminho usado pelo CI.
-- A `F06-pipeline-engine-linear` passou a ter `SPEC.md` propria, `NOTES.md`, contratos tipados de pipeline (`PipelineStep`, `StepExecutionResult`, `PipelineContext`) e uma `PipelineEngine` linear em fake mode para o AIgnt-Synapse-Flow.
+- A correcao de follow-up da `F06-pipeline-engine-linear` reexportou `SpecValidationError` em `synapse_os.pipeline`, alinhando a API publica da engine com o teste de bloqueio por SPEC invalida e restaurando o `repo-checks` local no mesmo caminho usado pelo CI.
+- A `F06-pipeline-engine-linear` passou a ter `SPEC.md` propria, `NOTES.md`, contratos tipados de pipeline (`PipelineStep`, `StepExecutionResult`, `PipelineContext`) e uma `PipelineEngine` linear em fake mode para o Synapse-Flow.
 - O recorte da `F06-pipeline-engine-linear` ficou deliberadamente restrito a `SPEC_VALIDATION`, `PLAN` e `TEST_RED`, reutilizando `SpecValidator` e state machine ja existentes, sem persistencia, worker, supervisor ou adapters reais.
 - A validacao local da `F06-pipeline-engine-linear` fechou verde com `SPEC` validada, `88` testes passando via `python -m pytest`, `ruff check`, `ruff format --check`, `mypy` e `./scripts/branch-sync-check.sh` em `ahead=0 behind=0`.
 - O `security-review` do delta da `F06-pipeline-engine-linear` foi concluido sem ressalvas: a feature nao adiciona shell, subprocesso novo, Docker, workflow ou automacao operacional, e mantem a execucao de pipeline em fake mode com contexto em memoria e validacao explicita da SPEC antes de `PLAN`.
 
 - A `F05-cli-adapter-base` passou a ter `SPEC.md` propria, `NOTES.md`, um `BaseCLIAdapter` assíncrono via `asyncio.create_subprocess_exec` e a evolucao de `CLIExecutionResult` para incluir `tool_name`, `stdout/stderr` raw/clean, `duration_ms` e `timed_out`.
-- O recorte da `F05-cli-adapter-base` ficou deliberadamente restrito a contrato de execucao, subprocesso async, timeout e sanitizacao leve de ANSI, preservando o Parsing Engine da `F04` como responsavel por limpeza mais rica e extracao de artefatos antes dos hand-offs do AIgnt-Synapse-Flow.
+- O recorte da `F05-cli-adapter-base` ficou deliberadamente restrito a contrato de execucao, subprocesso async, timeout e sanitizacao leve de ANSI, preservando o Parsing Engine da `F04` como responsavel por limpeza mais rica e extracao de artefatos antes dos hand-offs do Synapse-Flow.
 - A validacao local da `F05-cli-adapter-base` fechou verde com `SPEC` validada, `84` testes passando via `python -m pytest`, `ruff check`, `ruff format --check`, `mypy` e `./scripts/branch-sync-check.sh` em `ahead=0 behind=0`.
 - O `security-review` do delta da `F05-cli-adapter-base` foi concluido sem ressalvas: a implementacao usa `create_subprocess_exec` sem shell, preserva output bruto separado do output limpo, aplica timeout com encerramento explicito do processo e mantem a sanitizacao conservadora no adapter.
 
@@ -142,7 +142,7 @@
 - A branch de integração `chore/merge-operational-candidates` consolidou `chore-resolve-operational-merge-conflicts`, `feat-agent-skills` e `features/f11-runtime-persistente-minimo`.
 - A validação prática da feature de runtime persistente foi fechada na branch de integração com `17` testes passando em ambiente local dedicado.
 - A branch `chore/devcontainer-codex-isolation` introduziu um ambiente isolado de desenvolvimento do Codex com `.devcontainer/`, `compose.dev.yaml`, `scripts/dev-codex.sh` e profile versionado em `.codex/config.toml`.
-- O fluxo container-first do Codex ficou documentado em `AGENTS.md` e `README.md`, mantendo `codex-dev` separado do serviço de runtime `aignt-os`.
+- O fluxo container-first do Codex ficou documentado em `AGENTS.md` e `README.md`, mantendo `codex-dev` separado do serviço de runtime `synapse-os`.
 - A validação operacional local confirmou `codex-dev` com usuário não-root, `read_only`, `no-new-privileges`, `cap_drop: [ALL]`, sem `docker.sock`, sem mount do `$HOME` do host e com bind mount restrito ao repositório em `/workspace`.
 - A Branch Sync Gate foi incorporada como regra operacional leve em `AGENTS.md`, com `./scripts/branch-sync-check.sh` para detectar drift e `./scripts/branch-sync-update.sh` para atualização conservadora da branch.
 - As ressalvas baixas do security-review sobre a Branch Sync Gate foram mitigadas e o parecer final ficou aprovado, sem risco novo relevante.
@@ -163,7 +163,7 @@
 - O `security-review` da `F02-spec-engine-mvp` foi aprovado com ressalvas baixas: manter `yaml.safe_load` e, na integracao futura, restringir o chamador a paths esperados de `SPEC.md` dentro do workspace da run.
 - A PR `#19` da `F02-spec-engine-mvp` teve o gate `repo-checks` restaurado com correcao minima de formatacao, import order e compatibilidade de `mypy` no `SpecValidator`, sem ampliar o escopo da feature.
 - O `security-review` mais recente da correcao da F02 aprovou o delta com ressalva baixa e localizada: o `# type: ignore[import-untyped]` em `yaml` e aceitavel neste recorte, mas pode ser removido depois com tipagem mais explicita ou `types-PyYAML`.
-- A `F03-state-machine-mvp` passou a ter `SPEC.md` propria, state machine minima do AIgnt-Synapse-Flow com transicoes lineares validas, bloqueio de `PLAN` antes de `SPEC_VALIDATION` e estado terminal `FAILED`, com testes verdes e PR `#20` aberta.
+- A `F03-state-machine-mvp` passou a ter `SPEC.md` propria, state machine minima do Synapse-Flow com transicoes lineares validas, bloqueio de `PLAN` antes de `SPEC_VALIDATION` e estado terminal `FAILED`, com testes verdes e PR `#20` aberta.
 - O `security-review` da `F03-state-machine-mvp` foi aprovado com ressalvas baixas: os estados ainda sao modelados como strings livres e `TERMINAL_STATES` ainda nao e usada explicitamente nas validacoes internas.
 - A `F03-state-machine-mvp` ficou autocontida na worktree atual com materializacao de `features/F03-state-machine-mvp/SPEC.md`, mantendo alinhamento com o recorte aprovado da feature.
 - A validacao local da `F03-state-machine-mvp` confirmou `5` testes unitarios verdes para a state machine minima, e o proximo passo logico permanece fechar `REPORT/COMMIT` antes de abrir a `F04`.
@@ -187,7 +187,7 @@
 - Fixture `noisy_mixed_output.txt` e `noisy_no_code_block.txt` armazenam sequências ANSI como literais `\u001b`. Todo helper que os lê para testar comportamento de ANSI precisa de `unicode_escape=True`. Considerar adicionar comentário nos próprios arquivos de fixture documentando isso.
 - A ampliação de `TRANSPORT_NOISE_PREFIXES` para incluir prefixos como `[rpc]` deve ser decisão explícita documentada na SPEC da feature responsável — não uma adição silenciosa.
 - Os testes de `test_review_rework.py` exercitam a state machine diretamente para estados CODE_GREEN/REVIEW/SECURITY que ainda não estão implementados no `PipelineEngine`. Quando o Supervisor/pipeline for implementado para esses estados, esses testes servem como documentação de comportamento esperado e devem ser migrados para testes de integração.
-- O retry/reroute da F09 permanece restrito a uma unica execucao do AIgnt-Synapse-Flow; retomada persistida entre polls do worker e requeue duravel continuam fora de escopo.
+- O retry/reroute da F09 permanece restrito a uma unica execucao do Synapse-Flow; retomada persistida entre polls do worker e requeue duravel continuam fora de escopo.
 - Em worktree fria, `pytest` e `uv run pytest` podem falhar na coleta ate que `uv sync --locked --extra dev` tenha sido executado.
 
 - O fallback de `GITHUB_TOKEN` para `GITHUB_PERSONAL_ACCESS_TOKEN` continua aceitavel para o baseline atual, mas pode merecer opt-in explicito se gerar ambiguidade operacional em ambientes com tokens preexistentes.
@@ -207,9 +207,9 @@
 
 ## TUI — Ideia de feature futura (análise de viabilidade concluída)
 
-- **Rich enriquecido (F13-rich-cli-output)**: concluida localmente como primeira adocao de Rich em `src/`, restrita a `aignt runtime status` e sem abrir TUI completa.
+- **Rich enriquecido (F13-rich-cli-output)**: concluida localmente como primeira adocao de Rich em `src/`, restrita a `synapse runtime status` e sem abrir TUI completa.
 - **Observabilidade CLI de runs (F14-runs-observability-cli)**: concluida localmente e fecha a lacuna minima de inspecao antes de qualquer TUI.
-- **TUI watch (F14-tui-watch-command)**: `aignt tui` como subcomando opcional usando Textual. Pré-requisito atualizado: F13 + F14 + implementação de `observability/` (diretório ainda vazio). Hook ideal já existe: `PipelineObserver` em `pipeline.py`.
+- **TUI watch (F14-tui-watch-command)**: `synapse tui` como subcomando opcional usando Textual. Pré-requisito atualizado: F13 + F14 + implementação de `observability/` (diretório ainda vazio). Hook ideal já existe: `PipelineObserver` em `pipeline.py`.
 - **Constraint Typer×asyncio**: `asyncio.run(app.run_async())` dentro do comando Typer é a forma de coexistência; funcional mas exige cuidado com event loop.
 - **TTY em container**: Rich degrada automaticamente sem TTY; Textual exige guarda `sys.stdout.isatty()`.
 - **Não implementar antes**: apesar da F14 resolver a observabilidade minima via CLI, TUI real continua dependendo de recorte proprio de watch/streaming e da camada `observability/`.

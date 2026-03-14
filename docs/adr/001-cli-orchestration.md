@@ -4,7 +4,7 @@
 Aceito
 
 ## Contexto
-O AIgnt OS precisa integrar múltiplas ferramentas externas de IA com foco em eficiência de custo, flexibilidade operacional e execução local em Linux. Muitas das ferramentas-alvo já expõem CLIs utilizáveis e podem ser acessadas com menos atrito operacional do que integrações por API.
+O SynapseOS precisa integrar múltiplas ferramentas externas de IA com foco em eficiência de custo, flexibilidade operacional e execução local em Linux. Muitas das ferramentas-alvo já expõem CLIs utilizáveis e podem ser acessadas com menos atrito operacional do que integrações por API.
 
 ## Decisão
 Usar orquestração via CLI, executando ferramentas externas por subprocess, como mecanismo principal de integração.

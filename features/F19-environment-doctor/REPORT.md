@@ -2,13 +2,13 @@
 
 ## Resumo executivo
 
-- A F19 adiciona `aignt doctor` como diagnostico local pequeno para o fluxo publico atual da CLI.
+- A F19 adiciona `synapse doctor` como diagnostico local pequeno para o fluxo publico atual da CLI.
 - O recorte permaneceu local e nao mutante: checks para `runtime_state`, `runs_db` e `artifacts_dir`, com status `pass`/`warn`/`fail` e orientacao objetiva.
 - O handoff documental da etapa 2 tambem foi alinhado ao baseline real para manter a fila oficial coerente antes do PR.
 
 ## Escopo alterado
 
-- Implementacao do comando `aignt doctor` e do rendering associado em `src/aignt_os/cli/`.
+- Implementacao do comando `synapse doctor` e do rendering associado em `src/synapse_os/cli/`.
 - Testes unitarios e de integracao para o doctor.
 - Materializacao da feature em `features/F19-environment-doctor/` com `SPEC.md`, `NOTES.md`, `CHECKLIST.md` e este `REPORT.md`.
 - Alinhamento de `README.md`, `memory.md`, `PENDING_LOG.md`, `docs/architecture/PHASE_2_ROADMAP.md`, `docs/architecture/WORKTREE_FEATURES.md` e `.github/copilot-instructions.md` ao baseline da etapa 2.
@@ -17,8 +17,8 @@
 
 - `uv run --no-sync python -m pytest tests/unit/test_cli_doctor_rendering.py tests/integration/test_doctor_cli.py -q`
 - `uv run --no-sync python -m pytest tests/unit/test_cli_runs_rendering.py tests/unit/test_cli_rich_output.py tests/integration/test_runs_cli.py tests/integration/test_runtime_cli.py tests/integration/test_cli_error_model.py -q`
-- `uv run --no-sync ruff check src/aignt_os/cli/app.py src/aignt_os/cli/rendering.py tests/unit/test_cli_doctor_rendering.py tests/integration/test_doctor_cli.py`
-- `uv run --no-sync python -m mypy src/aignt_os/cli/app.py src/aignt_os/cli/rendering.py tests/unit/test_cli_doctor_rendering.py tests/integration/test_doctor_cli.py`
+- `uv run --no-sync ruff check src/synapse_os/cli/app.py src/synapse_os/cli/rendering.py tests/unit/test_cli_doctor_rendering.py tests/integration/test_doctor_cli.py`
+- `uv run --no-sync python -m mypy src/synapse_os/cli/app.py src/synapse_os/cli/rendering.py tests/unit/test_cli_doctor_rendering.py tests/integration/test_doctor_cli.py`
 - `./scripts/branch-sync-check.sh` em `feature/f19-environment-doctor` com `ahead=0 behind=0`
 
 ## Security review

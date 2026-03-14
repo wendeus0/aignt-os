@@ -2,7 +2,7 @@
 set -euo pipefail
 
 ROOT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
-SERVICE="aignt-os"
+SERVICE="synapse-os"
 SKIP_UP=1
 DRY_RUN=0
 HEALTH_TIMEOUT=30

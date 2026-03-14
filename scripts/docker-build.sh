@@ -2,16 +2,16 @@
 set -euo pipefail
 
 ROOT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
-TAG="aignt-os:dev"
+TAG="synapse-os:dev"
 USE_COMPOSE=0
 NO_CACHE=0
 DRY_RUN=0
-APP_UID="${AIGNT_OS_UID:-$(id -u)}"
-APP_GID="${AIGNT_OS_GID:-$(id -g)}"
+APP_UID="${SYNAPSE_OS_UID:-$(id -u)}"
+APP_GID="${SYNAPSE_OS_GID:-$(id -g)}"
 
 export DOCKER_CONFIG="${DOCKER_CONFIG:-$ROOT_DIR/.cache/docker/config}"
-export AIGNT_OS_UID="$APP_UID"
-export AIGNT_OS_GID="$APP_GID"
+export SYNAPSE_OS_UID="$APP_UID"
+export SYNAPSE_OS_GID="$APP_GID"
 mkdir -p "$DOCKER_CONFIG"
 
 require_docker() {
@@ -67,7 +67,7 @@ compose_cmd=(docker compose -f "$ROOT_DIR/compose.yaml" build)
 if [[ "$NO_CACHE" -eq 1 ]]; then
   compose_cmd+=(--no-cache)
 fi
-compose_cmd+=(aignt-os)
+compose_cmd+=(synapse-os)
 
 if [[ "$USE_COMPOSE" -eq 1 ]]; then
   selected_cmd=("${compose_cmd[@]}")

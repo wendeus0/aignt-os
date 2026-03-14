@@ -4,7 +4,7 @@ import pytest
 
 
 def _state_machine_module():
-    return import_module("aignt_os.state_machine")
+    return import_module("synapse_os.state_machine")
 
 
 # ---------------------------------------------------------------------------
@@ -15,7 +15,7 @@ def _state_machine_module():
 def test_state_machine_follows_minimal_happy_path_to_complete() -> None:
     state_machine_module = _state_machine_module()
 
-    machine = state_machine_module.AIgntStateMachine()
+    machine = state_machine_module.SynapseStateMachine()
 
     assert machine.current_state == "REQUEST"
 
@@ -37,7 +37,7 @@ def test_state_machine_follows_minimal_happy_path_to_complete() -> None:
 def test_state_machine_starts_at_request() -> None:
     state_machine_module = _state_machine_module()
 
-    machine = state_machine_module.AIgntStateMachine()
+    machine = state_machine_module.SynapseStateMachine()
 
     assert machine.current_state == "REQUEST"
 
@@ -50,7 +50,7 @@ def test_state_machine_starts_at_request() -> None:
 def test_state_machine_blocks_plan_before_spec_validation() -> None:
     state_machine_module = _state_machine_module()
 
-    machine = state_machine_module.AIgntStateMachine()
+    machine = state_machine_module.SynapseStateMachine()
     machine.advance_to("SPEC_DISCOVERY")
     machine.advance_to("SPEC_NORMALIZATION")
 
@@ -61,7 +61,7 @@ def test_state_machine_blocks_plan_before_spec_validation() -> None:
 def test_state_machine_rejects_invalid_transition_that_skips_flow_order() -> None:
     state_machine_module = _state_machine_module()
 
-    machine = state_machine_module.AIgntStateMachine()
+    machine = state_machine_module.SynapseStateMachine()
 
     with pytest.raises(state_machine_module.InvalidStateTransition, match="TEST_RED"):
         machine.advance_to("TEST_RED")
@@ -70,7 +70,7 @@ def test_state_machine_rejects_invalid_transition_that_skips_flow_order() -> Non
 def test_state_machine_allows_review_to_return_to_code_green() -> None:
     state_machine_module = _state_machine_module()
 
-    machine = state_machine_module.AIgntStateMachine()
+    machine = state_machine_module.SynapseStateMachine()
     for state in (
         "SPEC_DISCOVERY",
         "SPEC_NORMALIZATION",
@@ -140,7 +140,7 @@ def test_state_machine_rejects_out_of_order_transition(
 ) -> None:
     state_machine_module = _state_machine_module()
 
-    machine = state_machine_module.AIgntStateMachine()
+    machine = state_machine_module.SynapseStateMachine()
     for state in advance_before:
         machine.advance_to(state)
 
@@ -183,7 +183,7 @@ def test_state_machine_can_transition_to_failed_from_active_state(
 ) -> None:
     state_machine_module = _state_machine_module()
 
-    machine = state_machine_module.AIgntStateMachine()
+    machine = state_machine_module.SynapseStateMachine()
     for state in advance_before:
         machine.advance_to(state)
 
@@ -200,9 +200,9 @@ def test_state_machine_can_transition_to_failed_from_active_state(
 def test_state_machine_rejects_transition_after_terminal_complete() -> None:
     state_machine_module = _state_machine_module()
 
-    machine = state_machine_module.AIgntStateMachine()
+    machine = state_machine_module.SynapseStateMachine()
 
-    machine = state_machine_module.AIgntStateMachine()
+    machine = state_machine_module.SynapseStateMachine()
     for state in (
         "SPEC_DISCOVERY",
         "SPEC_NORMALIZATION",
@@ -225,7 +225,7 @@ def test_state_machine_rejects_transition_after_terminal_complete() -> None:
 def test_state_machine_rejects_any_transition_after_terminal_failed() -> None:
     state_machine_module = _state_machine_module()
 
-    machine = state_machine_module.AIgntStateMachine()
+    machine = state_machine_module.SynapseStateMachine()
     machine.fail()
 
     assert machine.current_state == "FAILED"
@@ -248,7 +248,7 @@ def test_state_machine_rejects_any_transition_after_terminal_failed() -> None:
 def test_state_machine_rejects_all_transitions_after_complete(next_state: str) -> None:
     state_machine_module = _state_machine_module()
 
-    machine = state_machine_module.AIgntStateMachine()
+    machine = state_machine_module.SynapseStateMachine()
     for state in (
         "SPEC_DISCOVERY",
         "SPEC_NORMALIZATION",
@@ -288,7 +288,7 @@ def test_state_machine_includes_quality_gate_in_linear_flow() -> None:
 def test_state_machine_transitions_from_code_green_to_quality_gate() -> None:
     state_machine_module = _state_machine_module()
 
-    machine = state_machine_module.AIgntStateMachine()
+    machine = state_machine_module.SynapseStateMachine()
     for state in (
         "SPEC_DISCOVERY",
         "SPEC_NORMALIZATION",
@@ -307,7 +307,7 @@ def test_state_machine_transitions_from_code_green_to_quality_gate() -> None:
 def test_state_machine_transitions_from_quality_gate_to_review() -> None:
     state_machine_module = _state_machine_module()
 
-    machine = state_machine_module.AIgntStateMachine()
+    machine = state_machine_module.SynapseStateMachine()
     for state in (
         "SPEC_DISCOVERY",
         "SPEC_NORMALIZATION",
@@ -328,7 +328,7 @@ def test_state_machine_cannot_skip_quality_gate_from_code_green_to_review() -> N
     """After CODE_GREEN the machine must go through QUALITY_GATE before REVIEW."""
     state_machine_module = _state_machine_module()
 
-    machine = state_machine_module.AIgntStateMachine()
+    machine = state_machine_module.SynapseStateMachine()
     for state in (
         "SPEC_DISCOVERY",
         "SPEC_NORMALIZATION",
@@ -347,7 +347,7 @@ def test_state_machine_cannot_skip_quality_gate_from_code_green_to_security() ->
     """After CODE_GREEN jumping directly to SECURITY must be rejected."""
     state_machine_module = _state_machine_module()
 
-    machine = state_machine_module.AIgntStateMachine()
+    machine = state_machine_module.SynapseStateMachine()
     for state in (
         "SPEC_DISCOVERY",
         "SPEC_NORMALIZATION",
@@ -365,7 +365,7 @@ def test_state_machine_cannot_skip_quality_gate_from_code_green_to_security() ->
 def test_state_machine_can_fail_from_quality_gate() -> None:
     state_machine_module = _state_machine_module()
 
-    machine = state_machine_module.AIgntStateMachine()
+    machine = state_machine_module.SynapseStateMachine()
     for state in (
         "SPEC_DISCOVERY",
         "SPEC_NORMALIZATION",

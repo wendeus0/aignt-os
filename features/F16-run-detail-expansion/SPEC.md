@@ -1,7 +1,7 @@
 ---
 id: F16-run-detail-expansion
 type: feature
-summary: Aprofundar o diagnostico de `aignt runs show <run_id>` para orientar o proximo passo operacional sem abrir preview de conteudo nem nova TUI.
+summary: Aprofundar o diagnostico de `synapse runs show <run_id>` para orientar o proximo passo operacional sem abrir preview de conteudo nem nova TUI.
 inputs:
   - CONTEXT.md
   - docs/architecture/SDD.md
@@ -9,23 +9,23 @@ inputs:
   - docs/architecture/SPEC_FORMAT.md
   - memory.md
   - PENDING_LOG.md
-  - src/aignt_os/cli/app.py
-  - src/aignt_os/cli/rendering.py
-  - src/aignt_os/persistence.py
+  - src/synapse_os/cli/app.py
+  - src/synapse_os/cli/rendering.py
+  - src/synapse_os/persistence.py
 outputs:
   - expanded_run_detail_rendering
   - run_detail_tests
   - feature_notes_and_checklist
 constraints:
-  - manter o AIgnt-Synapse-Flow como a engine propria de pipeline do AIgnt OS
-  - manter a superficie publica restrita ao comando existente `aignt runs show <run_id>`
+  - manter o Synapse-Flow como a engine propria de pipeline do SynapseOS
+  - manter a superficie publica restrita ao comando existente `synapse runs show <run_id>`
   - nao introduzir nova flag, novo subcomando, TUI, watch mode ou preview de conteudo de artifacts
   - reutilizar apenas `RunRepository`, `ArtifactStore` e os registros persistidos ja existentes
   - nao alterar schema SQLite nem layout de artifacts no filesystem
   - nao exigir DOCKER_PREFLIGHT, pois a frente nao depende de validacao pratica em Docker
 acceptance_criteria:
-  - "`aignt runs show <run_id>` passa a exibir um resumo de diagnostico com `status`, `current_state`, ultimo evento relevante, timestamp mais recente e orientacao objetiva de proximo passo."
-  - "Quando houver steps persistidos, `aignt runs show <run_id>` exibe paths de `raw_output` e `clean_output` associados ao step, sem ler o conteudo desses arquivos."
+  - "`synapse runs show <run_id>` passa a exibir um resumo de diagnostico com `status`, `current_state`, ultimo evento relevante, timestamp mais recente e orientacao objetiva de proximo passo."
+  - "Quando houver steps persistidos, `synapse runs show <run_id>` exibe paths de `raw_output` e `clean_output` associados ao step, sem ler o conteudo desses arquivos."
   - "A secao de eventos passa a exibir timestamp persistido para facilitar diagnostico cronologico."
   - "Existe pelo menos um teste de integracao cobrindo run `completed` e pelo menos um cobrindo run `failed` ou `pending`, verificando o resumo de diagnostico e as novas informacoes operacionais."
   - "A saida enriquecida continua legivel sem TTY e `run_id` inexistente continua falhando sem traceback cru."
@@ -44,13 +44,13 @@ dependencies:
 
 # Contexto
 
-A CLI publica ja expõe `aignt runs list`, `aignt runs show <run_id>` e `aignt runs submit <spec_path>`, enquanto o AIgnt-Synapse-Flow continua como a engine propria de pipeline do AIgnt OS. Porem, o detalhe atual de `runs show` ainda exige leitura mental excessiva: faltam resumo de diagnostico, cronologia mais clara e indicacao objetiva do proximo ponto de investigacao.
+A CLI publica ja expõe `synapse runs list`, `synapse runs show <run_id>` e `synapse runs submit <spec_path>`, enquanto o Synapse-Flow continua como a engine propria de pipeline do SynapseOS. Porem, o detalhe atual de `runs show` ainda exige leitura mental excessiva: faltam resumo de diagnostico, cronologia mais clara e indicacao objetiva do proximo ponto de investigacao.
 
 A fila oficial da etapa 2 prioriza justamente reduzir esse atrito logo apos a submissao publica. A F16 deve aprofundar a visibilidade de uma run sem abrir nova superficie publica nem antecipar preview de artifacts, que permanece reservado para a F17.
 
 # Objetivo
 
-Entregar uma expansao pequena e localizada de `aignt runs show <run_id>` para que um operador consiga identificar rapidamente onde a run esta, qual foi o ultimo sinal persistido e qual e o proximo passo operacional mais util.
+Entregar uma expansao pequena e localizada de `synapse runs show <run_id>` para que um operador consiga identificar rapidamente onde a run esta, qual foi o ultimo sinal persistido e qual e o proximo passo operacional mais util.
 
 # Escopo
 
@@ -67,12 +67,12 @@ Entregar uma expansao pequena e localizada de `aignt runs show <run_id>` para qu
 
 - preview de conteudo de artifact
 - filtros, watch mode ou streaming
-- nova flag ou novo subcomando em `aignt runs`
+- nova flag ou novo subcomando em `synapse runs`
 - mudanca em schema SQLite, `RunRepository` ou `ArtifactStore`
 
 # Requisitos funcionais
 
-1. `aignt runs show <run_id>` deve apresentar um resumo de diagnostico no topo da saida.
+1. `synapse runs show <run_id>` deve apresentar um resumo de diagnostico no topo da saida.
 2. O resumo deve incluir pelo menos:
    - `status`
    - `current_state`
@@ -103,7 +103,7 @@ Entregar uma expansao pequena e localizada de `aignt runs show <run_id>` para qu
 ## Cenario 1: run concluida com sinais persistidos
 
 - Dado uma run concluida com steps, eventos e artifacts
-- Quando `aignt runs show <run_id>` for executado
+- Quando `synapse runs show <run_id>` for executado
 - Entao a CLI exibe um resumo de diagnostico
 - E exibe o ultimo evento persistido
 - E exibe paths de `raw_output` e `clean_output`
@@ -112,7 +112,7 @@ Entregar uma expansao pequena e localizada de `aignt runs show <run_id>` para qu
 ## Cenario 2: run falha ou pendente
 
 - Dado uma run falha ou pendente com persistencia parcial
-- Quando `aignt runs show <run_id>` for executado
+- Quando `synapse runs show <run_id>` for executado
 - Entao a CLI informa o estado atual
 - E informa o proximo passo operacional recomendado
 - E continua legivel mesmo sem todos os dados opcionais
@@ -120,7 +120,7 @@ Entregar uma expansao pequena e localizada de `aignt runs show <run_id>` para qu
 ## Cenario 3: run ausente
 
 - Dado um `run_id` inexistente
-- Quando `aignt runs show <run_id>` for executado
+- Quando `synapse runs show <run_id>` for executado
 - Entao a CLI falha sem traceback cru
 - E informa que a run nao foi encontrada
 

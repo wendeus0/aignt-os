@@ -18,7 +18,7 @@ outputs:
   - post_f36_g11_alignment
   - updated_g11_local_vs_remote_baseline_docs
 constraints:
-  - "manter o AIgnt-Synapse-Flow como a engine propria de pipeline do AIgnt OS"
+  - "manter o Synapse-Flow como a engine propria de pipeline do SynapseOS"
   - "restringir a frente a docs e handoff; sem alteracao funcional de CLI, runtime, auth ou persistencia"
   - "nao introduzir nova feature de produto, transporte remoto, socket, IPC ou ADR"
   - "nao exigir DOCKER_PREFLIGHT, porque a frente nao depende de Docker, build, boot ou integracao pratica"
@@ -44,8 +44,8 @@ dependencies:
 A `F33-post-f32-handoff-sync` alinhou o baseline ao estado pos-`F32`, quando o bucket
 `resident_transport_auth` ainda tinha apenas o primeiro slice concreto absorvido. Depois
 disso, `main` incorporou a `F34`, a `F35` e a `F36`, fechando ownership local no submit,
-no consumo da fila pelo worker e na observabilidade do skip. O AIgnt-Synapse-Flow
-continua sendo a engine propria de pipeline do AIgnt OS, e nenhuma frente de transporte
+no consumo da fila pelo worker e na observabilidade do skip. O Synapse-Flow
+continua sendo a engine propria de pipeline do SynapseOS, e nenhuma frente de transporte
 remoto ou multi-host foi iniciada.
 
 Apesar disso, a documentacao central e o handoff duravel ainda pararam antes dessas

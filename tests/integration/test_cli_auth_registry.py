@@ -6,12 +6,12 @@ from pathlib import Path
 
 def _auth_env(tmp_path: Path) -> dict[str, str]:
     return {
-        "AIGNT_OS_ENVIRONMENT": "test",
-        "AIGNT_OS_RUNTIME_STATE_DIR": str(tmp_path / "runtime"),
-        "AIGNT_OS_RUNS_DB_PATH": str(tmp_path / "runs" / "runs.sqlite3"),
-        "AIGNT_OS_ARTIFACTS_DIR": str(tmp_path / "artifacts"),
-        "AIGNT_OS_WORKSPACE_ROOT": str(tmp_path),
-        "AIGNT_OS_AUTH_ENABLED": "true",
+        "SYNAPSE_OS_ENVIRONMENT": "test",
+        "SYNAPSE_OS_RUNTIME_STATE_DIR": str(tmp_path / "runtime"),
+        "SYNAPSE_OS_RUNS_DB_PATH": str(tmp_path / "runs" / "runs.sqlite3"),
+        "SYNAPSE_OS_ARTIFACTS_DIR": str(tmp_path / "artifacts"),
+        "SYNAPSE_OS_WORKSPACE_ROOT": str(tmp_path),
+        "SYNAPSE_OS_AUTH_ENABLED": "true",
     }
 
 
@@ -55,7 +55,7 @@ def test_auth_init_creates_registry_and_prints_token_once(
     cli_runner,
     cli_app,
 ) -> None:
-    auth_module = import_module("aignt_os.auth")
+    auth_module = import_module("synapse_os.auth")
 
     result = cli_runner.invoke(
         cli_app,
@@ -104,7 +104,7 @@ def test_auth_issue_creates_new_viewer_principal_when_role_is_provided(
     cli_runner,
     cli_app,
 ) -> None:
-    auth_module = import_module("aignt_os.auth")
+    auth_module = import_module("synapse_os.auth")
 
     init_result = cli_runner.invoke(
         cli_app,
@@ -114,7 +114,7 @@ def test_auth_issue_creates_new_viewer_principal_when_role_is_provided(
     admin_token = _extract_value(init_result.stdout, "Auth Token")
 
     env = _auth_env(tmp_path)
-    env["AIGNT_OS_AUTH_TOKEN"] = admin_token
+    env["SYNAPSE_OS_AUTH_TOKEN"] = admin_token
 
     issue_result = cli_runner.invoke(
         cli_app,
@@ -145,7 +145,7 @@ def test_auth_issue_rejects_role_conflict_for_existing_principal(
     admin_token = _extract_value(init_result.stdout, "Auth Token")
 
     env = _auth_env(tmp_path)
-    env["AIGNT_OS_AUTH_TOKEN"] = admin_token
+    env["SYNAPSE_OS_AUTH_TOKEN"] = admin_token
 
     cli_runner.invoke(
         cli_app,
@@ -176,7 +176,7 @@ def test_auth_disable_revokes_token_used_by_runs_submit(
     admin_token = _extract_value(init_result.stdout, "Auth Token")
 
     env = _auth_env(tmp_path)
-    env["AIGNT_OS_AUTH_TOKEN"] = admin_token
+    env["SYNAPSE_OS_AUTH_TOKEN"] = admin_token
 
     issue_result = cli_runner.invoke(
         cli_app,
@@ -195,7 +195,7 @@ def test_auth_disable_revokes_token_used_by_runs_submit(
     spec_path = tmp_path / "SPEC.md"
     _write_valid_spec(spec_path)
     submit_env = _auth_env(tmp_path)
-    submit_env["AIGNT_OS_AUTH_TOKEN"] = token
+    submit_env["SYNAPSE_OS_AUTH_TOKEN"] = token
     submit_result = cli_runner.invoke(
         cli_app,
         ["runs", "submit", str(spec_path), "--mode", "sync", "--stop-at", "SPEC_VALIDATION"],
@@ -216,8 +216,8 @@ def test_auth_init_rejects_state_dir_outside_workspace_root(
     cli_app,
 ) -> None:
     env = _auth_env(tmp_path)
-    env["AIGNT_OS_WORKSPACE_ROOT"] = str(tmp_path / "workspace")
-    env["AIGNT_OS_RUNTIME_STATE_DIR"] = str(tmp_path / "outside-runtime")
+    env["SYNAPSE_OS_WORKSPACE_ROOT"] = str(tmp_path / "workspace")
+    env["SYNAPSE_OS_RUNTIME_STATE_DIR"] = str(tmp_path / "outside-runtime")
 
     result = cli_runner.invoke(
         cli_app,

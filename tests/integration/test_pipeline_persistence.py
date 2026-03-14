@@ -40,7 +40,7 @@ def _write_invalid_spec(path: Path) -> None:
 class _PlanExecutor:
     def execute(self, step, context):  # type: ignore[no-untyped-def]
         del step, context
-        pipeline = import_module("aignt_os.pipeline")
+        pipeline = import_module("synapse_os.pipeline")
         return pipeline.StepExecutionResult(
             artifacts={"plan_md": "# Generated Plan\n"},
             raw_output="RAW PLAN\n",
@@ -55,7 +55,7 @@ class _PlanExecutor:
 def test_persisted_pipeline_records_steps_events_and_artifacts_until_plan(
     tmp_path: Path,
 ) -> None:
-    persistence = import_module("aignt_os.persistence")
+    persistence = import_module("synapse_os.persistence")
 
     spec_path = tmp_path / "SPEC.md"
     _write_valid_spec(spec_path)
@@ -94,8 +94,8 @@ def test_persisted_pipeline_records_steps_events_and_artifacts_until_plan(
 def test_persisted_pipeline_marks_failed_run_when_spec_validation_blocks_plan(
     tmp_path: Path,
 ) -> None:
-    persistence = import_module("aignt_os.persistence")
-    pipeline = import_module("aignt_os.pipeline")
+    persistence = import_module("synapse_os.persistence")
+    pipeline = import_module("synapse_os.pipeline")
 
     spec_path = tmp_path / "SPEC.md"
     _write_invalid_spec(spec_path)
@@ -127,9 +127,9 @@ def test_persisted_pipeline_marks_failed_run_when_spec_validation_blocks_plan(
 
 
 def test_persisted_pipeline_records_supervisor_decision_events(tmp_path: Path) -> None:
-    persistence = import_module("aignt_os.persistence")
-    pipeline = import_module("aignt_os.pipeline")
-    supervisor = import_module("aignt_os.supervisor")
+    persistence = import_module("synapse_os.persistence")
+    pipeline = import_module("synapse_os.pipeline")
+    supervisor = import_module("synapse_os.supervisor")
 
     spec_path = tmp_path / "SPEC.md"
     _write_valid_spec(spec_path)
@@ -194,7 +194,7 @@ def test_persisted_pipeline_records_supervisor_decision_events(tmp_path: Path) -
 
 
 def test_persisted_pipeline_generates_run_report_until_document(tmp_path: Path) -> None:
-    persistence = import_module("aignt_os.persistence")
+    persistence = import_module("synapse_os.persistence")
 
     spec_path = tmp_path / "SPEC.md"
     _write_valid_spec(spec_path)
@@ -215,7 +215,7 @@ def test_persisted_pipeline_generates_run_report_until_document(tmp_path: Path) 
 
         def execute(self, step, context):  # type: ignore[no-untyped-def]
             del step, context
-            pipeline = import_module("aignt_os.pipeline")
+            pipeline = import_module("synapse_os.pipeline")
             return pipeline.StepExecutionResult(
                 artifacts={self.artifact_name: self.content},
                 raw_output=self.content,
@@ -254,9 +254,9 @@ def test_persisted_pipeline_generates_run_report_until_document(tmp_path: Path) 
 
 
 def test_persisted_pipeline_blocks_unsafe_python_artifact_promotion(tmp_path: Path) -> None:
-    persistence = import_module("aignt_os.persistence")
-    parsing = import_module("aignt_os.parsing")
-    pipeline = import_module("aignt_os.pipeline")
+    persistence = import_module("synapse_os.persistence")
+    parsing = import_module("synapse_os.parsing")
+    pipeline = import_module("synapse_os.pipeline")
 
     spec_path = tmp_path / "SPEC.md"
     _write_valid_spec(spec_path)
@@ -304,8 +304,8 @@ def test_persisted_pipeline_blocks_unsafe_python_artifact_promotion(tmp_path: Pa
 
 
 def test_persisted_pipeline_promotes_safe_python_artifact(tmp_path: Path) -> None:
-    persistence = import_module("aignt_os.persistence")
-    pipeline = import_module("aignt_os.pipeline")
+    persistence = import_module("synapse_os.persistence")
+    pipeline = import_module("synapse_os.pipeline")
 
     spec_path = tmp_path / "SPEC.md"
     _write_valid_spec(spec_path)

@@ -1,9 +1,9 @@
 import pytest
 from typer.testing import CliRunner
 
-from aignt_os.cli.app import app
-from aignt_os.config import AppSettings
-from aignt_os.persistence import RunRepository
+from synapse_os.cli.app import app
+from synapse_os.config import AppSettings
+from synapse_os.persistence import RunRepository
 
 runner = CliRunner()
 
@@ -22,8 +22,8 @@ def app_settings(tmp_path):
 
 
 def test_cli_cancel_run_not_found(tmp_path, monkeypatch):
-    monkeypatch.setenv("AIGNT_OS_WORKSPACE_ROOT", str(tmp_path))
-    monkeypatch.setenv("AIGNT_OS_RUNS_DB_PATH", str(tmp_path / "runs.db"))
+    monkeypatch.setenv("SYNAPSE_OS_WORKSPACE_ROOT", str(tmp_path))
+    monkeypatch.setenv("SYNAPSE_OS_RUNS_DB_PATH", str(tmp_path / "runs.db"))
     result = runner.invoke(app, ["runs", "cancel", "non-existent-id"])
     print(f"STDOUT: {result.stdout}")
     print(f"STDERR: {result.stderr}")
@@ -50,8 +50,8 @@ def test_cli_cancel_pending_run(tmp_path, monkeypatch):
     )
 
     # Run cancel command
-    monkeypatch.setenv("AIGNT_OS_WORKSPACE_ROOT", str(tmp_path))
-    monkeypatch.setenv("AIGNT_OS_RUNS_DB_PATH", str(db_path))
+    monkeypatch.setenv("SYNAPSE_OS_WORKSPACE_ROOT", str(tmp_path))
+    monkeypatch.setenv("SYNAPSE_OS_RUNS_DB_PATH", str(db_path))
     result = runner.invoke(app, ["runs", "cancel", run_id])
 
     print(f"STDOUT: {result.stdout}")
@@ -84,8 +84,8 @@ def test_cli_cancel_running_run(tmp_path, monkeypatch):
     repo.acquire_lock(run_id)
 
     # Run cancel command
-    monkeypatch.setenv("AIGNT_OS_WORKSPACE_ROOT", str(tmp_path))
-    monkeypatch.setenv("AIGNT_OS_RUNS_DB_PATH", str(db_path))
+    monkeypatch.setenv("SYNAPSE_OS_WORKSPACE_ROOT", str(tmp_path))
+    monkeypatch.setenv("SYNAPSE_OS_RUNS_DB_PATH", str(db_path))
     result = runner.invoke(app, ["runs", "cancel", run_id])
 
     print(f"STDOUT: {result.stdout}")

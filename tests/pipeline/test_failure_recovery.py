@@ -1,6 +1,6 @@
 """Pipeline failure recovery tests.
 
-Tests cover failure handling in the AIgnt-Synapse-Flow pipeline engine:
+Tests cover failure handling in the Synapse-Flow pipeline engine:
 - observer notification on failure
 - exception propagation with context preservation
 - SPEC validation errors vs execution errors
@@ -50,7 +50,7 @@ def _make_spec(tmp_path: Path, content: str) -> Path:
 def _pipeline_module():
     from importlib import import_module
 
-    return import_module("aignt_os.pipeline")
+    return import_module("synapse_os.pipeline")
 
 
 class _FakeExecutor:

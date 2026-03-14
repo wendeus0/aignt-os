@@ -1,7 +1,7 @@
 ---
 id: F06-pipeline-engine-linear
 type: feature
-summary: Implementar a primeira engine linear do AIgnt-Synapse-Flow com PipelineStep, StepExecutor e PipelineEngine em fake mode até PLAN ou TEST_RED.
+summary: Implementar a primeira engine linear do Synapse-Flow com PipelineStep, StepExecutor e PipelineEngine em fake mode até PLAN ou TEST_RED.
 workspace: .
 inputs:
   - docs/architecture/SDD.md
@@ -16,7 +16,7 @@ outputs:
   - pipeline_engine_linear
   - fake_mode_pipeline_tests
 constraints:
-  - manter escopo estritamente na pipeline linear do AIgnt-Synapse-Flow
+  - manter escopo estritamente na pipeline linear do Synapse-Flow
   - reutilizar a state machine, o SpecValidator e os contratos ja existentes
   - nao implementar persistencia, worker, supervisor ou adapter real
   - nao depender de Docker, rede ou ferramentas externas reais
@@ -42,13 +42,13 @@ dependencies:
 
 # Contexto
 
-Depois da F05, o projeto ja possui os blocos minimos para subir um nivel de abstracao: validacao de SPEC, state machine linear, parser MVP e adapter base async. O proximo incremento natural do nucleo e ligar esses contratos por meio do AIgnt-Synapse-Flow, a engine propria de pipeline do AIgnt OS, em uma pipeline linear pequena e totalmente controlada.
+Depois da F05, o projeto ja possui os blocos minimos para subir um nivel de abstracao: validacao de SPEC, state machine linear, parser MVP e adapter base async. O proximo incremento natural do nucleo e ligar esses contratos por meio do Synapse-Flow, a engine propria de pipeline do SynapseOS, em uma pipeline linear pequena e totalmente controlada.
 
 Esta feature deve permanecer restrita a fake mode. O objetivo nao e orquestrar ferramentas reais ainda, e sim introduzir a primeira camada de `PipelineStep`, `StepExecutor` e `PipelineEngine` capaz de validar a SPEC e encadear hand-offs minimos para `PLAN` e `TEST_RED`.
 
 # Objetivo
 
-Entregar a primeira engine linear do AIgnt-Synapse-Flow com:
+Entregar a primeira engine linear do Synapse-Flow com:
 - contratos tipados de pipeline;
 - validacao real da SPEC no step `SPEC_VALIDATION`;
 - execucao linear controlada em fake mode;
@@ -134,4 +134,4 @@ Entregar a primeira engine linear do AIgnt-Synapse-Flow com:
 
 # Observacoes
 
-Esta feature nao implementa planner real nem writer real de testes. O fake mode existe apenas para exercitar a primeira orquestracao linear do AIgnt-Synapse-Flow. Persistencia, worker, supervisor e runtime mais completo continuam para as features seguintes.
+Esta feature nao implementa planner real nem writer real de testes. O fake mode existe apenas para exercitar a primeira orquestracao linear do Synapse-Flow. Persistencia, worker, supervisor e runtime mais completo continuam para as features seguintes.

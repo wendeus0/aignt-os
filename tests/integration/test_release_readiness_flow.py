@@ -7,11 +7,11 @@ from pathlib import Path
 
 def _release_env(tmp_path: Path) -> dict[str, str]:
     return {
-        "AIGNT_OS_ENVIRONMENT": "test",
-        "AIGNT_OS_RUNTIME_STATE_DIR": str(tmp_path / "runtime"),
-        "AIGNT_OS_RUNS_DB_PATH": str(tmp_path / "runs" / "runs.sqlite3"),
-        "AIGNT_OS_ARTIFACTS_DIR": str(tmp_path / "artifacts"),
-        "AIGNT_OS_WORKSPACE_ROOT": str(tmp_path),
+        "SYNAPSE_OS_ENVIRONMENT": "test",
+        "SYNAPSE_OS_RUNTIME_STATE_DIR": str(tmp_path / "runtime"),
+        "SYNAPSE_OS_RUNS_DB_PATH": str(tmp_path / "runs" / "runs.sqlite3"),
+        "SYNAPSE_OS_ARTIFACTS_DIR": str(tmp_path / "artifacts"),
+        "SYNAPSE_OS_WORKSPACE_ROOT": str(tmp_path),
     }
 
 
@@ -81,13 +81,13 @@ def test_phase_2_release_readiness_previews_real_persisted_run_report_via_public
     cli_runner,
     cli_app,
 ) -> None:
-    persistence = import_module("aignt_os.persistence")
+    persistence = import_module("synapse_os.persistence")
 
     spec_path = tmp_path / "SPEC.md"
     _write_valid_spec(spec_path)
     env = _release_env(tmp_path)
-    repository = persistence.RunRepository(Path(env["AIGNT_OS_RUNS_DB_PATH"]))
-    artifact_store = persistence.ArtifactStore(Path(env["AIGNT_OS_ARTIFACTS_DIR"]))
+    repository = persistence.RunRepository(Path(env["SYNAPSE_OS_RUNS_DB_PATH"]))
+    artifact_store = persistence.ArtifactStore(Path(env["SYNAPSE_OS_ARTIFACTS_DIR"]))
 
     class _FixedExecutor:
         def __init__(
@@ -103,7 +103,7 @@ def test_phase_2_release_readiness_previews_real_persisted_run_report_via_public
 
         def execute(self, step, context):  # type: ignore[no-untyped-def]
             del step, context
-            pipeline = import_module("aignt_os.pipeline")
+            pipeline = import_module("synapse_os.pipeline")
             return pipeline.StepExecutionResult(
                 artifacts={self.artifact_name: self.content},
                 raw_output=self.content,

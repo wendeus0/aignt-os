@@ -7,19 +7,19 @@ from pathlib import Path
 
 def _submit_env(tmp_path: Path) -> dict[str, str]:
     return {
-        "AIGNT_OS_ENVIRONMENT": "test",
-        "AIGNT_OS_RUNTIME_STATE_DIR": str(tmp_path / "runtime"),
-        "AIGNT_OS_RUNS_DB_PATH": str(tmp_path / "runs" / "runs.sqlite3"),
-        "AIGNT_OS_ARTIFACTS_DIR": str(tmp_path / "artifacts"),
-        "AIGNT_OS_WORKSPACE_ROOT": str(tmp_path),
+        "SYNAPSE_OS_ENVIRONMENT": "test",
+        "SYNAPSE_OS_RUNTIME_STATE_DIR": str(tmp_path / "runtime"),
+        "SYNAPSE_OS_RUNS_DB_PATH": str(tmp_path / "runs" / "runs.sqlite3"),
+        "SYNAPSE_OS_ARTIFACTS_DIR": str(tmp_path / "artifacts"),
+        "SYNAPSE_OS_WORKSPACE_ROOT": str(tmp_path),
     }
 
 
 def _runtime_env(tmp_path: Path) -> dict[str, str]:
     return {
-        "AIGNT_OS_ENVIRONMENT": "test",
-        "AIGNT_OS_RUNTIME_STATE_DIR": str(tmp_path),
-        "AIGNT_OS_WORKSPACE_ROOT": str(tmp_path),
+        "SYNAPSE_OS_ENVIRONMENT": "test",
+        "SYNAPSE_OS_RUNTIME_STATE_DIR": str(tmp_path),
+        "SYNAPSE_OS_WORKSPACE_ROOT": str(tmp_path),
     }
 
 
@@ -113,7 +113,7 @@ def test_runs_submit_unexpected_dispatch_failure_returns_execution_error_code(
     cli_runner,
     monkeypatch,
 ) -> None:
-    cli_module = import_module("aignt_os.cli.app")
+    cli_module = import_module("synapse_os.cli.app")
 
     class _BrokenDispatchService:
         def dispatch(self, *args, **kwargs):  # type: ignore[no-untyped-def]

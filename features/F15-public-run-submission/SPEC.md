@@ -9,21 +9,21 @@ inputs:
   - docs/architecture/SPEC_FORMAT.md
   - memory.md
   - PENDING_LOG.md
-  - src/aignt_os/cli/app.py
-  - src/aignt_os/runtime/dispatch.py
-  - src/aignt_os/persistence.py
+  - src/synapse_os/cli/app.py
+  - src/synapse_os/runtime/dispatch.py
+  - src/synapse_os/persistence.py
 outputs:
   - runs_submit_cli_command
   - dispatch_validation_guardrails
   - runs_submit_tests
 constraints:
-  - manter o AIgnt-Synapse-Flow como a engine propria de pipeline do AIgnt OS
+  - manter o Synapse-Flow como a engine propria de pipeline do SynapseOS
   - manter a entrada publica restrita a um caminho de SPEC explicitamente informado
   - reutilizar `RunDispatchService`, `PersistedPipelineRunner`, `RunRepository` e `RuntimeService` ja existentes
   - nao introduzir nova service layer, nova fila ou mudanca em schema SQLite
   - nao exigir TUI, watch mode, preview de artifacts ou novo modelo global de erros fora do minimo desta frente
 acceptance_criteria:
-  - "`aignt runs submit <spec_path>` submete uma SPEC valida pela CLI publica e sempre retorna pelo menos `run_id`, `status` e `mode`."
+  - "`synapse runs submit <spec_path>` submete uma SPEC valida pela CLI publica e sempre retorna pelo menos `run_id`, `status` e `mode`."
   - "Quando `--mode sync` for usado, a run e concluida inline e o resultado reporta `status=completed` e `mode=sync`."
   - "Quando `--mode async` for usado, a run e enfileirada como pendente e o resultado reporta `status=queued` e `mode=async`."
   - "Quando `--mode auto` for usado, a CLI resolve para `async` se o runtime estiver pronto e para `sync` caso contrario."
@@ -45,19 +45,19 @@ dependencies:
 
 # Contexto
 
-O projeto ja possui runtime dual, persistencia de runs e um `RunDispatchService` interno capaz de resolver dispatch `sync` ou `async`, mantendo o AIgnt-Synapse-Flow como a engine propria de pipeline do AIgnt OS. Porem, essa capacidade ainda nao esta exposta na CLI publica: hoje a superficie publica permite inspecionar runs, mas nao criar uma nova run a partir de uma SPEC.
+O projeto ja possui runtime dual, persistencia de runs e um `RunDispatchService` interno capaz de resolver dispatch `sync` ou `async`, mantendo o Synapse-Flow como a engine propria de pipeline do SynapseOS. Porem, essa capacidade ainda nao esta exposta na CLI publica: hoje a superficie publica permite inspecionar runs, mas nao criar uma nova run a partir de uma SPEC.
 
 A etapa 2 foi priorizada exatamente para fechar essa lacuna. A F15 deve abrir o caminho publico minimo de execucao sem criar nova engine ou novo modelo operacional.
 
 # Objetivo
 
-Entregar um comando publico `aignt runs submit <spec_path>` que valide a SPEC informada, resolva o modo de dispatch (`sync`, `async` ou `auto`) e retorne um contrato textual minimo, util para humanos e para captura em testes.
+Entregar um comando publico `synapse runs submit <spec_path>` que valide a SPEC informada, resolva o modo de dispatch (`sync`, `async` ou `auto`) e retorne um contrato textual minimo, util para humanos e para captura em testes.
 
 # Escopo
 
 ## Incluido
 
-- comando publico `aignt runs submit <spec_path>`
+- comando publico `synapse runs submit <spec_path>`
 - flags `--mode auto|sync|async` e `--stop-at <state>` com defaults operacionais seguros
 - validacao previa de existencia e formato minimo da SPEC
 - reutilizacao do `RunDispatchService` interno
@@ -73,7 +73,7 @@ Entregar um comando publico `aignt runs submit <spec_path>` que valide a SPEC in
 
 # Requisitos funcionais
 
-1. O comando `aignt runs submit <spec_path>` deve aceitar um path de SPEC e rejeitar caminhos ausentes.
+1. O comando `synapse runs submit <spec_path>` deve aceitar um path de SPEC e rejeitar caminhos ausentes.
 2. Antes de despachar a run, a SPEC deve passar por validacao minima de formato.
 3. O comando deve aceitar `--mode auto|sync|async`.
 4. O comando deve aceitar `--stop-at <state>` para limitar a execucao ao estado suportado informado.
@@ -106,21 +106,21 @@ Entregar um comando publico `aignt runs submit <spec_path>` que valide a SPEC in
 ## Cenario 1: submit sincrono
 
 - Dado uma SPEC valida
-- Quando `aignt runs submit <spec_path> --mode sync --stop-at SPEC_VALIDATION` for executado
+- Quando `synapse runs submit <spec_path> --mode sync --stop-at SPEC_VALIDATION` for executado
 - Entao a CLI retorna `run_id`, `status=completed` e `mode=sync`
 - E a run fica persistida com estado final coerente
 
 ## Cenario 2: submit assincrono
 
 - Dado uma SPEC valida
-- Quando `aignt runs submit <spec_path> --mode async --stop-at SPEC_VALIDATION` for executado
+- Quando `synapse runs submit <spec_path> --mode async --stop-at SPEC_VALIDATION` for executado
 - Entao a CLI retorna `run_id`, `status=queued` e `mode=async`
 - E a run fica persistida como pendente
 
 ## Cenario 3: modo auto
 
 - Dado uma SPEC valida
-- Quando `aignt runs submit <spec_path> --mode auto` for executado com runtime pronto
+- Quando `synapse runs submit <spec_path> --mode auto` for executado com runtime pronto
 - Entao a CLI resolve o dispatch para `async`
 
 - E quando o runtime nao estiver pronto
@@ -129,7 +129,7 @@ Entregar um comando publico `aignt runs submit <spec_path>` que valide a SPEC in
 ## Cenario 4: erro de input
 
 - Dado um path inexistente ou uma SPEC invalida
-- Quando `aignt runs submit <spec_path>` for executado
+- Quando `synapse runs submit <spec_path>` for executado
 - Entao a CLI falha sem traceback cru
 - E nenhuma run invalida e persistida
 

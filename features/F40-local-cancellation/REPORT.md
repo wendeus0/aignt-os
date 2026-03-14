@@ -3,11 +3,11 @@
 ## Resumo executivo
 
 - A `F40-local-cancellation` adicionou cancelamento local de runs via CLI e dashboard TUI.
-- A feature preservou o AIgnt-Synapse-Flow como a engine propria de pipeline do AIgnt OS e nao abriu fila remota, scheduler nem cancelamento distribuido.
+- A feature preservou o Synapse-Flow como a engine propria de pipeline do SynapseOS e nao abriu fila remota, scheduler nem cancelamento distribuido.
 
 ## Escopo alterado
 
-- superficie publica com `aignt runs cancel <run_id>`
+- superficie publica com `synapse runs cancel <run_id>`
 - atalho `k` no dashboard TUI para a run atualmente observada
 - persistencia de sinalizacao de cancelamento para `pending` e `running`
 

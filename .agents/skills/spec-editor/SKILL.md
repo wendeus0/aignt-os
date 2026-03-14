@@ -5,7 +5,7 @@ description: Use esta skill quando a tarefa for transformar um pedido do usuári
 
 # Objetivo
 
-Transformar um pedido do usuário em uma SPEC de feature pequena, coerente com o AIgnt OS e pronta para alimentar TDD.
+Transformar um pedido do usuário em uma SPEC de feature pequena, coerente com o SynapseOS e pronta para alimentar TDD.
 
 # Leia antes de agir
 
@@ -44,7 +44,7 @@ Não use esta skill para:
 - A SPEC deve ser pequena o suficiente para caber em 1 a 3 dias de trabalho.
 - A SPEC deve ser coerente com o MVP:
   - pipeline linear state-driven
-  - AIgnt-Synapse-Flow como engine própria de pipeline
+  - Synapse-Flow como engine própria de pipeline
   - runtime dual simples
   - memória semântica apenas advisory
   - observabilidade local

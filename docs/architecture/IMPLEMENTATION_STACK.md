@@ -1,7 +1,7 @@
-# Implementation Stack — AIgnt OS
+# Implementation Stack — SynapseOS
 
 ## Objetivo
-Registrar a stack Python recomendada para implementar o AIgnt OS conforme a arquitetura definida.
+Registrar a stack Python recomendada para implementar o SynapseOS conforme a arquitetura definida.
 
 ## MVP
 - **Python 3.12**
@@ -9,7 +9,7 @@ Registrar a stack Python recomendada para implementar o AIgnt OS conforme a arqu
 - **Typer** para CLI
 - **Rich** para UX terminal
 - **python-statemachine** para estados
-- **AIgnt-Synapse-Flow** em Python como engine própria de pipeline
+- **Synapse-Flow** em Python como engine própria de pipeline
 - **asyncio** para concorrência
 - **asyncio.create_subprocess_exec()** para execução de CLIs
 - **Pydantic v2** para contratos internos
@@ -36,7 +36,7 @@ Trade-offs:
 - exige que `repo-preflight` prepare e valide o runtime antes de `spec-editor`.
 - por isso, o preflight padrão deve permanecer leve (`compose config`), com build e runtime completo reservados para workflows ou execuções explícitas.
 
-### AIgnt-Synapse-Flow
+### Synapse-Flow
 Permite controle fino de hand-offs, retry, rollback e estágios específicos do domínio sem complexidade operacional de um orquestrador pesado.
 
 ### python-statemachine

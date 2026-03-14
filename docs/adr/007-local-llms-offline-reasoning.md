@@ -4,7 +4,7 @@
 Aceito
 
 ## Contexto
-O AIgnt OS busca eficiência de custo, resiliência parcial offline e mais privacidade para tarefas auxiliares.
+O SynapseOS busca eficiência de custo, resiliência parcial offline e mais privacidade para tarefas auxiliares.
 
 ## Decisão
 Integrar LLMs locais para tarefas de suporte, como sumarização semântica, explicações, extração de padrões e geração de commit messages.

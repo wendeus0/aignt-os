@@ -47,7 +47,7 @@ Não use esta skill para:
 ```bash
 uv run --no-sync python -c "
 from pathlib import Path
-from aignt_os.specs.validator import validate_spec_file
+from synapse_os.specs.validator import validate_spec_file
 result = validate_spec_file(Path('features/<feature>/SPEC.md'))
 print(result)
 "

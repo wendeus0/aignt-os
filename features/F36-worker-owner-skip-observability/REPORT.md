@@ -3,7 +3,7 @@
 ## Resumo executivo
 
 - A `F36-worker-owner-skip-observability` torna auditavel quando o worker autenticado do runtime residente pula uma run pendente de outro principal por mismatch de ownership.
-- O evento `runtime_owner_skip` passa a ser persistido na propria run incompatível, preservando o AIgnt-Synapse-Flow como a engine propria de pipeline do AIgnt OS.
+- O evento `runtime_owner_skip` passa a ser persistido na propria run incompatível, preservando o Synapse-Flow como a engine propria de pipeline do SynapseOS.
 - O recorte permaneceu local-only: sem mudanca de CLI publica, sem schema novo e sem transporte remoto.
 
 ## Escopo alterado
@@ -18,9 +18,9 @@
 ## Validacoes executadas
 
 - `validate_spec_file(Path('features/F36-worker-owner-skip-observability/SPEC.md'))`
-- `env UV_CACHE_DIR=/home/g0dsssp33d/work/projects/aignt-os/.cache/uv uv run --no-sync python -m pytest tests/unit/test_worker_runtime.py tests/integration/test_worker_runtime_flow.py -q`
-- `env UV_CACHE_DIR=/home/g0dsssp33d/work/projects/aignt-os/.cache/uv uv run --no-sync ruff check src/aignt_os/runtime/worker.py src/aignt_os/persistence.py tests/unit/test_worker_runtime.py tests/integration/test_worker_runtime_flow.py`
-- `env UV_CACHE_DIR=/home/g0dsssp33d/work/projects/aignt-os/.cache/uv uv run --no-sync python -m mypy src/aignt_os/runtime/worker.py src/aignt_os/persistence.py`
+- `env UV_CACHE_DIR=/home/g0dsssp33d/work/projects/synapse-os/.cache/uv uv run --no-sync python -m pytest tests/unit/test_worker_runtime.py tests/integration/test_worker_runtime_flow.py -q`
+- `env UV_CACHE_DIR=/home/g0dsssp33d/work/projects/synapse-os/.cache/uv uv run --no-sync ruff check src/synapse_os/runtime/worker.py src/synapse_os/persistence.py tests/unit/test_worker_runtime.py tests/integration/test_worker_runtime_flow.py`
+- `env UV_CACHE_DIR=/home/g0dsssp33d/work/projects/synapse-os/.cache/uv uv run --no-sync python -m mypy src/synapse_os/runtime/worker.py src/synapse_os/persistence.py`
 - `./scripts/commit-check.sh --no-sync --skip-branch-validation --skip-docker --skip-security`
 - `./scripts/security-gate.sh`
 

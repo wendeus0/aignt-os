@@ -11,4 +11,4 @@ build/
 *.db
 artifacts/
 .worktrees/
-.aignt-os/
+.synapse-os/

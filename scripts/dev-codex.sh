@@ -8,10 +8,10 @@ START_RUNTIME=0
 BUILD=0
 
 export DOCKER_CONFIG="${DOCKER_CONFIG:-$ROOT_DIR/.cache/docker/config}"
-export AIGNT_DEV_UID="${AIGNT_DEV_UID:-$(id -u)}"
-export AIGNT_DEV_GID="${AIGNT_DEV_GID:-$(id -g)}"
-export AIGNT_OS_UID="${AIGNT_OS_UID:-$(id -u)}"
-export AIGNT_OS_GID="${AIGNT_OS_GID:-$(id -g)}"
+export SYNAPSE_DEV_UID="${SYNAPSE_DEV_UID:-$(id -u)}"
+export SYNAPSE_DEV_GID="${SYNAPSE_DEV_GID:-$(id -g)}"
+export SYNAPSE_OS_UID="${SYNAPSE_OS_UID:-$(id -u)}"
+export SYNAPSE_OS_GID="${SYNAPSE_OS_GID:-$(id -g)}"
 
 mkdir -p "$DOCKER_CONFIG"
 
@@ -66,7 +66,7 @@ if [[ "$BUILD" -eq 1 ]]; then
 fi
 
 if [[ "$START_RUNTIME" -eq 1 ]]; then
-  up_cmd+=(aignt-os "$SERVICE")
+  up_cmd+=(synapse-os "$SERVICE")
 else
   up_cmd+=("$SERVICE")
 fi

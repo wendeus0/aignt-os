@@ -1,4 +1,4 @@
-# Worktree de Features — AIgnt OS
+# Worktree de Features — SynapseOS
 
 ## Objetivo
 Organizar o desenvolvimento do projeto em features pequenas, isoladas por branch/worktree, seguindo a esteira definida no SDD e a ordem recomendada no TDD.
@@ -7,7 +7,7 @@ Organizar o desenvolvimento do projeto em features pequenas, isoladas por branch
 - Trabalhar **uma feature por vez**.
 - Cada feature deve ter sua própria `SPEC.md`.
 - Nenhuma feature entra em código antes da SPEC e dos testes mínimos.
-- O MVP de 10 dias deve priorizar **núcleo funcional**: SPEC, state machine, parser, adapter base, AIgnt-Synapse-Flow linear como engine própria de pipeline, persistência, worker leve e `RUN_REPORT.md`.
+- O MVP de 10 dias deve priorizar **núcleo funcional**: SPEC, state machine, parser, adapter base, Synapse-Flow linear como engine própria de pipeline, persistência, worker leve e `RUN_REPORT.md`.
 - Adapters reais ficam limitados a **1 adapter real prioritário** no prazo de 10 dias.
 
 ## Sequência recomendada de features do MVP inicial
@@ -37,7 +37,7 @@ Organizar o desenvolvimento do projeto em features pequenas, isoladas por branch
 **Entrega:** `BaseCLIAdapter`, `CLIExecutionResult`, timeout e sanitização.
 **Branch/worktree:** `feature/f05-cli-adapter-base`
 
-### F06 — AIgnt-Synapse-Flow Linear
+### F06 — Synapse-Flow Linear
 **Objetivo:** executar a esteira linear com step executor e hand-offs mínimos.
 **Entrega:** `PipelineStep`, `StepExecutor`, `PipelineEngine`, fluxo até `PLAN` ou fluxo completo em fake mode.
 **Branch/worktree:** `feature/f06-pipeline-engine-linear`
@@ -76,17 +76,17 @@ Organizar o desenvolvimento do projeto em features pequenas, isoladas por branch
 
 ### F13 — Rich CLI Output
 **Objetivo:** melhorar a UX inicial da CLI sem abrir TUI.
-**Entrega:** saída enriquecida com Rich para `aignt runtime status`.
+**Entrega:** saída enriquecida com Rich para `synapse runtime status`.
 **Branch/worktree:** `feature/f13-rich-cli-output`
 
 ### F14 — Runs Observability CLI
 **Objetivo:** expor inspeção pública de runs persistidas.
-**Entrega:** `aignt runs list` e `aignt runs show <run_id>`.
+**Entrega:** `synapse runs list` e `synapse runs show <run_id>`.
 **Branch/worktree:** `feature/f14-runs-observability-cli`
 
 ### F15 — Public Run Submission
 **Objetivo:** expor submissao publica de runs pela CLI a partir de uma SPEC validada.
-**Entrega:** `aignt runs submit <spec_path>` com `--mode auto|sync|async` e `--stop-at`.
+**Entrega:** `synapse runs submit <spec_path>` com `--mode auto|sync|async` e `--stop-at`.
 **Branch/worktree:** `feature/f15-public-run-submission`
 
 ## Etapa 2 concluída

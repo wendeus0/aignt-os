@@ -1,7 +1,7 @@
 ---
 id: F13-rich-cli-output
 type: feature
-summary: Enriquecer a saida do comando `aignt runtime status` com Rich, mantendo o recorte pequeno e sem abrir uma TUI.
+summary: Enriquecer a saida do comando `synapse runtime status` com Rich, mantendo o recorte pequeno e sem abrir uma TUI.
 inputs:
   - CONTEXT.md
   - docs/architecture/SDD.md
@@ -9,25 +9,25 @@ inputs:
   - docs/architecture/SPEC_FORMAT.md
   - memory.md
   - PENDING_LOG.md
-  - src/aignt_os/cli/app.py
+  - src/synapse_os/cli/app.py
 outputs:
   - rich_runtime_status_output
   - cli_rendering_helper
   - runtime_status_tests
 constraints:
-  - manter o AIgnt-Synapse-Flow como engine propria de pipeline do AIgnt OS
-  - manter o recorte limitado ao comando `aignt runtime status`
+  - manter o Synapse-Flow como engine propria de pipeline do SynapseOS
+  - manter o recorte limitado ao comando `synapse runtime status`
   - nao introduzir Textual, watch mode ou nova TUI
   - nao alterar o comportamento operacional do runtime nem o contrato de erro
   - nao exigir DOCKER_PREFLIGHT, pois a frente nao depende de validacao pratica em Docker
 acceptance_criteria:
-  - "`aignt runtime status` usa Rich para apresentar o estado do runtime em formato mais legivel do que a linha crua atual."
+  - "`synapse runtime status` usa Rich para apresentar o estado do runtime em formato mais legivel do que a linha crua atual."
   - "Existe pelo menos um teste de integracao cobrindo a saida enriquecida do comando para runtime em execucao."
   - "Existe pelo menos um teste cobrindo o caso inconsistente sem perder a saida em `stderr` nem o exit code de falha."
   - "A saida enriquecida continua utilizavel em ambiente sem TTY e em captura de testes."
   - "A frente nao amplia a CLI publica nem adiciona dependencia nova."
 non_goals:
-  - criar `aignt tui`
+  - criar `synapse tui`
   - enriquecer todos os comandos da CLI na mesma feature
   - mudar o lifecycle do runtime
   - adicionar observabilidade nova ou watch mode
@@ -41,13 +41,13 @@ dependencies:
 
 # Contexto
 
-O MVP inicial ja entrega runtime persistente minimo, worker leve e o AIgnt-Synapse-Flow como a engine propria de pipeline do AIgnt OS. Porem, a CLI ainda apresenta `aignt runtime status` com `typer.echo()` em formato cru, suficiente para maquina mas pouco legivel para uso operacional diario.
+O MVP inicial ja entrega runtime persistente minimo, worker leve e o Synapse-Flow como a engine propria de pipeline do SynapseOS. Porem, a CLI ainda apresenta `synapse runtime status` com `typer.echo()` em formato cru, suficiente para maquina mas pouco legivel para uso operacional diario.
 
 Rich ja faz parte da stack de producao do projeto e ainda nao foi usado no codigo de `src/`. Isso abre uma frente pequena e de baixo risco para melhorar UX de terminal sem alterar arquitetura, sem dependencias novas e sem abrir uma TUI completa.
 
 # Objetivo
 
-Entregar a primeira saida CLI enriquecida com Rich no projeto, restrita ao comando `aignt runtime status`, preservando a semantica atual de sucesso e falha e garantindo boa degradacao fora de TTY.
+Entregar a primeira saida CLI enriquecida com Rich no projeto, restrita ao comando `synapse runtime status`, preservando a semantica atual de sucesso e falha e garantindo boa degradacao fora de TTY.
 
 # Escopo
 
@@ -67,7 +67,7 @@ Entregar a primeira saida CLI enriquecida com Rich no projeto, restrita ao coman
 
 # Requisitos funcionais
 
-1. O comando `aignt runtime status` deve continuar refletindo o estado real do runtime.
+1. O comando `synapse runtime status` deve continuar refletindo o estado real do runtime.
 2. Quando o runtime estiver em execucao, a saida deve exibir o status de forma enriquecida e incluir o PID persistido.
 3. Quando o runtime estiver inconsistente, a saida enriquecida deve continuar indo para `stderr` e o comando deve continuar encerrando com codigo de falha.
 4. O comando nao deve depender de TTY para produzir saida legivel.
@@ -89,14 +89,14 @@ Entregar a primeira saida CLI enriquecida com Rich no projeto, restrita ao coman
 ## Cenario 1: runtime em execucao
 
 - Dado um runtime ativo
-- Quando `aignt runtime status` for executado
+- Quando `synapse runtime status` for executado
 - Entao a CLI exibe uma saida enriquecida com Rich
 - E a saida inclui pelo menos o status e o PID
 
 ## Cenario 2: runtime inconsistente
 
 - Dado um estado persistido inconsistente
-- Quando `aignt runtime status` for executado
+- Quando `synapse runtime status` for executado
 - Entao a saida enriquecida e emitida em `stderr`
 - E o comando falha com exit code diferente de zero
 

@@ -9,8 +9,8 @@
 ## Validacoes executadas
 
 - `uv run --no-sync pytest tests/integration/test_runs_submit_cli.py tests/integration/test_runs_cli.py tests/unit/test_cli_runs_rendering.py`
-- `uv run --no-sync ruff check src/aignt_os/cli/rendering.py tests/integration/test_runs_submit_cli.py tests/unit/test_cli_runs_rendering.py`
-- `uv run --no-sync python -m mypy src/aignt_os/cli/rendering.py`
+- `uv run --no-sync ruff check src/synapse_os/cli/rendering.py tests/integration/test_runs_submit_cli.py tests/unit/test_cli_runs_rendering.py`
+- `uv run --no-sync python -m mypy src/synapse_os/cli/rendering.py`
 - `./scripts/security-gate.sh`
 
 ## Riscos residuais

@@ -8,8 +8,8 @@ from typing import Annotated
 import typer
 from sqlalchemy.exc import NoResultFound
 
-from aignt_os import __version__
-from aignt_os.auth import (
+from synapse_os import __version__
+from synapse_os.auth import (
     AuthConfigurationError,
     AuthRegistryStore,
     Permission,
@@ -17,7 +17,7 @@ from aignt_os.auth import (
     get_auth_provider,
     is_authorized,
 )
-from aignt_os.cli.errors import (
+from synapse_os.cli.errors import (
     CLIError,
     authentication_error,
     authorization_error,
@@ -28,7 +28,7 @@ from aignt_os.cli.errors import (
     usage_error,
     validation_error,
 )
-from aignt_os.cli.rendering import (
+from synapse_os.cli.rendering import (
     RunArtifactPreview,
     render_environment_doctor,
     render_run_detail,
@@ -36,20 +36,20 @@ from aignt_os.cli.rendering import (
     render_runs_list,
     render_runtime_status,
 )
-from aignt_os.config import AppSettings
-from aignt_os.persistence import ArtifactStore, PersistedPipelineRunner, RunRepository
-from aignt_os.pipeline import PIPELINE_STOP_STATES
-from aignt_os.runtime.dispatch import (
+from synapse_os.config import AppSettings
+from synapse_os.persistence import ArtifactStore, PersistedPipelineRunner, RunRepository
+from synapse_os.pipeline import PIPELINE_STOP_STATES
+from synapse_os.runtime.dispatch import (
     AsyncDispatchOwnershipError,
     AsyncDispatchRuntimeUnavailableError,
     RunDispatchService,
 )
-from aignt_os.runtime.service import RuntimeLifecycleError, RuntimeService
-from aignt_os.runtime.worker import build_runtime_worker
-from aignt_os.security import resolve_path_within_root
-from aignt_os.specs import SpecValidationError
+from synapse_os.runtime.service import RuntimeLifecycleError, RuntimeService
+from synapse_os.runtime.worker import build_runtime_worker
+from synapse_os.security import resolve_path_within_root
+from synapse_os.specs import SpecValidationError
 
-app = typer.Typer(help="AIgnt OS CLI")
+app = typer.Typer(help="SynapseOS CLI")
 runtime_app = typer.Typer(help="Manage the minimal persistent runtime.")
 runs_app = typer.Typer(help="Inspect persisted runs and artifacts.")
 auth_app = typer.Typer(help="Manage the local auth registry.")
@@ -147,9 +147,9 @@ def _persistence_doctor_check(
         else "Run persistence path can be prepared by the current process."
     )
     next_step = (
-        "Inspect persisted outputs with `aignt runs show <run_id>` after a successful run."
+        "Inspect persisted outputs with `synapse runs show <run_id>` after a successful run."
         if expects_directory
-        else "You can submit a run with `aignt runs submit`."
+        else "You can submit a run with `synapse runs submit`."
     )
     return _doctor_check(
         name=name,
@@ -463,7 +463,7 @@ def auth_issue(
     role: Annotated[str | None, typer.Option("--role")] = None,
     auth_token: Annotated[
         str | None,
-        typer.Option("--auth-token", envvar="AIGNT_OS_AUTH_TOKEN"),
+        typer.Option("--auth-token", envvar="SYNAPSE_OS_AUTH_TOKEN"),
     ] = None,
 ) -> None:
     try:
@@ -492,7 +492,7 @@ def auth_disable(
     token_id: Annotated[str, typer.Option("--token-id")] = "",
     auth_token: Annotated[
         str | None,
-        typer.Option("--auth-token", envvar="AIGNT_OS_AUTH_TOKEN"),
+        typer.Option("--auth-token", envvar="SYNAPSE_OS_AUTH_TOKEN"),
     ] = None,
 ) -> None:
     try:
@@ -515,7 +515,7 @@ def auth_disable(
 def runtime_start(
     auth_token: Annotated[
         str | None,
-        typer.Option("--auth-token", envvar="AIGNT_OS_AUTH_TOKEN"),
+        typer.Option("--auth-token", envvar="SYNAPSE_OS_AUTH_TOKEN"),
     ] = None,
 ) -> None:
     try:
@@ -549,7 +549,7 @@ def runtime_status() -> None:
 def runtime_run(
     auth_token: Annotated[
         str | None,
-        typer.Option("--auth-token", envvar="AIGNT_OS_AUTH_TOKEN"),
+        typer.Option("--auth-token", envvar="SYNAPSE_OS_AUTH_TOKEN"),
     ] = None,
     process_identity: Annotated[
         str | None,
@@ -564,13 +564,13 @@ def runtime_run(
     if process_identity is None:
         exec_env = os.environ.copy()
         if auth_token is not None:
-            exec_env["AIGNT_OS_AUTH_TOKEN"] = auth_token
+            exec_env["SYNAPSE_OS_AUTH_TOKEN"] = auth_token
         os.execvpe(
             sys.executable,
             [
                 sys.executable,
                 "-c",
-                "from aignt_os.cli.app import app; app()",
+                "from synapse_os.cli.app import app; app()",
                 "runtime",
                 "run",
                 "--process-identity",
@@ -606,7 +606,7 @@ def runtime_ready() -> None:
 def runtime_stop(
     auth_token: Annotated[
         str | None,
-        typer.Option("--auth-token", envvar="AIGNT_OS_AUTH_TOKEN"),
+        typer.Option("--auth-token", envvar="SYNAPSE_OS_AUTH_TOKEN"),
     ] = None,
 ) -> None:
     try:
@@ -638,13 +638,13 @@ def watch(
     refresh: float = typer.Option(1.0, help="Refresh interval in seconds"),
     auth_token: Annotated[
         str | None,
-        typer.Option("--auth-token", envvar="AIGNT_OS_AUTH_TOKEN"),
+        typer.Option("--auth-token", envvar="SYNAPSE_OS_AUTH_TOKEN"),
     ] = None,
 ) -> None:
     """
     Monitor a run in real-time using a TUI dashboard.
     """
-    from aignt_os.cli.dashboard import RunDashboard
+    from synapse_os.cli.dashboard import RunDashboard
 
     try:
         _resolve_principal_id(permission="run:read", auth_token=auth_token)
@@ -666,7 +666,7 @@ def watch(
 def runs_list(
     auth_token: Annotated[
         str | None,
-        typer.Option("--auth-token", envvar="AIGNT_OS_AUTH_TOKEN"),
+        typer.Option("--auth-token", envvar="SYNAPSE_OS_AUTH_TOKEN"),
     ] = None,
 ) -> None:
     try:
@@ -699,7 +699,7 @@ def runs_submit(
     stop_at: Annotated[str, typer.Option("--stop-at")] = "SPEC_VALIDATION",
     auth_token: Annotated[
         str | None,
-        typer.Option("--auth-token", envvar="AIGNT_OS_AUTH_TOKEN"),
+        typer.Option("--auth-token", envvar="SYNAPSE_OS_AUTH_TOKEN"),
     ] = None,
 ) -> None:
     try:
@@ -737,7 +737,7 @@ def runs_cancel(
     run_id: str,
     auth_token: Annotated[
         str | None,
-        typer.Option("--auth-token", envvar="AIGNT_OS_AUTH_TOKEN"),
+        typer.Option("--auth-token", envvar="SYNAPSE_OS_AUTH_TOKEN"),
     ] = None,
 ) -> None:
     """
@@ -775,7 +775,7 @@ def runs_show(
     preview: Annotated[str | None, typer.Option("--preview")] = None,
     auth_token: Annotated[
         str | None,
-        typer.Option("--auth-token", envvar="AIGNT_OS_AUTH_TOKEN"),
+        typer.Option("--auth-token", envvar="SYNAPSE_OS_AUTH_TOKEN"),
     ] = None,
 ) -> None:
     try:

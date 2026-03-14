@@ -16,7 +16,7 @@ outputs:
   - repo_checks_green
   - post_f30_handoff_sync
 constraints:
-  - "manter o AIgnt-Synapse-Flow como a engine propria de pipeline do AIgnt OS"
+  - "manter o Synapse-Flow como a engine propria de pipeline do SynapseOS"
   - "corrigir apenas a divida confirmada de formatacao e o handoff pos-F30"
   - "nao alterar workflow, scripts operacionais ou contrato publico da CLI"
   - "nao introduzir nova feature de produto, auth remota ou qualquer recorte de G-11"

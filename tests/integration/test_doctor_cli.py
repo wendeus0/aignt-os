@@ -6,11 +6,11 @@ from pathlib import Path
 
 def _doctor_env(tmp_path: Path) -> dict[str, str]:
     return {
-        "AIGNT_OS_ENVIRONMENT": "test",
-        "AIGNT_OS_RUNTIME_STATE_DIR": str(tmp_path / "runtime"),
-        "AIGNT_OS_RUNS_DB_PATH": str(tmp_path / "runs" / "runs.sqlite3"),
-        "AIGNT_OS_ARTIFACTS_DIR": str(tmp_path / "artifacts"),
-        "AIGNT_OS_WORKSPACE_ROOT": str(tmp_path),
+        "SYNAPSE_OS_ENVIRONMENT": "test",
+        "SYNAPSE_OS_RUNTIME_STATE_DIR": str(tmp_path / "runtime"),
+        "SYNAPSE_OS_RUNS_DB_PATH": str(tmp_path / "runs" / "runs.sqlite3"),
+        "SYNAPSE_OS_ARTIFACTS_DIR": str(tmp_path / "artifacts"),
+        "SYNAPSE_OS_WORKSPACE_ROOT": str(tmp_path),
     }
 
 
@@ -65,10 +65,10 @@ def test_doctor_returns_environment_error_when_runs_db_parent_is_not_writable(
     blocked_parent.write_text("not a directory", encoding="utf-8")
 
     env = {
-        "AIGNT_OS_ENVIRONMENT": "test",
-        "AIGNT_OS_RUNTIME_STATE_DIR": str(tmp_path / "runtime"),
-        "AIGNT_OS_RUNS_DB_PATH": str(blocked_parent / "runs.sqlite3"),
-        "AIGNT_OS_ARTIFACTS_DIR": str(tmp_path / "artifacts"),
+        "SYNAPSE_OS_ENVIRONMENT": "test",
+        "SYNAPSE_OS_RUNTIME_STATE_DIR": str(tmp_path / "runtime"),
+        "SYNAPSE_OS_RUNS_DB_PATH": str(blocked_parent / "runs.sqlite3"),
+        "SYNAPSE_OS_ARTIFACTS_DIR": str(tmp_path / "artifacts"),
     }
 
     result = cli_runner.invoke(cli_app, ["doctor"], env=env)
@@ -87,8 +87,8 @@ def test_doctor_returns_environment_error_when_persistence_paths_escape_workspac
     cli_app,
 ) -> None:
     env = _doctor_env(tmp_path)
-    env["AIGNT_OS_RUNS_DB_PATH"] = str((tmp_path / ".." / "outside" / "runs.sqlite3").resolve())
-    env["AIGNT_OS_ARTIFACTS_DIR"] = str((tmp_path / ".." / "outside-artifacts").resolve())
+    env["SYNAPSE_OS_RUNS_DB_PATH"] = str((tmp_path / ".." / "outside" / "runs.sqlite3").resolve())
+    env["SYNAPSE_OS_ARTIFACTS_DIR"] = str((tmp_path / ".." / "outside-artifacts").resolve())
 
     result = cli_runner.invoke(cli_app, ["doctor"], env=env)
 

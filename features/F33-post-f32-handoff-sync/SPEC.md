@@ -17,7 +17,7 @@ outputs:
   - post_f32_handoff_alignment
   - updated_g11_resident_auth_baseline_docs
 constraints:
-  - "manter o AIgnt-Synapse-Flow como a engine propria de pipeline do AIgnt OS"
+  - "manter o Synapse-Flow como a engine propria de pipeline do SynapseOS"
   - "restringir a frente a handoff e backlog docs; sem alteracao funcional de CLI, runtime ou auth"
   - "nao introduzir nova feature de produto, socket, IPC, transporte remoto ou ADR"
   - "nao exigir DOCKER_PREFLIGHT, porque a frente nao depende de Docker, build, boot ou integracao pratica"
@@ -41,7 +41,7 @@ dependencies:
 
 A `F31-g11-remote-auth-decomposition` removeu a ambiguidade de `G-11` e a `F32-runtime-resident-principal-binding`
 entregou o primeiro slice concreto do bucket `resident_transport_auth` no baseline atual.
-O AIgnt-Synapse-Flow continua sendo a engine propria de pipeline do AIgnt OS, e o runtime
+O Synapse-Flow continua sendo a engine propria de pipeline do SynapseOS, e o runtime
 segue local-only, sem socket, IPC autenticado ou operacao entre hosts.
 
 Apesar disso, o handoff operacional ainda parou antes da `F32`: `PENDING_LOG.md`,

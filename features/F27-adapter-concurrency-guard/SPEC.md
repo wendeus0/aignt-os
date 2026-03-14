@@ -8,14 +8,14 @@ inputs:
   - docs/architecture/TDD.md
   - docs/architecture/SPEC_FORMAT.md
   - docs/IDEAS.md
-  - src/aignt_os/adapters.py
-  - src/aignt_os/config.py
+  - src/synapse_os/adapters.py
+  - src/synapse_os/config.py
 outputs:
   - adapter_concurrency_guard
   - adapter_config_contract
   - feature_notes
 constraints:
-  - "manter o AIgnt-Synapse-Flow como a engine propria de pipeline do AIgnt OS"
+  - "manter o Synapse-Flow como a engine propria de pipeline do SynapseOS"
   - "trabalhar apenas o recorte de G-07"
   - "nao implementar circuit breaker persistido, estado entre runs ou G-09 nesta frente"
   - "nao alterar o contrato publico da CLI nem exigir novo subcomando"
@@ -48,7 +48,7 @@ dependencies:
 
 Depois da F26, o proximo gap logico da IDEA-001 ainda aberto no runtime atual fica na protecao contra excesso de subprocessos no adapter layer. Hoje `BaseCLIAdapter.execute()` abre o subprocesso diretamente e nao existe nenhum guard compartilhado por processo para limitar quantas chamadas de adapters podem entrar ao mesmo tempo.
 
-No shape atual do repositório, ainda nao existe uma camada de coordenacao robusta o bastante para justificar circuit breaker persistido entre runs. O menor recorte util e coerente com o MVP e adicionar apenas o limite de concorrencia local no processo, preservando o AIgnt-Synapse-Flow como a engine propria de pipeline do AIgnt OS e sem reabrir o runtime dual.
+No shape atual do repositório, ainda nao existe uma camada de coordenacao robusta o bastante para justificar circuit breaker persistido entre runs. O menor recorte util e coerente com o MVP e adicionar apenas o limite de concorrencia local no processo, preservando o Synapse-Flow como a engine propria de pipeline do SynapseOS e sem reabrir o runtime dual.
 
 # Objetivo
 

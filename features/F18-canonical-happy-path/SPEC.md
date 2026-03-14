@@ -8,8 +8,8 @@ inputs:
   - docs/architecture/TDD.md
   - docs/architecture/SPEC_FORMAT.md
   - docs/architecture/PHASE_2_ROADMAP.md
-  - src/aignt_os/cli/app.py
-  - src/aignt_os/cli/rendering.py
+  - src/synapse_os/cli/app.py
+  - src/synapse_os/cli/rendering.py
   - tests/integration/test_runs_submit_cli.py
   - tests/integration/test_runs_cli.py
 outputs:
@@ -17,15 +17,15 @@ outputs:
   - canonical_cli_flow_tests
   - feature_notes_and_checklist
 constraints:
-  - manter o AIgnt-Synapse-Flow como a engine propria de pipeline do AIgnt OS
+  - manter o Synapse-Flow como a engine propria de pipeline do SynapseOS
   - manter o recorte restrito a um fluxo sincrono, auditavel e reproduzivel pela CLI publica ja existente
-  - reutilizar apenas `aignt runs submit <spec_path>` e `aignt runs show <run_id>` como superficie publica obrigatoria do caminho canonico
+  - reutilizar apenas `synapse runs submit <spec_path>` e `synapse runs show <run_id>` como superficie publica obrigatoria do caminho canonico
   - nao introduzir novo subcomando, nova flag publica, TUI, watch mode, preview de artifact, schema SQLite novo ou runtime paralelo adicional
   - nao exigir DOCKER_PREFLIGHT nesta frente, porque o recorte default nao depende de Docker, boot completo de runtime nem integracao em container
 acceptance_criteria:
-  - "Existe um caminho canonico documentado pela feature em que `aignt runs submit <spec_path> --mode sync --stop-at SPEC_VALIDATION` conclui a run inline e retorna pelo menos `run_id`, `status=completed` e `mode=sync`."
+  - "Existe um caminho canonico documentado pela feature em que `synapse runs submit <spec_path> --mode sync --stop-at SPEC_VALIDATION` conclui a run inline e retorna pelo menos `run_id`, `status=completed` e `mode=sync`."
   - "No recorte da F18, o sucesso terminal do happy path e definido explicitamente como `status=completed` com `current_state=SPEC_VALIDATION`, sem exigir execucao publica alem desse ponto."
-  - "Apos a submissao bem-sucedida, `aignt runs show <run_id>` exibe sinais suficientes para auditoria do happy path: `status`, `current_state`, ultimo sinal relevante, `spec_path` e referencias a dados persistidos da run."
+  - "Apos a submissao bem-sucedida, `synapse runs show <run_id>` exibe sinais suficientes para auditoria do happy path: `status`, `current_state`, ultimo sinal relevante, `spec_path` e referencias a dados persistidos da run."
   - "Existe pelo menos um teste de integracao cobrindo a sequencia canonica completa da CLI publica: submeter uma SPEC valida em `sync`, capturar o `run_id` retornado e inspecionar a mesma run com `runs show`."
   - "A feature define explicitamente os pre-requisitos minimos da demonstracao e deixa fora de escopo runtime persistente, doctor de ambiente, onboarding publico e qualquer variante assincrona como caminho oficial primario."
 non_goals:
@@ -45,13 +45,13 @@ dependencies:
 
 # Contexto
 
-Depois de F15, F16 e F21, a CLI publica do AIgnt OS ja permite submeter uma SPEC valida, concluir uma run sincronamente no menor recorte suportado e inspecionar a run persistida. O AIgnt-Synapse-Flow continua sendo a engine propria de pipeline do AIgnt OS, mas ainda falta consolidar qual sequencia de comandos representa o happy path oficial da etapa 2.
+Depois de F15, F16 e F21, a CLI publica do SynapseOS ja permite submeter uma SPEC valida, concluir uma run sincronamente no menor recorte suportado e inspecionar a run persistida. O Synapse-Flow continua sendo a engine propria de pipeline do SynapseOS, mas ainda falta consolidar qual sequencia de comandos representa o happy path oficial da etapa 2.
 
 A lacuna atual nao e de capacidade tecnica isolada, e sim de contrato operacional: sem uma definicao canonica, a demonstracao publica da ferramenta continua dispersa entre comandos existentes, defaults implicitos e variantes que aumentam custo de validacao sem necessidade.
 
 # Objetivo
 
-Definir o menor caminho publico, reproduzivel e auditavel de ponta a ponta para demonstrar sucesso na CLI do AIgnt OS: submeter uma SPEC valida em modo sincrono, obter uma run concluida e inspecionar essa run com `aignt runs show <run_id>`.
+Definir o menor caminho publico, reproduzivel e auditavel de ponta a ponta para demonstrar sucesso na CLI do SynapseOS: submeter uma SPEC valida em modo sincrono, obter uma run concluida e inspecionar essa run com `synapse runs show <run_id>`.
 
 # Escopo
 
@@ -74,14 +74,14 @@ Definir o menor caminho publico, reproduzivel e auditavel de ponta a ponta para 
 # Requisitos funcionais
 
 1. A F18 deve definir como comando inicial canonico:
-   - `aignt runs submit <spec_path> --mode sync --stop-at SPEC_VALIDATION`
+   - `synapse runs submit <spec_path> --mode sync --stop-at SPEC_VALIDATION`
 2. A feature deve declarar explicitamente que, no recorte atual, o happy path oficial usa `--mode sync` para evitar pre-requisitos externos frageis.
 3. O sucesso terminal do caminho canonico deve ser:
    - `status=completed`
    - `current_state=SPEC_VALIDATION`
 4. A saida de `runs submit` no caminho canonico deve permitir ao operador recuperar o `run_id` sem consultar arquivos internos manualmente.
 5. A feature deve definir como passo de auditoria obrigatorio:
-   - `aignt runs show <run_id>`
+   - `synapse runs show <run_id>`
 6. A saida de `runs show` usada no happy path deve comprovar pelo menos:
    - identificacao da run
    - `status`
@@ -111,7 +111,7 @@ Definir o menor caminho publico, reproduzivel e auditavel de ponta a ponta para 
 ## Cenario 1: demonstracao canonica sincrona
 
 - Dado uma SPEC valida acessivel por path
-- Quando `aignt runs submit <spec_path> --mode sync --stop-at SPEC_VALIDATION` for executado
+- Quando `synapse runs submit <spec_path> --mode sync --stop-at SPEC_VALIDATION` for executado
 - Entao a CLI retorna `run_id`
 - E retorna `status=completed`
 - E retorna `mode=sync`
@@ -120,7 +120,7 @@ Definir o menor caminho publico, reproduzivel e auditavel de ponta a ponta para 
 ## Cenario 2: auditoria da run concluida
 
 - Dado o `run_id` retornado pela submissao canonica
-- Quando `aignt runs show <run_id>` for executado
+- Quando `synapse runs show <run_id>` for executado
 - Entao a CLI exibe o resumo diagnostico da run concluida
 - E exibe `status=completed`
 - E exibe `current_state=SPEC_VALIDATION`

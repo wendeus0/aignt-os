@@ -31,10 +31,10 @@ Use `python -m pytest` e `python -m mypy` — não os wrappers bare (`pytest`, `
 
 ## Estrutura do projeto
 
-- Código de produção em `src/aignt_os/`.
-- Layout: `src/aignt_os/<módulo>/` com `__init__.py` explícito.
-- Contratos em `src/aignt_os/contracts.py` — preserve as distinções existentes (ex: `stdout_raw` vs `stdout_clean`).
-- Configurações via `src/aignt_os/config.py` com Pydantic Settings — não use `os.environ` diretamente.
+- Código de produção em `src/synapse_os/`.
+- Layout: `src/synapse_os/<módulo>/` com `__init__.py` explícito.
+- Contratos em `src/synapse_os/contracts.py` — preserve as distinções existentes (ex: `stdout_raw` vs `stdout_clean`).
+- Configurações via `src/synapse_os/config.py` com Pydantic Settings — não use `os.environ` diretamente.
 
 ## Pydantic e contratos
 
@@ -44,12 +44,12 @@ Use `python -m pytest` e `python -m mypy` — não os wrappers bare (`pytest`, `
 
 ## Imports
 
-- Imports absolutos: `from aignt_os.contracts import ...`
+- Imports absolutos: `from synapse_os.contracts import ...`
 - Não use imports relativos (`from ..contracts import ...`) exceto dentro do mesmo subpacote.
 - Ordem: stdlib → third-party → local (ruff isort cuida disso automaticamente).
 
 ## Proibições
 
-- Não crie módulos fora de `src/aignt_os/` para código de produção.
+- Não crie módulos fora de `src/synapse_os/` para código de produção.
 - Não adicione dependências pesadas sem justificativa alinhada ao MVP.
 - Não antecipe subsistemas não implementados (`adapters/`, `orchestrator/`, `pipeline/`, `memory/`, `db/`).

@@ -7,7 +7,7 @@ from pathlib import Path
 
 
 def test_circuit_breaker_store_reports_closed_when_file_is_missing(tmp_path: Path) -> None:
-    module = import_module("aignt_os.runtime.circuit_breaker")
+    module = import_module("synapse_os.runtime.circuit_breaker")
 
     store = module.AdapterCircuitBreakerStore(tmp_path / "adapter-circuit-breakers.json")
 
@@ -18,7 +18,7 @@ def test_circuit_breaker_store_reports_closed_when_file_is_missing(tmp_path: Pat
 def test_circuit_breaker_store_persists_atomically_with_restricted_permissions(
     tmp_path: Path, monkeypatch
 ) -> None:  # type: ignore[no-untyped-def]
-    module = import_module("aignt_os.runtime.circuit_breaker")
+    module = import_module("synapse_os.runtime.circuit_breaker")
 
     state_file = tmp_path / "adapter-circuit-breakers.json"
     store = module.AdapterCircuitBreakerStore(state_file)
@@ -51,7 +51,7 @@ def test_circuit_breaker_store_persists_atomically_with_restricted_permissions(
 
 
 def test_circuit_breaker_store_opens_after_threshold_and_resets_on_success(tmp_path: Path) -> None:
-    module = import_module("aignt_os.runtime.circuit_breaker")
+    module = import_module("synapse_os.runtime.circuit_breaker")
 
     store = module.AdapterCircuitBreakerStore(tmp_path / "adapter-circuit-breakers.json")
 
@@ -79,7 +79,7 @@ def test_circuit_breaker_store_opens_after_threshold_and_resets_on_success(tmp_p
 
 
 def test_circuit_breaker_store_treats_expired_cooldown_as_closed(tmp_path: Path) -> None:
-    module = import_module("aignt_os.runtime.circuit_breaker")
+    module = import_module("synapse_os.runtime.circuit_breaker")
 
     state_file = tmp_path / "adapter-circuit-breakers.json"
     state_file.parent.mkdir(parents=True, exist_ok=True)

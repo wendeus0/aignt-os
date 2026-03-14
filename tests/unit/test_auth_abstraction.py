@@ -1,7 +1,7 @@
 import pytest
 
-from aignt_os.auth import AuthProvider, AuthRegistryStore, get_auth_provider
-from aignt_os.config import AppSettings
+from synapse_os.auth import AuthProvider, AuthRegistryStore, get_auth_provider
+from synapse_os.config import AppSettings
 
 
 def test_auth_provider_protocol():
@@ -14,7 +14,7 @@ def test_get_auth_provider_file(tmp_path):
     settings = AppSettings(
         auth_provider="file",
         workspace_root=tmp_path,
-        runtime_state_dir=tmp_path / ".aignt-os/runtime",
+        runtime_state_dir=tmp_path / ".synapse-os/runtime",
     )
     provider = get_auth_provider(settings)
     assert isinstance(provider, AuthRegistryStore)
@@ -39,7 +39,7 @@ def test_auth_provider_authenticate(tmp_path):
     settings = AppSettings(
         auth_provider="file",
         workspace_root=tmp_path,
-        runtime_state_dir=tmp_path / ".aignt-os/runtime",
+        runtime_state_dir=tmp_path / ".synapse-os/runtime",
     )
     provider = get_auth_provider(settings)
 

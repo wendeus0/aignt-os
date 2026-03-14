@@ -6,7 +6,7 @@ runner = CliRunner()
 
 
 def test_cli_help_returns_success() -> None:
-    cli_module = import_module("aignt_os.cli.app")
+    cli_module = import_module("synapse_os.cli.app")
 
     result = runner.invoke(cli_module.app, ["--help"])
 
@@ -15,7 +15,7 @@ def test_cli_help_returns_success() -> None:
 
 
 def test_cli_version_returns_success() -> None:
-    cli_module = import_module("aignt_os.cli.app")
+    cli_module = import_module("synapse_os.cli.app")
 
     result = runner.invoke(cli_module.app, ["version"])
 

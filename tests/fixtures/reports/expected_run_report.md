@@ -7,7 +7,7 @@
 - **Initiated By**: local_cli
 - **Spec Hash**: abc123
 - **SPEC ID**: F06-pipeline-engine-linear
-- **SPEC Summary**: Implementar a primeira engine linear do AIgnt-Synapse-Flow
+- **SPEC Summary**: Implementar a primeira engine linear do Synapse-Flow
 
 ## Estados percorridos
 

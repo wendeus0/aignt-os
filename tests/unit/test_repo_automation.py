@@ -112,7 +112,7 @@ def test_operational_ci_uses_real_pull_request_head_checkout() -> None:
     workflow_text = (REPO_ROOT / ".github/workflows/operational-ci.yml").read_text(encoding="utf-8")
 
     assert "ref: ${{ github.event.pull_request.head.sha }}" in workflow_text
-    assert 'branch_name="$AIGNT_HEAD_REF"' in workflow_text
+    assert 'branch_name="$SYNAPSE_HEAD_REF"' in workflow_text
 
 
 def test_operational_ci_repo_checks_use_sync_dev_commit_flow() -> None:
@@ -178,11 +178,11 @@ def test_validate_commit_message_rejects_invalid_pattern(tmp_path: Path) -> None
 
 
 def test_docker_build_supports_dry_run() -> None:
-    result = run_script("scripts/docker-build.sh", "--dry-run", "--tag", "aignt-os:test")
+    result = run_script("scripts/docker-build.sh", "--dry-run", "--tag", "synapse-os:test")
 
     assert result.returncode == 0
     assert "docker build" in result.stdout
-    assert "aignt-os:test" in result.stdout
+    assert "synapse-os:test" in result.stdout
     assert str(REPO_ROOT / ".cache/docker/config") in result.stdout or result.stderr == ""
 
 
@@ -304,7 +304,7 @@ def test_docker_rebuild_lists_relevant_inputs() -> None:
 
     assert result.returncode == 0
     assert "pyproject.toml" in result.stdout
-    assert "src/aignt_os/cli/app.py" in result.stdout
+    assert "src/synapse_os/cli/app.py" in result.stdout
     assert "uv.lock" in result.stdout
 
 
@@ -497,4 +497,4 @@ def test_compose_declares_runtime_healthcheck() -> None:
 
     assert 'command: ["runtime", "run"]' in compose_text
     assert "healthcheck:" in compose_text
-    assert 'test: ["CMD", "aignt", "runtime", "ready"]' in compose_text
+    assert 'test: ["CMD", "synapse", "runtime", "ready"]' in compose_text

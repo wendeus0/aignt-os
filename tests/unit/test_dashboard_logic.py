@@ -1,7 +1,7 @@
 from unittest.mock import MagicMock, patch
 
-from aignt_os.cli.dashboard import LogViewer, RunDashboard
-from aignt_os.persistence import RunStepRecord
+from synapse_os.cli.dashboard import LogViewer, RunDashboard
+from synapse_os.persistence import RunStepRecord
 
 MOCK_STEP = RunStepRecord(
     step_id=1,

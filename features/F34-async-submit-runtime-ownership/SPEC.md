@@ -10,14 +10,14 @@ inputs:
   - features/F15-public-run-submission/SPEC.md
   - features/F29-auth-rbac-foundation/SPEC.md
   - features/F32-runtime-resident-principal-binding/SPEC.md
-  - src/aignt_os/cli/app.py
-  - src/aignt_os/runtime/dispatch.py
-  - src/aignt_os/runtime/service.py
+  - src/synapse_os/cli/app.py
+  - src/synapse_os/runtime/dispatch.py
+  - src/synapse_os/runtime/service.py
 outputs:
   - async_dispatch_runtime_ownership_gate
   - async_submit_auth_red_tests
 constraints:
-  - "manter o AIgnt-Synapse-Flow como a engine propria de pipeline do AIgnt OS"
+  - "manter o Synapse-Flow como a engine propria de pipeline do SynapseOS"
   - "restringir a frente ao dispatch autenticado de `runs submit`; sem mudar socket, IPC, transporte remoto ou auth registry"
   - "preservar compatibilidade quando `auth_enabled=false`"
   - "preservar fallback compativel para estado legado do runtime sem `started_by`"
@@ -45,7 +45,7 @@ dependencies:
 Depois da `F29` e da `F30`, `runs submit` ja exige auth local quando ela estiver
 habilitada. Depois da `F32`, o runtime residente local passou a persistir `started_by`
 como o principal autenticado que o iniciou, sem abrir socket nem transporte novo. O
-AIgnt-Synapse-Flow continua sendo a engine propria de pipeline do AIgnt OS.
+Synapse-Flow continua sendo a engine propria de pipeline do SynapseOS.
 
 Mesmo assim, o caminho autenticado de `runs submit` ainda aceita dispatch assinado como
 `async` sem verificar se o runtime residente disponivel pertence ao mesmo principal.

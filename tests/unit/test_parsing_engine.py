@@ -7,7 +7,7 @@ FIXTURES_DIR = Path(__file__).resolve().parents[1] / "fixtures" / "cli_outputs"
 
 
 def _parsing_module():
-    return import_module("aignt_os.parsing")
+    return import_module("synapse_os.parsing")
 
 
 def _read_fixture(name: str, *, unicode_escape: bool = False) -> str:

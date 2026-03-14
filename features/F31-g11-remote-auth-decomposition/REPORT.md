@@ -4,7 +4,7 @@
 
 - A `F31-g11-remote-auth-decomposition` fechou a ambiguidade residual de `G-11` sem alterar comportamento de produto.
 - O delta permaneceu doc-only: SPEC, backlog e memoria operacional foram alinhados ao baseline pos-`#66`.
-- O AIgnt-Synapse-Flow continua sendo a engine propria de pipeline do AIgnt OS; nenhuma implementacao de socket, transporte autenticado ou auth remota foi iniciada.
+- O Synapse-Flow continua sendo a engine propria de pipeline do SynapseOS; nenhuma implementacao de socket, transporte autenticado ou auth remota foi iniciada.
 
 ## Escopo entregue
 
@@ -17,7 +17,7 @@
 ## Validacoes executadas
 
 - `validate_spec_file(Path('features/F31-g11-remote-auth-decomposition/SPEC.md'))`
-- `env UV_CACHE_DIR=/home/g0dsssp33d/work/projects/aignt-os/.cache/uv uv run --no-sync python -m pytest tests/unit/test_auth_registry_docs.py -q`
+- `env UV_CACHE_DIR=/home/g0dsssp33d/work/projects/synapse-os/.cache/uv uv run --no-sync python -m pytest tests/unit/test_auth_registry_docs.py -q`
 - `./scripts/commit-check.sh --no-sync --skip-branch-validation --skip-docker --skip-security`
 - `./scripts/security-gate.sh`
 

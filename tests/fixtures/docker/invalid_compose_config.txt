@@ -1,6 +1,6 @@
-name: aignt-os
+name: synapse-os
 services:
-  aignt-os:
+  synapse-os:
     image: nonexistent-image:missing
     environment:
       - INVALID_FORMAT_WITHOUT_VALUE

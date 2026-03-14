@@ -7,8 +7,8 @@ import pytest
 
 
 def test_runtime_service_treats_identity_mismatch_as_inconsistent(tmp_path: Path) -> None:
-    service_module = import_module("aignt_os.runtime.service")
-    state_module = import_module("aignt_os.runtime.state")
+    service_module = import_module("synapse_os.runtime.service")
+    state_module = import_module("synapse_os.runtime.state")
 
     service = service_module.RuntimeService(tmp_path / "runtime-state.json")
     service.state_store._write(  # noqa: SLF001
@@ -27,8 +27,8 @@ def test_runtime_service_treats_identity_mismatch_as_inconsistent(tmp_path: Path
 def test_runtime_service_stop_does_not_signal_when_identity_validation_fails(
     tmp_path: Path, monkeypatch: pytest.MonkeyPatch
 ) -> None:
-    service_module = import_module("aignt_os.runtime.service")
-    state_module = import_module("aignt_os.runtime.state")
+    service_module = import_module("synapse_os.runtime.service")
+    state_module = import_module("synapse_os.runtime.state")
 
     service = service_module.RuntimeService(tmp_path / "runtime-state.json")
     service.state_store._write(  # noqa: SLF001

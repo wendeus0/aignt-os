@@ -4,7 +4,7 @@
 Aceito
 
 ## Contexto
-O AIgnt OS precisa reduzir ambiguidade entre `REQUEST`, `PLAN`, `TEST_RED` e `CODE_GREEN`. Uma SPEC em texto livre dificulta validação, enquanto um schema puro prejudica legibilidade e contexto para humanos e IAs.
+O SynapseOS precisa reduzir ambiguidade entre `REQUEST`, `PLAN`, `TEST_RED` e `CODE_GREEN`. Uma SPEC em texto livre dificulta validação, enquanto um schema puro prejudica legibilidade e contexto para humanos e IAs.
 
 ## Decisão
 Adotar **Spec-Driven Development** com uma SPEC híbrida:
@@ -18,7 +18,7 @@ A esteira passa a ser:
 SPEC → TEST_RED → CODE_GREEN → REFACTOR → SECURITY_REVIEW → REPORT → COMMIT
 ```
 
-Dentro do macroestágio `SPEC`, o AIgnt-Synapse-Flow continua usando `SPEC_DISCOVERY`, `SPEC_NORMALIZATION` e `SPEC_VALIDATION` como subetapas internas.
+Dentro do macroestágio `SPEC`, o Synapse-Flow continua usando `SPEC_DISCOVERY`, `SPEC_NORMALIZATION` e `SPEC_VALIDATION` como subetapas internas.
 
 O `DOCKER_PREFLIGHT` permanece como gate operacional condicional antes de execução prática dependente de Docker, sem fazer parte da abertura padrão da esteira.
 

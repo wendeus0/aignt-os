@@ -1,4 +1,4 @@
-from aignt_os.cli.rendering import truncate_logs
+from synapse_os.cli.rendering import truncate_logs
 
 
 def test_truncate_logs_empty():

@@ -3,7 +3,7 @@ set -euo pipefail
 
 ROOT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 STATE_FILE="$ROOT_DIR/.cache/docker/rebuild.sha256"
-TAG="aignt-os:dev"
+TAG="synapse-os:dev"
 USE_COMPOSE=0
 FORCE=0
 DRY_RUN=0

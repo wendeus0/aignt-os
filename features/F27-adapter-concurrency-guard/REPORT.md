@@ -3,7 +3,7 @@
 ## Resumo executivo
 
 - A F27 foi implementada como um guard de concorrencia local no adapter layer.
-- O recorte ficou fechado em `G-07`, sem abrir circuit breaker persistido, coordenacao cross-process ou mudancas no runtime do AIgnt-Synapse-Flow, a engine propria de pipeline do AIgnt OS.
+- O recorte ficou fechado em `G-07`, sem abrir circuit breaker persistido, coordenacao cross-process ou mudancas no runtime do Synapse-Flow, a engine propria de pipeline do SynapseOS.
 - A mitigacao central ficou em `BaseCLIAdapter.execute()`, que agora adquire um `asyncio.Semaphore` compartilhado por processo antes de abrir o subprocesso.
 
 ## Escopo entregue
@@ -18,8 +18,8 @@
 - Leitura e alinhamento com `CONTEXT.md`, `docs/architecture/SDD.md`, `docs/architecture/TDD.md` e `docs/architecture/SPEC_FORMAT.md`.
 - Validacao da SPEC com `validate_spec_file(Path('features/F27-adapter-concurrency-guard/SPEC.md'))`.
 - `uv run --no-sync python -m pytest tests/unit/test_config.py tests/unit/test_cli_adapter.py tests/integration/test_adapter_concurrency_flow.py -q`
-- `uv run --no-sync ruff check src/aignt_os/adapters.py src/aignt_os/config.py tests/unit/test_cli_adapter.py tests/unit/test_config.py tests/integration/test_adapter_concurrency_flow.py`
-- `uv run --no-sync mypy src/aignt_os/adapters.py src/aignt_os/config.py`
+- `uv run --no-sync ruff check src/synapse_os/adapters.py src/synapse_os/config.py tests/unit/test_cli_adapter.py tests/unit/test_config.py tests/integration/test_adapter_concurrency_flow.py`
+- `uv run --no-sync mypy src/synapse_os/adapters.py src/synapse_os/config.py`
 - `./scripts/security-gate.sh`
 
 ## Security review

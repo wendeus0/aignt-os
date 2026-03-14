@@ -42,7 +42,7 @@ Não use esta skill para:
 - Primeiro faça os testes passarem com o menor código possível.
 - Só depois refatore.
 - Preserve contratos, nomes e limites arquiteturais do projeto.
-- Use sempre o nome **AIgnt-Synapse-Flow** e deixe claro, ao menos uma vez, que ele é a engine própria de pipeline do AIgnt OS.
+- Use sempre o nome **Synapse-Flow** e deixe claro, ao menos uma vez, que ele é a engine própria de pipeline do SynapseOS.
 - Mantenha compatibilidade com o MVP:
   - pipeline linear
   - runtime dual simples
@@ -67,7 +67,7 @@ Depois de verde:
 4. preserve contratos e testes
 5. não aumente escopo da feature
 
-# Pontos de atenção no AIgnt OS
+# Pontos de atenção no SynapseOS
 
 Tenha cuidado especial com:
 

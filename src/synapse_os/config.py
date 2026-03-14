@@ -4,20 +4,20 @@ from typing import Literal
 from pydantic import Field
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
-from aignt_os.security import DEFAULT_SECRET_MASK_PATTERNS, resolve_path_within_root
+from synapse_os.security import DEFAULT_SECRET_MASK_PATTERNS, resolve_path_within_root
 
 
 class AppSettings(BaseSettings):
     model_config = SettingsConfigDict(
-        env_prefix="AIGNT_OS_",
+        env_prefix="SYNAPSE_OS_",
         extra="ignore",
     )
 
-    app_name: str = "AIgnt OS"
+    app_name: str = "SynapseOS"
     environment: Literal["development", "test", "production"] = "development"
-    runtime_state_dir: Path = Path(".aignt-os/runtime")
-    runs_db_path: Path = Path(".aignt-os/runs/runs.sqlite3")
-    artifacts_dir: Path = Path(".aignt-os/artifacts")
+    runtime_state_dir: Path = Path(".synapse-os/runtime")
+    runs_db_path: Path = Path(".synapse-os/runs/runs.sqlite3")
+    artifacts_dir: Path = Path(".synapse-os/artifacts")
     workspace_root: Path = Field(default_factory=Path.cwd)
     runtime_poll_interval_seconds: float = 0.5
     run_initiated_by: str = "local_cli"

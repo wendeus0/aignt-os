@@ -58,7 +58,7 @@ Não use esta skill para:
 4. Garanta que os testes falham pelos motivos certos.
 5. Não implemente o código da feature nesta etapa.
 
-# Convenções para o AIgnt OS
+# Convenções para o SynapseOS
 
 Priorize testes para:
 

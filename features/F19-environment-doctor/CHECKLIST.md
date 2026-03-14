@@ -1,7 +1,7 @@
 # F19 Checklist
 
 - [x] SPEC da F19 criada e validavel
-- [x] Superficie publica fechada em `aignt doctor`
+- [x] Superficie publica fechada em `synapse doctor`
 - [x] Fora de escopo explicito para Docker, credenciais externas, auto-fix e onboarding
 - [x] REDs cobrindo rendering sem TTY e CLI publica do doctor
 - [x] Implementacao minima adicionada para `runtime_state`, `runs_db` e `artifacts_dir`

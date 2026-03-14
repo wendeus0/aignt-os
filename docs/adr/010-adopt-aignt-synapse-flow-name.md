@@ -1,10 +1,10 @@
-# ADR-010 — Adotar AIgnt-Synapse-Flow como nome formal da engine própria de pipeline
+# ADR-010 — Adotar Synapse-Flow como nome formal da engine própria de pipeline
 
 ## Status
 Aceito
 
 ## Contexto
-O projeto já adotou o AIgnt-Synapse-Flow como conceito técnico central para coordenar estados, hand-offs, retries e integração com o supervisor, mas ainda sem nome formal padronizado nos documentos. Até aqui, os textos o descrevem apenas de forma genérica como engine própria de pipeline, o que dificulta comunicação operacional, rastreabilidade documental e padronização entre skills, ADRs e workflows.
+O projeto já adotou o Synapse-Flow como conceito técnico central para coordenar estados, hand-offs, retries e integração com o supervisor, mas ainda sem nome formal padronizado nos documentos. Até aqui, os textos o descrevem apenas de forma genérica como engine própria de pipeline, o que dificulta comunicação operacional, rastreabilidade documental e padronização entre skills, ADRs e workflows.
 
 Ao mesmo tempo, o fluxo oficial do projeto passou a exigir a sequência:
 
@@ -12,14 +12,14 @@ Ao mesmo tempo, o fluxo oficial do projeto passou a exigir a sequência:
 SPEC → TEST_RED → CODE_GREEN → REFACTOR → QUALITY_GATE → SECURITY_REVIEW → REPORT → COMMIT
 ```
 
-Essa formalização aumenta a necessidade de um nome estável para o AIgnt-Synapse-Flow, a engine própria de pipeline do AIgnt OS.
+Essa formalização aumenta a necessidade de um nome estável para o Synapse-Flow, a engine própria de pipeline do SynapseOS.
 
 ## Decisão
-Adotar **AIgnt-Synapse-Flow** como nome formal da engine própria de pipeline do AIgnt OS.
+Adotar **Synapse-Flow** como nome formal da engine própria de pipeline do SynapseOS.
 
 Regras derivadas:
-- o termo `AIgnt-Synapse-Flow` deve ser usado nos documentos alterados quando o conceito for mencionado;
-- ao menos uma vez por documento alterado, deve ficar explícito que o AIgnt-Synapse-Flow é a engine própria de pipeline do AIgnt OS;
+- o termo `Synapse-Flow` deve ser usado nos documentos alterados quando o conceito for mencionado;
+- ao menos uma vez por documento alterado, deve ficar explícito que o Synapse-Flow é a engine própria de pipeline do SynapseOS;
 - o fluxo oficial de trabalho por feature passa a ser documentado separadamente das subetapas internas do runtime.
 
 ## Consequências
@@ -35,6 +35,6 @@ Regras derivadas:
 - pode gerar coexistência temporária entre nomenclaturas antigas e novas durante a transição.
 
 ## Alternativas consideradas
-- continuar usando apenas a descrição genérica de engine própria de pipeline, sem formalizar o nome AIgnt-Synapse-Flow;
+- continuar usando apenas a descrição genérica de engine própria de pipeline, sem formalizar o nome Synapse-Flow;
 - adotar um nome genérico como `Pipeline Engine`;
 - renomear toda a arquitetura para refletir a engine, ampliando escopo além do necessário.

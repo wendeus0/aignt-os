@@ -1,10 +1,10 @@
 # AGENTS.md
 
 ## Objetivo do repositório
-Este repositório implementa o AIgnt OS, um meta-orquestrador de agentes de IA via CLI.
+Este repositório implementa o SynapseOS, um meta-orquestrador de agentes de IA via CLI.
 A implementação deve seguir a arquitetura e decisões já documentadas, sem reinventar o projeto a cada feature.
 
-O runtime interno deve ser referido como **AIgnt-Synapse-Flow**, deixando claro que ele é a **engine própria de pipeline** do AIgnt OS.
+O runtime interno deve ser referido como **Synapse-Flow**, deixando claro que ele é a **engine própria de pipeline** do SynapseOS.
 
 ## Fontes de verdade
 Antes de iniciar qualquer trabalho, leia nesta ordem:
@@ -28,7 +28,7 @@ Em caso de conflito:
 - Prefira mudanças pequenas, localizadas e reversíveis.
 - Nunca altere docs centrais sem necessidade real da feature.
 - Preserve o caráter **CLI-first**, **spec-first** e **feature-by-feature** do projeto.
-- Use sempre o nome **AIgnt-Synapse-Flow** ao se referir ao runtime interno do AIgnt OS, deixando explícito ao menos uma vez por documento que ele é a **engine própria de pipeline** do AIgnt OS.
+- Use sempre o nome **Synapse-Flow** ao se referir ao runtime interno do SynapseOS, deixando explícito ao menos uma vez por documento que ele é a **engine própria de pipeline** do SynapseOS.
 
 ## Convenção de nomes para agents/skills
 - Use o padrão `<domínio>-<papel>`.
@@ -266,7 +266,7 @@ Neste repositório, a operação do Codex deve ser container-first via ./scripts
 
 O serviço codex-dev existe só para desenvolvimento assistido.
 
-O serviço aignt-os continua sendo o container de runtime da aplicação e do AIgnt-Synapse-Flow, a engine própria de pipeline do AIgnt OS.
+O serviço synapse-os continua sendo o container de runtime da aplicação e do Synapse-Flow, a engine própria de pipeline do SynapseOS.
 
 Não rode o Codex diretamente no host quando a tarefa exigir execução prática em container.
 

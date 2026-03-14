@@ -1,11 +1,11 @@
-name: aignt-os
+name: synapse-os
 services:
-  aignt-os:
+  synapse-os:
     build:
       context: .
       dockerfile: Dockerfile
     environment:
-      AIGNT_OS_ENVIRONMENT: development
+      SYNAPSE_OS_ENVIRONMENT: development
     volumes:
       - ./artifacts:/app/artifacts
     restart: unless-stopped

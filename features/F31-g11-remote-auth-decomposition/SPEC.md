@@ -12,13 +12,13 @@ inputs:
   - memory.md
   - features/F29-auth-rbac-foundation/SPEC.md
   - features/F30-auth-registry-cli/SPEC.md
-  - src/aignt_os/auth.py
-  - src/aignt_os/runtime/service.py
+  - src/synapse_os/auth.py
+  - src/synapse_os/runtime/service.py
 outputs:
   - g11_remote_backlog_decomposition
   - post_baseline_handoff_alignment
 constraints:
-  - "manter o AIgnt-Synapse-Flow como a engine propria de pipeline do AIgnt OS"
+  - "manter o Synapse-Flow como a engine propria de pipeline do SynapseOS"
   - "trabalhar apenas a decomposicao documental do residual de G-11"
   - "nao alterar o comportamento atual de CLI, runtime, auth local ou persistencia"
   - "nao introduzir socket, IPC autenticado, transporte em rede, RBAC novo ou coordenacao entre hosts"
@@ -43,8 +43,8 @@ dependencies:
 # Contexto
 
 Depois da `F29-auth-rbac-foundation` e da `F30-auth-registry-cli`, o baseline atual do
-AIgnt OS ja possui auth local opt-in na borda da CLI e lifecycle local do registry de
-tokens. O AIgnt-Synapse-Flow continua sendo a engine propria de pipeline do AIgnt OS,
+SynapseOS ja possui auth local opt-in na borda da CLI e lifecycle local do registry de
+tokens. O Synapse-Flow continua sendo a engine propria de pipeline do SynapseOS,
 mas o runtime atual segue estritamente local: processo residente leve, arquivo de
 estado local e nenhuma camada de socket, IPC autenticado ou operacao entre hosts.
 
@@ -71,7 +71,7 @@ permanece explicitamente adiado fora do baseline atual.
 ## Fora de escopo
 
 - qualquer implementacao de socket, IPC, RPC ou transporte em rede
-- qualquer alteracao em `src/aignt_os/auth.py` ou no runtime
+- qualquer alteracao em `src/synapse_os/auth.py` ou no runtime
 - novas roles, policy engine ou RBAC distribuido
 - rotacao distribuida, revogacao entre hosts ou descoberta remota do runtime
 

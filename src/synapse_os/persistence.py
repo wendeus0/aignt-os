@@ -23,8 +23,8 @@ from sqlalchemy import (
 from sqlalchemy.engine import RowMapping
 from sqlalchemy.sql import update
 
-from aignt_os.parsing import ParsingArtifactError, validate_named_artifact_content
-from aignt_os.pipeline import (
+from synapse_os.parsing import ParsingArtifactError, validate_named_artifact_content
+from synapse_os.pipeline import (
     PRIMARY_EXECUTOR_ROUTE,
     PipelineCancelledError,
     PipelineContext,
@@ -34,8 +34,8 @@ from aignt_os.pipeline import (
     StepExecutionResult,
     StepExecutor,
 )
-from aignt_os.security import compute_file_sha256, resolve_path_within_root, sanitize_clean_text
-from aignt_os.supervisor import Supervisor, SupervisorDecision
+from synapse_os.security import compute_file_sha256, resolve_path_within_root, sanitize_clean_text
+from synapse_os.supervisor import Supervisor, SupervisorDecision
 
 ARTIFACT_DIR_MODE = 0o700
 ARTIFACT_FILE_MODE = 0o600
@@ -621,7 +621,7 @@ class PipelinePersistenceObserver(PipelineObserver):
         )
 
         try:
-            from aignt_os.reporting import RunReportGenerator
+            from synapse_os.reporting import RunReportGenerator
 
             generator = RunReportGenerator(
                 repository=cast(Any, self.repository),
@@ -971,7 +971,7 @@ class _RunReportStepExecutor:
         if context.run_id is None:
             raise ValueError("Pipeline context is missing run_id for report generation.")
 
-        from aignt_os.reporting import RunReportGenerator
+        from synapse_os.reporting import RunReportGenerator
 
         generator = RunReportGenerator(
             repository=cast(Any, self.repository),

@@ -25,9 +25,9 @@ def test_readme_lists_current_public_cli_surface_and_boundaries() -> None:
     readme = README_PATH.read_text(encoding="utf-8")
 
     assert "### Superfície pública atual da CLI" in readme
-    assert "`aignt runs watch <run_id>`" in readme
-    assert "`aignt runs cancel <run_id>`" in readme
-    assert "`aignt auth init|issue|disable`" in readme
-    assert "`aignt runtime start|status|run|ready|stop`" in readme
+    assert "`synapse runs watch <run_id>`" in readme
+    assert "`synapse runs cancel <run_id>`" in readme
+    assert "`synapse auth init|issue|disable`" in readme
+    assert "`synapse runtime start|status|run|ready|stop`" in readme
     assert "nao existe web UI nem operacao distribuida" in readme
     assert "auth e RBAC continuam locais com provider `file`" in readme

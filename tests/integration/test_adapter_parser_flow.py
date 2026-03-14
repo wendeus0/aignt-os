@@ -10,7 +10,7 @@ from pathlib import Path
 
 import pytest
 
-from aignt_os import parsing
+from synapse_os import parsing
 
 FIXTURES_DIR = Path(__file__).parent.parent / "fixtures" / "cli_outputs"
 

@@ -25,7 +25,7 @@ non_goals:
 
 # Contexto
 
-O AIgnt OS gera diversos artefatos durante a execução (código, relatórios, diagramas) no diretório `artifacts/`. Atualmente, para visualizar esses arquivos, o operador precisa sair da TUI ou abrir um segundo terminal. A feature F17 trouxe o preview via CLI (`runs show --artifact`), mas a experiência na TUI (F33/F39) ainda carece dessa integração.
+O SynapseOS gera diversos artefatos durante a execução (código, relatórios, diagramas) no diretório `artifacts/`. Atualmente, para visualizar esses arquivos, o operador precisa sair da TUI ou abrir um segundo terminal. A feature F17 trouxe o preview via CLI (`runs show --artifact`), mas a experiência na TUI (F33/F39) ainda carece dessa integração.
 
 # Objetivo
 

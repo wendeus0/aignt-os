@@ -41,7 +41,7 @@ dependencies:
 
 # Contexto
 
-Depois da F04, o AIgnt OS já possui um Parsing Engine MVP para separar output bruto, output limpo e artefatos. O próximo incremento natural do núcleo é fechar a camada base de execução CLI assíncrona, seguindo o ADR-004 e o SDD, para que o AIgnt-Synapse-Flow, a engine própria de pipeline do AIgnt OS, tenha um contrato uniforme ao chamar ferramentas externas.
+Depois da F04, o SynapseOS já possui um Parsing Engine MVP para separar output bruto, output limpo e artefatos. O próximo incremento natural do núcleo é fechar a camada base de execução CLI assíncrona, seguindo o ADR-004 e o SDD, para que o Synapse-Flow, a engine própria de pipeline do SynapseOS, tenha um contrato uniforme ao chamar ferramentas externas.
 
 Esta feature deve permanecer pequena: criar o adapter base, endurecer o contrato de resultado e tratar timeout/sanitização mínima sem antecipar adapters reais, pipeline, worker ou integrações mais pesadas.
 
@@ -69,7 +69,7 @@ Entregar a base assíncrona de execução CLI com:
 
 - adapters específicos de Codex, Gemini, Claude ou outras ferramentas
 - parsing de fenced blocks, validação sintática de artefatos ou heurísticas por ferramenta
-- retries, reroute, supervisor ou integração com AIgnt-Synapse-Flow além do contrato base
+- retries, reroute, supervisor ou integração com Synapse-Flow além do contrato base
 - execução prática em Docker ou validação operacional de container
 - persistência, relatório de run ou worker residente
 

@@ -1,4 +1,4 @@
-# SPEC Format — AIgnt OS
+# SPEC Format — SynapseOS
 
 ## Decisão
 O formato oficial da SPEC no MVP é **Markdown estruturado com front matter YAML obrigatório**.

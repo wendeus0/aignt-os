@@ -2,23 +2,23 @@
 
 ## Summary
 
-Esta release tecnica consolida a etapa 2 do AIgnt OS sem abrir nova feature de produto alem da superficie publica ja entregue. O AIgnt-Synapse-Flow continua sendo a engine propria de pipeline do AIgnt OS, e a release foca em tornar o fluxo atual mais auditavel, documentado e reproduzivel.
+Esta release tecnica consolida a etapa 2 do SynapseOS sem abrir nova feature de produto alem da superficie publica ja entregue. O Synapse-Flow continua sendo a engine propria de pipeline do SynapseOS, e a release foca em tornar o fluxo atual mais auditavel, documentado e reproduzivel.
 
 ## Public surface
 
-- `aignt doctor`
-- `aignt runs submit <spec_path>`
-- `aignt runs show <run_id>`
-- `aignt runs show <run_id> --preview report`
-- `aignt runs show <run_id> --preview <STEP_STATE>.clean`
+- `synapse doctor`
+- `synapse runs submit <spec_path>`
+- `synapse runs show <run_id>`
+- `synapse runs show <run_id> --preview report`
+- `synapse runs show <run_id> --preview <STEP_STATE>.clean`
 
 ## Supported flow
 
 O fluxo minimo oficial continua local e `sync-first`:
 
-1. `aignt doctor`
-2. `aignt runs submit <spec_path> --mode sync --stop-at SPEC_VALIDATION`
-3. `aignt runs show <run_id>`
+1. `synapse doctor`
+2. `synapse runs submit <spec_path> --mode sync --stop-at SPEC_VALIDATION`
+3. `synapse runs show <run_id>`
 
 Artifact preview permanece opcional e depende de artifacts persistidos ja existentes, como `RUN_REPORT.md` e `clean_output` por step.
 

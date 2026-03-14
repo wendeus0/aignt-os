@@ -23,8 +23,8 @@
 ## 2026-03-13 - PR `#65` da F30 mergeada com `repo-checks` falhando por formatacao global, depois resolvido pela `#66`
 
 - Contexto: fechamento Git da `F30-auth-registry-cli` apos quality gate local e abertura da PR `#65`.
-- Ação/comando relacionado: `gh pr checks 65`, `gh run view 23034742953 --job 66900277313 --log-failed` e revalidacao local com `env UV_CACHE_DIR=/home/g0dsssp33d/work/projects/aignt-os/.cache/uv uv run --no-sync ruff format --check .`.
-- Erro observado: o job `repo-checks` da PR falhou porque `ruff format --check .` ainda listava 6 arquivos fora do padrao (`src/aignt_os/persistence.py`, `tests/integration/test_runs_cli.py`, `tests/unit/test_cli_adapter.py`, `tests/unit/test_parsing_engine.py`, `tests/unit/test_persistence.py`, `tests/unit/test_security.py`).
+- Ação/comando relacionado: `gh pr checks 65`, `gh run view 23034742953 --job 66900277313 --log-failed` e revalidacao local com `env UV_CACHE_DIR=/home/g0dsssp33d/work/projects/synapse-os/.cache/uv uv run --no-sync ruff format --check .`.
+- Erro observado: o job `repo-checks` da PR falhou porque `ruff format --check .` ainda listava 6 arquivos fora do padrao (`src/synapse_os/persistence.py`, `tests/integration/test_runs_cli.py`, `tests/unit/test_cli_adapter.py`, `tests/unit/test_parsing_engine.py`, `tests/unit/test_persistence.py`, `tests/unit/test_security.py`).
 - Causa identificada: divida de formatacao preexistente na baseline atual, fora do diff funcional da `F30`.
 - Ação tomada: a PR foi mergeada com aprovacao explicita por excecao; a correcao do gate virou a proxima frente prioritaria de estabilizacao da baseline.
 - Status: resolvido; a baseline foi restaurada na PR `#66` e o handoff pos-`F32` nao deve mais tratar este incidente como bloqueio aberto.
@@ -33,7 +33,7 @@
 ## 2026-03-12 - Regressao de compatibilidade no monkeypatch de `_dispatch_service` durante a F29
 
 - Contexto: implementacao e validacao final da `F29-auth-rbac-foundation`.
-- Ação/comando relacionado: `env UV_CACHE_DIR=/home/g0dsssp33d/work/projects/aignt-os/.cache/uv uv run --no-sync python -m pytest tests/unit/test_config.py tests/unit/test_auth.py tests/integration/test_cli_auth_rbac.py tests/integration/test_runs_submit_cli.py tests/integration/test_runtime_cli.py tests/integration/test_cli_error_model.py -q`
+- Ação/comando relacionado: `env UV_CACHE_DIR=/home/g0dsssp33d/work/projects/synapse-os/.cache/uv uv run --no-sync python -m pytest tests/unit/test_config.py tests/unit/test_auth.py tests/integration/test_cli_auth_rbac.py tests/integration/test_runs_submit_cli.py tests/integration/test_runtime_cli.py tests/integration/test_cli_error_model.py -q`
 - Erro observado: `tests/integration/test_cli_error_model.py::test_runs_submit_unexpected_dispatch_failure_returns_execution_error_code` falhou com `TypeError` porque o monkeypatch local de `_dispatch_service` nao aceitava o novo keyword argument `initiated_by`.
 - Causa identificada: a F29 ampliou `_dispatch_service()` para aceitar override de provenance autenticada, mas o call site de `runs submit` perdeu compatibilidade com o patch zero-arg exercitado pelos testes legados da F21.
 - Ação tomada: o call site foi ajustado para chamar `_dispatch_service()` sem argumentos quando nao houver principal autenticado e usar o override apenas no caminho autenticado.
@@ -53,22 +53,22 @@
 ## 2026-03-11 17:44 -03 - Worktree fria da F09 sem dependencias dev para coleta de testes
 
 - Contexto: implementacao da `F09-supervisor-mvp` em worktree nova.
-- Ação/comando relacionado: `pytest tests/unit/test_supervisor.py ... tests/integration/test_pipeline_persistence.py` e `env UV_CACHE_DIR=/home/g0dsssp33d/work/projects/aignt-os/.cache/uv uv run pytest ...`
+- Ação/comando relacionado: `pytest tests/unit/test_supervisor.py ... tests/integration/test_pipeline_persistence.py` e `env UV_CACHE_DIR=/home/g0dsssp33d/work/projects/synapse-os/.cache/uv uv run pytest ...`
 - Erro observado: `ModuleNotFoundError: No module named 'typer'` durante a carga de `tests/integration/conftest.py`.
 - Causa identificada: a worktree foi aberta sem bootstrap de dependencias dev; a coleta dos testes de integracao depende de `typer`.
-- Ação tomada: `env UV_CACHE_DIR=/home/g0dsssp33d/work/projects/aignt-os/.cache/uv uv sync --locked --extra dev` e reexecucao da suite no ambiente sincronizado.
+- Ação tomada: `env UV_CACHE_DIR=/home/g0dsssp33d/work/projects/synapse-os/.cache/uv uv sync --locked --extra dev` e reexecucao da suite no ambiente sincronizado.
 - Status: resolvido localmente.
 - Observação futura: em worktree fria, sincronizar extras de desenvolvimento antes de rodar suites que carregam `tests/integration/conftest.py`.
 
 ## 2026-03-11 17:44 -03 - `mypy src tests` continua falhando por modulo duplicado `conftest`
 
 - Contexto: validacao final da `F09-supervisor-mvp` antes do handoff.
-- Ação/comando relacionado: `env UV_CACHE_DIR=/home/g0dsssp33d/work/projects/aignt-os/.cache/uv uv run mypy src tests`
+- Ação/comando relacionado: `env UV_CACHE_DIR=/home/g0dsssp33d/work/projects/synapse-os/.cache/uv uv run mypy src tests`
 - Erro observado: `tests/unit/conftest.py: error: Duplicate module named "conftest" (also at "tests/integration/conftest.py")`.
-- Causa identificada: a invocacao ampla `mypy src tests` conflitou primeiro com os dois `conftest.py` como modulos top-level e, apos resolver o namespace, expôs que a arvore `tests/` nao seguia o mesmo contrato strict aplicado a `src/aignt_os`.
+- Causa identificada: a invocacao ampla `mypy src tests` conflitou primeiro com os dois `conftest.py` como modulos top-level e, apos resolver o namespace, expôs que a arvore `tests/` nao seguia o mesmo contrato strict aplicado a `src/synapse_os`.
 - Ação tomada: na branch `chore/test-layout-typecheck-hardening`, a arvore `tests/` recebeu package markers (`tests/`, `tests/unit/`, `tests/integration/`, `tests/pipeline/`) e o `pyproject.toml` passou a declarar override explícito de `mypy` para `tests` e `tests.*`. A revalidação com `uv run mypy src tests`, `uv run --no-sync python -m mypy`, `pytest` e `./scripts/commit-check.sh --sync-dev --skip-docker` fechou verde.
 - Status: resolvido.
-- Observação futura: manter o contrato strict de `mypy` centrado em `src/aignt_os`; tipagem estrita da arvore `tests/` só deve virar frente própria se houver benefício real.
+- Observação futura: manter o contrato strict de `mypy` centrado em `src/synapse_os`; tipagem estrita da arvore `tests/` só deve virar frente própria se houver benefício real.
 
 ## 2026-03-11 - `test_adapter_parser_flow` falhou por fixture ANSI como texto literal
 
@@ -94,9 +94,9 @@
 
 - Contexto: tentativa de preparar o merge da `F06-pipeline-engine-linear`.
 - Ação/comando relacionado: `gh pr checks 28`, `gh run view 22966152999 --job 66670192469 --log-failed` e reproducao local com `PYTHONPATH=src ... python -m pytest tests/unit/test_pipeline_engine.py -k invalid -q`.
-- Erro observado: o CI falhou em `tests/unit/test_pipeline_engine.py::test_pipeline_engine_blocks_plan_when_spec_is_invalid` com `AttributeError: module 'aignt_os.pipeline' has no attribute 'SpecValidationError'`.
-- Causa identificada: o teste da `F06` ja modelava `SpecValidationError` como parte da API publica de `aignt_os.pipeline`, mas o modulo nao reexportava esse simbolo vindo de `aignt_os.specs`.
-- Ação tomada: o modulo `src/aignt_os/pipeline.py` passou a reexportar `SpecValidationError`; a revalidacao local com `pytest`, `ruff`, `mypy` e `./scripts/commit-check.sh --sync-dev --skip-branch-validation --skip-docker --skip-security` voltou a fechar verde.
+- Erro observado: o CI falhou em `tests/unit/test_pipeline_engine.py::test_pipeline_engine_blocks_plan_when_spec_is_invalid` com `AttributeError: module 'synapse_os.pipeline' has no attribute 'SpecValidationError'`.
+- Causa identificada: o teste da `F06` ja modelava `SpecValidationError` como parte da API publica de `synapse_os.pipeline`, mas o modulo nao reexportava esse simbolo vindo de `synapse_os.specs`.
+- Ação tomada: o modulo `src/synapse_os/pipeline.py` passou a reexportar `SpecValidationError`; a revalidacao local com `pytest`, `ruff`, `mypy` e `./scripts/commit-check.sh --sync-dev --skip-branch-validation --skip-docker --skip-security` voltou a fechar verde.
 - Status: resolvido localmente; PR pendente de atualizacao no GitHub.
 - Observação futura: quando a feature introduzir novo modulo de orquestracao, manter teste e API publica alinhados explicitamente para evitar regressao em `repo-checks`.
 
@@ -154,7 +154,7 @@
 
 - Contexto: execução local de testes após corrigir baseline operacional.
 - Ação/comando relacionado: `./.venv/bin/pytest`
-- Erro observado: `ModuleNotFoundError: No module named 'aignt_os'` em testes de config, contracts e CLI.
+- Erro observado: `ModuleNotFoundError: No module named 'synapse_os'` em testes de config, contracts e CLI.
 - Causa identificada: execução local usando `.venv` sem instalar o pacote ou sem `PYTHONPATH=src`; o caminho operacional do CI continua sendo `uv run pytest`.
 - Ação tomada: validação local da suíte foi feita com `PYTHONPATH=src ./.venv/bin/pytest`.
 - Status: contornado na sessão.
@@ -196,7 +196,7 @@
 - Ação/comando relacionado: `UV_CACHE_DIR=.cache/uv uv run ruff format --check .`
 - Erro observado: arquivos preexistentes fora do padrão de formatação.
 - Causa identificada: dívida de formatação já presente no repositório, não ligada ao runtime persistente.
-- Ação tomada: a pendência ficou aberta inicialmente; em 2026-03-10 o repositório foi revalidado com `env UV_CACHE_DIR=/home/g0dsssp33d/work/projects/aignt-os/.cache/uv uv run --no-sync ruff format --check .` e o gate voltou a fechar verde no estado atual.
+- Ação tomada: a pendência ficou aberta inicialmente; em 2026-03-10 o repositório foi revalidado com `env UV_CACHE_DIR=/home/g0dsssp33d/work/projects/synapse-os/.cache/uv uv run --no-sync ruff format --check .` e o gate voltou a fechar verde no estado atual.
 - Status: resolvido no estado atual do repositório.
 - Observação futura: revalidar após mudanças amplas de documentação ou baseline para garantir que `ruff format --check .` continue apto a operar como gate completo.
 
@@ -204,7 +204,7 @@
 
 - Contexto: tentativa de validar a feature de runtime persistente após integrar a branch no merge operacional.
 - Ação/comando relacionado: `PYTHONPATH=src ./.venv/bin/pytest tests/integration/test_runtime_cli.py tests/unit/test_runtime_service_security.py tests/unit/test_runtime_state.py`
-- Erro observado: `bad interpreter` apontando para `/home/g0dsssp33d/work/projetcs/aignt-os/.venv/bin/python3`.
+- Erro observado: `bad interpreter` apontando para `/home/g0dsssp33d/work/projetcs/synapse-os/.venv/bin/python3`.
 - Causa identificada: virtualenv preexistente criada com caminho antigo/incorreto.
 - Ação tomada: a validação migrou para um ambiente local novo dedicado (`.venv-codex-runtime`).
 - Status: contornado na sessão.
@@ -213,7 +213,7 @@
 ## 2026-03-09 08:42 - `uv run pytest` não enxergou dependências de runtime após `uv sync`
 
 - Contexto: validação da suíte específica do runtime persistente depois de sincronizar dependências dev.
-- Ação/comando relacionado: `env UV_CACHE_DIR=/home/g0dsssp33d/work/projects/aignt-os/.cache/uv uv run pytest tests/integration/test_runtime_cli.py tests/unit/test_runtime_service_security.py tests/unit/test_runtime_state.py`
+- Ação/comando relacionado: `env UV_CACHE_DIR=/home/g0dsssp33d/work/projects/synapse-os/.cache/uv uv run pytest tests/integration/test_runtime_cli.py tests/unit/test_runtime_service_security.py tests/unit/test_runtime_state.py`
 - Erro observado: `ModuleNotFoundError: No module named 'typer'` durante a coleta.
 - Causa identificada: o runner usado pelo `uv run` permaneceu desalinhado com o ambiente esperado para a sessão.
 - Ação tomada: instalação do projeto e extras de desenvolvimento em uma virtualenv local dedicada (`.venv-codex-runtime`) e reexecução da suíte por esse ambiente.
@@ -245,7 +245,7 @@
 - Contexto: revalidação operacional do fluxo local após `uv sync --locked --extra dev` em ambiente com rede liberada.
 - Ação/comando relacionado: `./scripts/commit-check.sh --no-sync --skip-branch-validation --skip-docker --skip-security`, `uv run --no-sync mypy`, `uv run --no-sync pytest`
 - Erro observado: `uv run --no-sync mypy` falhou com `No such file or directory`; o mesmo padrão afetava wrappers da `.venv` usados no passo de testes.
-- Causa identificada: wrappers de `.venv/bin/mypy` e `.venv/bin/pytest` apontavam para caminho antigo/incorreto em `/home/g0dsssp33d/work/projetcs/aignt-os/.venv/bin/python3`.
+- Causa identificada: wrappers de `.venv/bin/mypy` e `.venv/bin/pytest` apontavam para caminho antigo/incorreto em `/home/g0dsssp33d/work/projetcs/synapse-os/.venv/bin/python3`.
 - Ação tomada: o fluxo operacional em `scripts/commit-check.sh` passou a executar `python -m mypy` e `python -m pytest` via `uv`; os testes operacionais do script foram ajustados para refletir o novo contrato.
 - Status: resolvido.
 - Observação futura: manter o fluxo com `python -m ...` reduz dependência de wrappers quebrados da `.venv`, mas a virtualenv local antiga ainda pode merecer limpeza dedicada fora desta frente.
@@ -254,7 +254,7 @@
 
 - Contexto: tentativa de fechar a feature `F02-spec-engine-mvp` com PR já aberta no GitHub.
 - Ação/comando relacionado: `gh pr checks 19`, inspeção dos logs do GitHub Actions e revalidação local com `ruff`, `mypy`, `pytest` e `./scripts/commit-check.sh --sync-dev --skip-branch-validation --skip-docker --skip-security --allow-main`.
-- Erro observado: `repo-checks` falhou por formatação pendente em `src/aignt_os/specs/validator.py`, import order em `tests/unit/test_spec_validator.py` e `mypy` reclamando de `Library stubs not installed for "yaml"`.
+- Erro observado: `repo-checks` falhou por formatação pendente em `src/synapse_os/specs/validator.py`, import order em `tests/unit/test_spec_validator.py` e `mypy` reclamando de `Library stubs not installed for "yaml"`.
 - Causa identificada: o delta da F02 foi commitado sem alinhar completamente os gates locais de formatação, lint e tipagem exigidos pelo CI.
 - Ação tomada: correção mínima no `SpecValidator` e no teste afetado, com revalidação local completa dos mesmos gates usados no CI.
 - Status: resolvido na branch atual.

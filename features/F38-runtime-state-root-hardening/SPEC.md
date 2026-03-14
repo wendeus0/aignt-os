@@ -7,24 +7,24 @@ inputs:
   - docs/architecture/SDD.md
   - docs/architecture/TDD.md
   - docs/architecture/SPEC_FORMAT.md
-  - src/aignt_os/config.py
-  - src/aignt_os/runtime/state.py
-  - src/aignt_os/auth.py
-  - src/aignt_os/runtime/circuit_breaker.py
-  - src/aignt_os/cli/app.py
+  - src/synapse_os/config.py
+  - src/synapse_os/runtime/state.py
+  - src/synapse_os/auth.py
+  - src/synapse_os/runtime/circuit_breaker.py
+  - src/synapse_os/cli/app.py
 outputs:
   - trusted_runtime_state_root
   - state_dir_hardening_red_tests
 constraints:
-  - "manter o AIgnt-Synapse-Flow como a engine propria de pipeline do AIgnt OS"
+  - "manter o Synapse-Flow como a engine propria de pipeline do SynapseOS"
   - "restringir a frente ao state-dir compartilhado de runtime/auth/circuit-breaker; sem tocar TUI, socket, IPC ou transporte remoto"
   - "preservar a CLI publica atual, mudando apenas o erro configuracional para state-dir fora da raiz confiável"
   - "nao exigir DOCKER_PREFLIGHT porque a frente nao depende de Docker, build, boot em container ou integracao externa"
 acceptance_criteria:
-  - "`AIGNT_OS_RUNTIME_STATE_DIR` passa a resolver apenas para um path canonico dentro de `workspace_root`, rejeitando escapes por path absoluto fora da raiz ou por symlink."
+  - "`SYNAPSE_OS_RUNTIME_STATE_DIR` passa a resolver apenas para um path canonico dentro de `workspace_root`, rejeitando escapes por path absoluto fora da raiz ou por symlink."
   - "`runtime_state_file`, `auth_registry_file` e `adapter_circuit_breaker_state_file` passam a herdar o mesmo boundary confiável."
-  - "`aignt runtime start` e `aignt auth init` falham com erro configuracional previsivel quando o state-dir configurado escapa da raiz confiável."
-  - "A configuracao valida atual continua funcionando quando `AIGNT_OS_WORKSPACE_ROOT` aponta para a raiz usada nos testes e no fluxo local."
+  - "`synapse runtime start` e `synapse auth init` falham com erro configuracional previsivel quando o state-dir configurado escapa da raiz confiável."
+  - "A configuracao valida atual continua funcionando quando `SYNAPSE_OS_WORKSPACE_ROOT` aponta para a raiz usada nos testes e no fluxo local."
   - "Existe cobertura unitaria e de integracao para configuracao valida, path invalido fora do workspace e escape por symlink."
 non_goals:
   - "alterar `runs_db_path` ou `artifacts_dir`"
@@ -70,7 +70,7 @@ workspace, reutilizando canonicalizacao de path ja existente e mantendo erros pr
 
 - `runtime_state_dir` absoluto fora de `workspace_root` continuar aceito
 - symlink dentro do workspace escapar para um target fora da raiz confiável
-- `aignt auth init` gerar traceback em vez de erro previsivel para state-dir invalido
+- `synapse auth init` gerar traceback em vez de erro previsivel para state-dir invalido
 - fixtures atuais de runtime falharem por nao declarar `workspace_root`
 
 # Cenarios verificaveis

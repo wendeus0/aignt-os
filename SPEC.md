@@ -18,11 +18,11 @@ related_adrs:
   - docs/adr/009-runtime-dual-cli-worker.md
 acceptance_criteria:
   - O projeto instala e executa via pyproject.toml sem erro estrutural.
-  - Existe um comando CLI mínimo do pacote aignt_os que responde sem falhar.
+  - Existe um comando CLI mínimo do pacote synapse_os que responde sem falhar.
   - Existem modelos/contratos iniciais para TaskRequest, RunContext, CLIExecutionResult e ParsedArtifact.
   - Existe configuração básica centralizada para a aplicação.
   - Existe ao menos um teste automatizado para CLI mínima e um teste para contratos/modelos.
-  - A organização do código respeita src/aignt_os e tests/.
+  - A organização do código respeita src/synapse_os e tests/.
 inputs:
   - Estrutura base do repositório
   - Documentação arquitetural existente
@@ -43,14 +43,14 @@ out_of_scope:
 ---
 
 # Contexto
-Esta feature cria a base mínima de código para permitir o início do desenvolvimento guiado por SPEC e TDD no AIgnt OS.
+Esta feature cria a base mínima de código para permitir o início do desenvolvimento guiado por SPEC e TDD no SynapseOS.
 
 # Objetivo
 Estabelecer o primeiro incremento funcional do projeto em Python com CLI mínima e contratos estruturais do domínio.
 
 # Escopo
 ## Incluído
-- scaffold inicial do pacote `aignt_os`
+- scaffold inicial do pacote `synapse_os`
 - ponto de entrada mínimo da CLI
 - modelos base do domínio
 - configuração inicial
@@ -64,7 +64,7 @@ Estabelecer o primeiro incremento funcional do projeto em Python com CLI mínima
 - relatórios de execução completos
 
 # Requisitos funcionais
-1. O comando `aignt` deve iniciar sem erro estrutural.
+1. O comando `synapse` deve iniciar sem erro estrutural.
 2. A CLI mínima deve oferecer uma resposta simples de diagnóstico ou placeholder.
 3. O sistema deve expor contratos iniciais fortemente tipados.
 4. O projeto deve ter testes automatizados mínimos.

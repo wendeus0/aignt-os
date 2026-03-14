@@ -6,7 +6,7 @@ import tempfile
 from dataclasses import asdict, dataclass
 from pathlib import Path
 
-from aignt_os.runtime.state import STATE_DIR_MODE, STATE_FILE_MODE
+from synapse_os.runtime.state import STATE_DIR_MODE, STATE_FILE_MODE
 
 
 @dataclass(frozen=True, slots=True)

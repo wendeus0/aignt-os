@@ -4,7 +4,7 @@ from importlib import import_module
 
 
 def _supervisor_module():
-    return import_module("aignt_os.supervisor")
+    return import_module("synapse_os.supervisor")
 
 
 def test_supervisor_requests_retry_after_recoverable_step_failure() -> None:

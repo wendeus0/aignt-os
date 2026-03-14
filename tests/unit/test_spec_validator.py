@@ -7,7 +7,7 @@ FIXTURES_DIR = Path(__file__).resolve().parents[1] / "fixtures" / "specs"
 
 
 def _validator_module():
-    return import_module("aignt_os.specs.validator")
+    return import_module("synapse_os.specs.validator")
 
 
 def test_valid_spec_file_returns_structured_document() -> None:

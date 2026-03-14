@@ -8,26 +8,26 @@ inputs:
   - docs/architecture/TDD.md
   - docs/architecture/SPEC_FORMAT.md
   - docs/architecture/PHASE_2_ROADMAP.md
-  - src/aignt_os/cli/app.py
-  - src/aignt_os/config.py
-  - src/aignt_os/runtime/service.py
-  - src/aignt_os/persistence.py
+  - src/synapse_os/cli/app.py
+  - src/synapse_os/config.py
+  - src/synapse_os/runtime/service.py
+  - src/synapse_os/persistence.py
 outputs:
   - environment_doctor_cli_contract
   - doctor_rendering_and_exit_code_tests
   - feature_notes
 constraints:
-  - "manter o AIgnt-Synapse-Flow como a engine propria de pipeline do AIgnt OS"
+  - "manter o Synapse-Flow como a engine propria de pipeline do SynapseOS"
   - "manter o recorte restrito a diagnostico local e somente leitura logica, sem autocorrecao do ambiente"
-  - "expor um unico comando publico novo: `aignt doctor`"
+  - "expor um unico comando publico novo: `synapse doctor`"
   - "reutilizar `AppSettings`, `RuntimeService`, `RunRepository` e `ArtifactStore` apenas para verificacoes leves do ambiente atual"
   - "nao exigir DOCKER_PREFLIGHT, porque o recorte default nao depende de Docker, build, boot completo de runtime nem integracao em container"
   - "nao introduzir TUI, watch mode, shell novo, subprocesso arbitrario nem verificacoes dependentes de credencial externa"
 acceptance_criteria:
-  - "`aignt doctor` passa a exibir um resumo legivel do ambiente local com status geral e checks nomeados para `runtime_state`, `runs_db` e `artifacts_dir`."
+  - "`synapse doctor` passa a exibir um resumo legivel do ambiente local com status geral e checks nomeados para `runtime_state`, `runs_db` e `artifacts_dir`."
   - "Cada check informa `pass`, `warn` ou `fail` e uma orientacao objetiva de proximo passo, sem traceback cru."
   - "O doctor detecta pelo menos: estado de runtime inconsistente, parent directory nao gravavel para `runs_db_path` e parent directory nao gravavel para `artifacts_dir`."
-  - "Quando o ambiente minimo do fluxo publico atual estiver pronto, `aignt doctor` retorna exit code `0`; quando houver falha bloqueante de ambiente, retorna exit code `5` conforme o contrato da F21."
+  - "Quando o ambiente minimo do fluxo publico atual estiver pronto, `synapse doctor` retorna exit code `0`; quando houver falha bloqueante de ambiente, retorna exit code `5` conforme o contrato da F21."
   - "Existe pelo menos um teste de integracao cobrindo ambiente saudavel e pelo menos um cobrindo falha bloqueante de ambiente via CLI publica."
 non_goals:
   - "autocorrigir permissoes, criar containers ou iniciar/parar o runtime"
@@ -45,19 +45,19 @@ dependencies:
 
 # Contexto
 
-Depois de `F15`, `F16`, `F21` e `F18`, a CLI publica do AIgnt OS ja expõe um caminho canonico minimo para submeter e inspecionar uma run, enquanto o AIgnt-Synapse-Flow continua sendo a engine propria de pipeline do AIgnt OS. O atrito seguinte nao e de fluxo da run em si, mas de diagnostico do ambiente local antes da primeira execucao real por um operador.
+Depois de `F15`, `F16`, `F21` e `F18`, a CLI publica do SynapseOS ja expõe um caminho canonico minimo para submeter e inspecionar uma run, enquanto o Synapse-Flow continua sendo a engine propria de pipeline do SynapseOS. O atrito seguinte nao e de fluxo da run em si, mas de diagnostico do ambiente local antes da primeira execucao real por um operador.
 
 Hoje, quando o diretório de estado, o banco SQLite ou a area de artifacts estao mal configurados, o operador precisa inferir isso indiretamente por falhas em `runs submit`, `runtime status` ou outros comandos. A `F19` existe para transformar esse diagnostico em um comando publico pequeno, objetivo e testavel.
 
 # Objetivo
 
-Entregar um doctor de ambiente enxuto, acessivel por `aignt doctor`, capaz de verificar os pre-requisitos locais minimos do fluxo publico atual e orientar o operador sobre o proximo passo sem alterar o ambiente automaticamente.
+Entregar um doctor de ambiente enxuto, acessivel por `synapse doctor`, capaz de verificar os pre-requisitos locais minimos do fluxo publico atual e orientar o operador sobre o proximo passo sem alterar o ambiente automaticamente.
 
 # Escopo
 
 ## Incluido
 
-- um comando publico novo: `aignt doctor`
+- um comando publico novo: `synapse doctor`
 - resumo geral do ambiente com checks nomeados
 - verificacao leve de paths configurados para runtime state, SQLite e artifacts
 - verificacao do estado atual do runtime como `pass`, `warn` ou `fail`
@@ -75,7 +75,7 @@ Entregar um doctor de ambiente enxuto, acessivel por `aignt doctor`, capaz de ve
 
 # Requisitos funcionais
 
-1. A CLI deve expor `aignt doctor` como comando publico de diagnostico local.
+1. A CLI deve expor `synapse doctor` como comando publico de diagnostico local.
 2. O comando deve apresentar um resumo com status geral do ambiente.
 3. O doctor deve listar checks nomeados, no minimo:
    - `runtime_state`
@@ -120,7 +120,7 @@ Entregar um doctor de ambiente enxuto, acessivel por `aignt doctor`, capaz de ve
 
 - Dado um ambiente local com paths configurados acessiveis
 - E runtime parado de forma coerente
-- Quando `aignt doctor` for executado
+- Quando `synapse doctor` for executado
 - Entao a CLI retorna exit code `0`
 - E exibe status geral `pass`
 - E exibe checks nomeados para `runtime_state`, `runs_db` e `artifacts_dir`
@@ -129,7 +129,7 @@ Entregar um doctor de ambiente enxuto, acessivel por `aignt doctor`, capaz de ve
 ## Cenario 2: runtime inconsistente
 
 - Dado um estado persistido de runtime inconsistente
-- Quando `aignt doctor` for executado
+- Quando `synapse doctor` for executado
 - Entao a CLI retorna exit code `5`
 - E o check `runtime_state` aparece como `fail`
 - E a saida continua sem traceback cru
@@ -137,7 +137,7 @@ Entregar um doctor de ambiente enxuto, acessivel por `aignt doctor`, capaz de ve
 ## Cenario 3: path nao gravavel para persistencia
 
 - Dado um ambiente em que `runs_db_path` ou `artifacts_dir` nao pode ser preparado pelo processo atual
-- Quando `aignt doctor` for executado
+- Quando `synapse doctor` for executado
 - Entao a CLI retorna exit code `5`
 - E o check correspondente aparece como `fail`
 - E a orientacao sugere corrigir permissao ou configuracao de path

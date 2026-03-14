@@ -1,7 +1,7 @@
-# Test-Driven Development Strategy — AIgnt OS v3
+# Test-Driven Development Strategy — SynapseOS v3
 
 ## 1. Objetivo
-Definir a estratégia de testes para implementar o AIgnt OS com foco em confiabilidade do **AIgnt-Synapse-Flow**, a engine própria de pipeline do projeto, dos adapters CLI, do formato de SPEC, do runtime dual (CLI + worker leve) e dos hand-offs entre etapas.
+Definir a estratégia de testes para implementar o SynapseOS com foco em confiabilidade do **Synapse-Flow**, a engine própria de pipeline do projeto, dos adapters CLI, do formato de SPEC, do runtime dual (CLI + worker leve) e dos hand-offs entre etapas.
 
 ## 2. Princípios
 - Validar `DOCKER_PREFLIGHT` antes de iniciar execução prática dependente de Docker.
@@ -9,7 +9,7 @@ Definir a estratégia de testes para implementar o AIgnt OS com foco em confiabi
 - Separar testes de unidade, integração, pipeline e worker.
 - Simular ferramentas CLI com outputs realistas.
 - Validar hand-offs entre steps, não apenas comportamento interno.
-- Garantir que o AIgnt-Synapse-Flow permaneça refatorável.
+- Garantir que o Synapse-Flow permaneça refatorável.
 - Fazer `TEST_RED` derivar testes da SPEC validada, não do prompt cru.
 - Tratar `SECURITY_REVIEW` como gate antes de `REPORT` e `COMMIT`.
 
@@ -74,7 +74,7 @@ Cobrem:
 - adapter + parser,
 - pipeline manager + supervisor,
 - persistência de run,
-- CLI + AIgnt-Synapse-Flow,
+- CLI + Synapse-Flow,
 - worker + repositório de runs.
 
 ### 5.3 CLI simulation tests
@@ -113,7 +113,7 @@ Garantem que:
 5. Cleaner/parser básico.
 6. Base adapter async.
 7. Step executor.
-8. AIgnt-Synapse-Flow linear.
+8. Synapse-Flow linear.
 9. Persistência SQLite.
 10. Worker leve.
 11. Supervisor com retry/reroute.
@@ -283,7 +283,7 @@ Adapters e integrações assíncronas usam `pytest-asyncio`. A configuração `a
 A suíte deve garantir:
 - hand-offs confiáveis,
 - validação rígida da SPEC,
-- previsibilidade do AIgnt-Synapse-Flow,
+- previsibilidade do Synapse-Flow,
 - worker seguro para retries longos,
 - `DOCKER_PREFLIGHT` executável e verificável,
 - `SECURITY_REVIEW` funcionando como gate,

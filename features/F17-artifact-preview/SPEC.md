@@ -1,7 +1,7 @@
 ---
 id: F17-artifact-preview
 type: feature
-summary: Adicionar preview textual controlado de artifacts uteis em `aignt runs show <run_id>` sem abrir leitura arbitraria do host nem dump irrestrito de outputs.
+summary: Adicionar preview textual controlado de artifacts uteis em `synapse runs show <run_id>` sem abrir leitura arbitraria do host nem dump irrestrito de outputs.
 inputs:
   - CONTEXT.md
   - docs/architecture/SDD.md
@@ -10,25 +10,25 @@ inputs:
   - docs/architecture/PHASE_2_ROADMAP.md
   - features/F16-run-detail-expansion/SPEC.md
   - features/F21-cli-error-model-and-exit-codes/SPEC.md
-  - src/aignt_os/cli/app.py
-  - src/aignt_os/cli/rendering.py
-  - src/aignt_os/persistence.py
+  - src/synapse_os/cli/app.py
+  - src/synapse_os/cli/rendering.py
+  - src/synapse_os/persistence.py
 outputs:
   - artifact_preview_cli_contract
   - artifact_preview_tests
   - feature_notes
 constraints:
-  - "manter o AIgnt-Synapse-Flow como a engine propria de pipeline do AIgnt OS"
-  - "manter a superficie publica concentrada no comando existente `aignt runs show <run_id>`"
+  - "manter o Synapse-Flow como a engine propria de pipeline do SynapseOS"
+  - "manter a superficie publica concentrada no comando existente `synapse runs show <run_id>`"
   - "usar um unico seletor opcional de preview: `--preview <target>`"
   - "limitar os targets suportados a `report` e `<STEP_STATE>.clean`"
   - "nao permitir leitura arbitraria por path informado pelo usuario"
   - "nao alterar schema SQLite, layout de artifacts no filesystem, worker ou pipeline"
   - "nao exigir DOCKER_PREFLIGHT, porque a frente so le sinais persistidos locais"
 acceptance_criteria:
-  - "`aignt runs show <run_id>` continua exibindo o detalhe atual por padrao e passa a aceitar `--preview <target>` sem quebrar o caminho existente."
-  - "`aignt runs show <run_id> --preview report` exibe um preview textual do `RUN_REPORT.md` persistido para a run, incluindo o path de origem e um trecho truncado quando necessario."
-  - "`aignt runs show <run_id> --preview <STEP_STATE>.clean` exibe um preview textual do `clean_output` persistido do step solicitado, sem expor `raw_output`."
+  - "`synapse runs show <run_id>` continua exibindo o detalhe atual por padrao e passa a aceitar `--preview <target>` sem quebrar o caminho existente."
+  - "`synapse runs show <run_id> --preview report` exibe um preview textual do `RUN_REPORT.md` persistido para a run, incluindo o path de origem e um trecho truncado quando necessario."
+  - "`synapse runs show <run_id> --preview <STEP_STATE>.clean` exibe um preview textual do `clean_output` persistido do step solicitado, sem expor `raw_output`."
   - "O preview e limitado ao inicio do arquivo, com truncamento explicito apos no maximo 40 linhas, para evitar dump irrestrito de artifacts grandes."
   - "Preview alvo invalido retorna `Usage error:` com exit code `2`, e preview solicitado para conteudo inexistente retorna `Not found:` com exit code `3`, sempre sem traceback cru."
   - "Existe pelo menos um teste de integracao cobrindo preview de report e pelo menos um teste de integracao cobrindo target invalido ou preview ausente via CLI publica."
@@ -49,19 +49,19 @@ dependencies:
 
 # Contexto
 
-Depois da `F16`, a CLI publica do AIgnt OS ja consegue explicar melhor o estado de uma run e listar onde estao seus outputs e artifacts persistidos, enquanto o AIgnt-Synapse-Flow continua sendo a engine propria de pipeline do AIgnt OS. Porem, o operador ainda precisa sair da superficie publica da CLI para abrir manualmente `RUN_REPORT.md` ou um `clean_output` relevante quando quer confirmar o conteudo de um sinal persistido.
+Depois da `F16`, a CLI publica do SynapseOS ja consegue explicar melhor o estado de uma run e listar onde estao seus outputs e artifacts persistidos, enquanto o Synapse-Flow continua sendo a engine propria de pipeline do SynapseOS. Porem, o operador ainda precisa sair da superficie publica da CLI para abrir manualmente `RUN_REPORT.md` ou um `clean_output` relevante quando quer confirmar o conteudo de um sinal persistido.
 
-A `F17` existe para reduzir esse atrito sem transformar `aignt runs show` em dump arbitrario de arquivos. O objetivo e oferecer preview controlado dos artifacts mais uteis ao fluxo publico atual, mantendo a leitura restrita a alvos explicitamente suportados e previsiveis.
+A `F17` existe para reduzir esse atrito sem transformar `synapse runs show` em dump arbitrario de arquivos. O objetivo e oferecer preview controlado dos artifacts mais uteis ao fluxo publico atual, mantendo a leitura restrita a alvos explicitamente suportados e previsiveis.
 
 # Objetivo
 
-Entregar preview textual controlado de report e output limpo por step dentro de `aignt runs show <run_id>`, preservando o contrato atual da CLI e evitando leitura arbitraria de arquivos ou ampliacao indevida da superficie publica.
+Entregar preview textual controlado de report e output limpo por step dentro de `synapse runs show <run_id>`, preservando o contrato atual da CLI e evitando leitura arbitraria de arquivos ou ampliacao indevida da superficie publica.
 
 # Escopo
 
 ## Incluido
 
-- extensao pequena de `aignt runs show <run_id>` com `--preview <target>`
+- extensao pequena de `synapse runs show <run_id>` com `--preview <target>`
 - preview de `RUN_REPORT.md` persistido da run
 - preview de `clean_output` persistido por step
 - truncamento explicito para manter a leitura curta e segura
@@ -78,7 +78,7 @@ Entregar preview textual controlado de report e output limpo por step dentro de 
 
 # Requisitos funcionais
 
-1. `aignt runs show <run_id>` deve manter o comportamento atual quando `--preview` nao for informado.
+1. `synapse runs show <run_id>` deve manter o comportamento atual quando `--preview` nao for informado.
 2. A CLI deve aceitar um unico argumento opcional `--preview <target>`.
 3. Os targets validos devem ser:
    - `report`
@@ -118,7 +118,7 @@ Entregar preview textual controlado de report e output limpo por step dentro de 
 ## Cenario 1: preview do report da run
 
 - Dado uma run com `RUN_REPORT.md` persistido
-- Quando `aignt runs show <run_id> --preview report` for executado
+- Quando `synapse runs show <run_id> --preview report` for executado
 - Entao a CLI retorna exit code `0`
 - E exibe o path do report
 - E exibe um preview textual truncado quando necessario
@@ -126,7 +126,7 @@ Entregar preview textual controlado de report e output limpo por step dentro de 
 ## Cenario 2: preview de output limpo por step
 
 - Dado uma run com `clean_output` persistido para um step
-- Quando `aignt runs show <run_id> --preview PLAN.clean` for executado
+- Quando `synapse runs show <run_id> --preview PLAN.clean` for executado
 - Entao a CLI retorna exit code `0`
 - E exibe o path de `clean_output`
 - E nao exibe `raw_output` como conteudo do preview
@@ -134,7 +134,7 @@ Entregar preview textual controlado de report e output limpo por step dentro de 
 ## Cenario 3: target invalido ou preview ausente
 
 - Dado um target invalido ou um artifact previewable ausente
-- Quando `aignt runs show <run_id> --preview <target>` for executado
+- Quando `synapse runs show <run_id> --preview <target>` for executado
 - Entao a CLI falha com o exit code correto do contrato da F21
 - E a mensagem permanece curta e sem traceback cru
 

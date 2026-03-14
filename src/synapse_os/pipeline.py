@@ -5,16 +5,16 @@ from typing import Protocol
 
 from pydantic import BaseModel, ConfigDict, Field, StrictStr
 
-from aignt_os.config import AppSettings
-from aignt_os.specs import (
+from synapse_os.config import AppSettings
+from synapse_os.specs import (
     SpecDocument,
     validate_spec_file,
 )
-from aignt_os.specs import (
+from synapse_os.specs import (
     SpecValidationError as _SpecValidationError,
 )
-from aignt_os.state_machine import LINEAR_STATE_FLOW, AIgntStateMachine
-from aignt_os.supervisor import (
+from synapse_os.state_machine import LINEAR_STATE_FLOW, SynapseStateMachine
+from synapse_os.supervisor import (
     RetryableStepError,
     Supervisor,
     SupervisorDecision,
@@ -170,14 +170,14 @@ class PipelineEngine:
         *,
         settings: AppSettings | None = None,
         executors: dict[str, StepExecutor | dict[str, StepExecutor]] | None = None,
-        state_machine: AIgntStateMachine | None = None,
+        state_machine: SynapseStateMachine | None = None,
         observer: PipelineObserver | None = None,
         supervisor: Supervisor | None = None,
         cancellation_checker: CancellationChecker | None = None,
     ) -> None:
         self.settings = settings or AppSettings()
         self.executors = self._normalize_executors(executors or {})
-        self.state_machine = state_machine or AIgntStateMachine()
+        self.state_machine = state_machine or SynapseStateMachine()
         self.observer = observer
         self.cancellation_checker = cancellation_checker
 

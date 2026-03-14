@@ -11,8 +11,8 @@ def test_readme_documents_watch_cancel_and_actual_dashboard_shortcuts() -> None:
     readme = README_PATH.read_text(encoding="utf-8")
 
     assert "## TUI Watch e Cancelamento Local" in readme
-    assert "`aignt runs watch <run_id>`" in readme
-    assert "`aignt runs cancel <run_id>`" in readme
+    assert "`synapse runs watch <run_id>`" in readme
+    assert "`synapse runs cancel <run_id>`" in readme
     assert "`Enter`" in readme
     assert "`a`" in readme
     assert "`f`" in readme
@@ -42,6 +42,6 @@ def test_changelog_mentions_filters_and_local_cancellation() -> None:
         "restauracao da lista completa (`x`)" in changelog
     )
     assert (
-        "`aignt runs cancel <run_id>` e atalho `k` no dashboard para "
+        "`synapse runs cancel <run_id>` e atalho `k` no dashboard para "
         "cancelamento local e gracioso de runs" in changelog
     )

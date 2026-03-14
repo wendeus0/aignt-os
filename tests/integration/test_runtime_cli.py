@@ -15,13 +15,13 @@ REPO_ROOT = Path(__file__).resolve().parents[2]
 
 
 def invoke_runtime_command(tmp_path: Path, *args: str):
-    cli_module = import_module("aignt_os.cli.app")
+    cli_module = import_module("synapse_os.cli.app")
     env = {
-        "AIGNT_OS_ENVIRONMENT": "test",
-        "AIGNT_OS_RUNTIME_STATE_DIR": str(tmp_path),
-        "AIGNT_OS_RUNS_DB_PATH": str(tmp_path / "runs" / "runs.sqlite3"),
-        "AIGNT_OS_ARTIFACTS_DIR": str(tmp_path / "artifacts"),
-        "AIGNT_OS_WORKSPACE_ROOT": str(tmp_path),
+        "SYNAPSE_OS_ENVIRONMENT": "test",
+        "SYNAPSE_OS_RUNTIME_STATE_DIR": str(tmp_path),
+        "SYNAPSE_OS_RUNS_DB_PATH": str(tmp_path / "runs" / "runs.sqlite3"),
+        "SYNAPSE_OS_ARTIFACTS_DIR": str(tmp_path / "artifacts"),
+        "SYNAPSE_OS_WORKSPACE_ROOT": str(tmp_path),
     }
     return runner.invoke(cli_module.app, ["runtime", *args], env=env)
 
@@ -33,17 +33,17 @@ def spawn_runtime_foreground(tmp_path: Path) -> subprocess.Popen[str]:
     env["PYTHONPATH"] = (
         f"{python_path}{os.pathsep}{existing_python_path}" if existing_python_path else python_path
     )
-    env["AIGNT_OS_ENVIRONMENT"] = "test"
-    env["AIGNT_OS_RUNTIME_STATE_DIR"] = str(tmp_path)
-    env["AIGNT_OS_RUNS_DB_PATH"] = str(tmp_path / "runs" / "runs.sqlite3")
-    env["AIGNT_OS_ARTIFACTS_DIR"] = str(tmp_path / "artifacts")
-    env["AIGNT_OS_WORKSPACE_ROOT"] = str(tmp_path)
+    env["SYNAPSE_OS_ENVIRONMENT"] = "test"
+    env["SYNAPSE_OS_RUNTIME_STATE_DIR"] = str(tmp_path)
+    env["SYNAPSE_OS_RUNS_DB_PATH"] = str(tmp_path / "runs" / "runs.sqlite3")
+    env["SYNAPSE_OS_ARTIFACTS_DIR"] = str(tmp_path / "artifacts")
+    env["SYNAPSE_OS_WORKSPACE_ROOT"] = str(tmp_path)
 
     return subprocess.Popen(
         [
             sys.executable,
             "-c",
-            "from aignt_os.cli.app import app; app()",
+            "from synapse_os.cli.app import app; app()",
             "runtime",
             "run",
         ],
@@ -119,7 +119,7 @@ def test_runtime_status_reports_running_for_active_runtime(tmp_path: Path) -> No
     status_result = invoke_runtime_command(tmp_path, "status")
 
     assert status_result.exit_code == 0
-    assert "aignt os runtime" in status_result.stdout.lower()
+    assert "synapseos runtime" in status_result.stdout.lower()
     assert "status" in status_result.stdout.lower()
     assert "running" in status_result.stdout.lower()
     assert "pid" in status_result.stdout.lower()
@@ -223,13 +223,13 @@ def test_runtime_stop_refuses_to_signal_process_when_persisted_identity_mismatch
 
 
 def test_runtime_start_rejects_untrusted_state_directory(tmp_path: Path) -> None:
-    cli_module = import_module("aignt_os.cli.app")
+    cli_module = import_module("synapse_os.cli.app")
     workspace_root = tmp_path / "workspace"
     workspace_root.mkdir()
     env = {
-        "AIGNT_OS_ENVIRONMENT": "test",
-        "AIGNT_OS_WORKSPACE_ROOT": str(workspace_root),
-        "AIGNT_OS_RUNTIME_STATE_DIR": str(tmp_path / "outside-runtime-state"),
+        "SYNAPSE_OS_ENVIRONMENT": "test",
+        "SYNAPSE_OS_WORKSPACE_ROOT": str(workspace_root),
+        "SYNAPSE_OS_RUNTIME_STATE_DIR": str(tmp_path / "outside-runtime-state"),
     }
 
     result = runner.invoke(cli_module.app, ["runtime", "start"], env=env)
@@ -245,7 +245,7 @@ def test_runtime_start_rejects_untrusted_state_directory(tmp_path: Path) -> None
 def test_runtime_start_rejects_symlinked_state_directory_outside_workspace_root(
     tmp_path: Path,
 ) -> None:
-    cli_module = import_module("aignt_os.cli.app")
+    cli_module = import_module("synapse_os.cli.app")
     workspace_root = tmp_path / "workspace"
     outside_root = tmp_path / "outside-runtime-state"
     runtime_link = workspace_root / "runtime-link"
@@ -253,9 +253,9 @@ def test_runtime_start_rejects_symlinked_state_directory_outside_workspace_root(
     outside_root.mkdir()
     runtime_link.symlink_to(outside_root, target_is_directory=True)
     env = {
-        "AIGNT_OS_ENVIRONMENT": "test",
-        "AIGNT_OS_WORKSPACE_ROOT": str(workspace_root),
-        "AIGNT_OS_RUNTIME_STATE_DIR": str(runtime_link),
+        "SYNAPSE_OS_ENVIRONMENT": "test",
+        "SYNAPSE_OS_WORKSPACE_ROOT": str(workspace_root),
+        "SYNAPSE_OS_RUNTIME_STATE_DIR": str(runtime_link),
     }
 
     result = runner.invoke(cli_module.app, ["runtime", "start"], env=env)

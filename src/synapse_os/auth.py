@@ -11,10 +11,10 @@ from typing import TYPE_CHECKING, Literal, Protocol, runtime_checkable
 
 from pydantic import BaseModel, ConfigDict, Field, ValidationError
 
-from aignt_os.runtime.state import STATE_DIR_MODE, STATE_FILE_MODE
+from synapse_os.runtime.state import STATE_DIR_MODE, STATE_FILE_MODE
 
 if TYPE_CHECKING:
-    from aignt_os.config import AppSettings
+    from synapse_os.config import AppSettings
 
 
 Role = Literal["admin", "operator", "viewer"]

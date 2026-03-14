@@ -1,21 +1,21 @@
 services:
-  aignt-os:
+  synapse-os:
     build:
       context: .
       dockerfile: Dockerfile
       args:
-        APP_UID: ${AIGNT_OS_UID:-1000}
-        APP_GID: ${AIGNT_OS_GID:-1000}
-    image: aignt-os:dev
+        APP_UID: ${SYNAPSE_OS_UID:-1000}
+        APP_GID: ${SYNAPSE_OS_GID:-1000}
+    image: synapse-os:dev
     command: ["runtime", "run"]
     environment:
-      AIGNT_OS_ENVIRONMENT: development
-    user: "${AIGNT_OS_UID:-1000}:${AIGNT_OS_GID:-1000}"
+      SYNAPSE_OS_ENVIRONMENT: development
+    user: "${SYNAPSE_OS_UID:-1000}:${SYNAPSE_OS_GID:-1000}"
     volumes:
       - ./artifacts:/app/artifacts
     working_dir: /app
     healthcheck:
-      test: ["CMD", "aignt", "runtime", "ready"]
+      test: ["CMD", "synapse", "runtime", "ready"]
       interval: 2s
       timeout: 2s
       retries: 15

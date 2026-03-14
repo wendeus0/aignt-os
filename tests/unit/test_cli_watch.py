@@ -4,7 +4,7 @@ from unittest.mock import MagicMock, patch
 import pytest
 from typer.testing import CliRunner
 
-from aignt_os.cli.app import app
+from synapse_os.cli.app import app
 
 
 @pytest.fixture
@@ -29,18 +29,18 @@ def test_runs_watch_requires_run_id(runner: CliRunner) -> None:
     assert "Missing argument" in result.stdout or "Missing argument" in result.stderr
 
 
-@patch.dict("sys.modules", {"aignt_os.cli.dashboard": MagicMock()})
+@patch.dict("sys.modules", {"synapse_os.cli.dashboard": MagicMock()})
 def test_runs_watch_invokes_tui(runner: CliRunner) -> None:
     """O comando deve instanciar e rodar o Dashboard TUI."""
     # Recupera o módulo mockado
-    mock_dashboard_module = sys.modules["aignt_os.cli.dashboard"]
+    mock_dashboard_module = sys.modules["synapse_os.cli.dashboard"]
     mock_dashboard_cls = mock_dashboard_module.RunDashboard
     mock_app_instance = MagicMock()
     mock_dashboard_cls.return_value = mock_app_instance
 
     # Precisamos mockar _run_repository que é chamado dentro de watch
     # Como _run_repository está no mesmo módulo (app), mockamos ele lá.
-    with patch("aignt_os.cli.app._run_repository") as mock_repo_factory:
+    with patch("synapse_os.cli.app._run_repository") as mock_repo_factory:
         mock_repo = MagicMock()
         mock_repo_factory.return_value = mock_repo
         # Simula run existente (retorna algo truthy)
@@ -66,7 +66,7 @@ def test_runs_watch_handles_missing_run(runner: CliRunner) -> None:
     # Mas o erro de run not found acontece depois do import.
 
     # Vamos mockar o repository para lançar NoResultFound
-    with patch("aignt_os.cli.app._run_repository") as mock_repo_factory:
+    with patch("synapse_os.cli.app._run_repository") as mock_repo_factory:
         mock_repo = MagicMock()
         mock_repo_factory.return_value = mock_repo
 
@@ -76,7 +76,7 @@ def test_runs_watch_handles_missing_run(runner: CliRunner) -> None:
         mock_repo.get_run.side_effect = NoResultFound()
 
         # Mock dashboard para evitar erro de import/instanciação se o código chegar lá (não deveria)
-        with patch.dict("sys.modules", {"aignt_os.cli.dashboard": MagicMock()}):
+        with patch.dict("sys.modules", {"synapse_os.cli.dashboard": MagicMock()}):
             result = runner.invoke(app, ["runs", "watch", "non-existent-id"])
 
     assert result.exit_code != 0

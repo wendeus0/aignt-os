@@ -17,7 +17,7 @@ non_goals:
 ---
 
 ## Contexto
-Atualmente, o `PipelineEngine` assume que a SPEC é válida ou falha de forma não tratada durante a execução. O `SpecValidator` existe (`src/aignt_os/specs/validator.py`), mas não é invocado obrigatoriamente no início do pipeline de execução. Isso permite que SPECs quebradas avancem para estados inconsistentes.
+Atualmente, o `PipelineEngine` assume que a SPEC é válida ou falha de forma não tratada durante a execução. O `SpecValidator` existe (`src/synapse_os/specs/validator.py`), mas não é invocado obrigatoriamente no início do pipeline de execução. Isso permite que SPECs quebradas avancem para estados inconsistentes.
 
 ## Objetivo
 Tornar a validação da SPEC um gate obrigatório na máquina de estados. Se a validação falhar:

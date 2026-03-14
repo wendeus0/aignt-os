@@ -4,7 +4,7 @@
 Aceito
 
 ## Contexto
-O AIgnt OS adota TDD explícito com cobertura progressiva das features. Até a feature F07, os testes eram predominantemente unitários — suficientes para validar contratos isolados, mas insuficientes para garantir comportamento real em features que envolvem I/O de filesystem, lifecycle de processo, adaptadores com subprocesso ou encadeamento entre módulos via entrypoint público.
+O SynapseOS adota TDD explícito com cobertura progressiva das features. Até a feature F07, os testes eram predominantemente unitários — suficientes para validar contratos isolados, mas insuficientes para garantir comportamento real em features que envolvem I/O de filesystem, lifecycle de processo, adaptadores com subprocesso ou encadeamento entre módulos via entrypoint público.
 
 A expansão da suíte para 215 testes (F01–F07 + TDD hardening) evidenciou que certos critérios de aceite não podem ser verificados com testes unitários puros: um test unitário com mocks pode passar mesmo quando a integração real falha silenciosamente.
 

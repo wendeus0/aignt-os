@@ -10,10 +10,10 @@ def test_readme_documents_local_auth_registry_cli_boundary() -> None:
     readme = README_PATH.read_text(encoding="utf-8")
 
     assert "## Auth Registry Local" in readme
-    assert "`aignt auth init --principal-id local-admin --role admin`" in readme
-    assert "`aignt auth issue --principal-id local-viewer --role viewer`" in readme
-    assert "`aignt auth issue --principal-id local-operator --role operator`" in readme
-    assert "`aignt auth disable --token-id <token_id>`" in readme
+    assert "`synapse auth init --principal-id local-admin --role admin`" in readme
+    assert "`synapse auth issue --principal-id local-viewer --role viewer`" in readme
+    assert "`synapse auth issue --principal-id local-operator --role operator`" in readme
+    assert "`synapse auth disable --token-id <token_id>`" in readme
     assert "`viewer`" in readme
     assert "`operator`" in readme
     assert "`admin`" in readme

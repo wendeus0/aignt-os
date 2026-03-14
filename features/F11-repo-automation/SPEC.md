@@ -1,7 +1,7 @@
 ---
 id: F11-repo-automation
 type: feature
-summary: Implementar a infraestrutura operacional de containerização e automação do repositório para subir o AIgnt OS em Docker e validar fluxo de branch/commit.
+summary: Implementar a infraestrutura operacional de containerização e automação do repositório para subir o SynapseOS em Docker e validar fluxo de branch/commit.
 workspace: .
 inputs:
   - repository_structure
@@ -43,7 +43,7 @@ security_notes:
 
 # Contexto
 
-O AIgnt OS já possui bootstrap mínimo em Python, mas ainda não possui camada operacional pronta para containerização, build repetível, rebuild baseado em mudanças relevantes e validações de branch/commit compatíveis com um fluxo seguro de repositório.
+O SynapseOS já possui bootstrap mínimo em Python, mas ainda não possui camada operacional pronta para containerização, build repetível, rebuild baseado em mudanças relevantes e validações de branch/commit compatíveis com um fluxo seguro de repositório.
 
 # Objetivo
 
@@ -77,7 +77,7 @@ Fica explicitamente fora desta feature:
 
 ## 5. Regras Funcionais
 
-1. O container deve executar a CLI `aignt` sem depender de componentes ainda não implementados.
+1. O container deve executar a CLI `synapse` sem depender de componentes ainda não implementados.
 2. O build local deve ser acionável por script auditável.
 3. O rebuild deve considerar mudanças em arquivos relevantes para imagem e runtime operacional.
 4. A validação contra `main` deve ser explícita e configurável.
@@ -96,7 +96,7 @@ Fica explicitamente fora desta feature:
 
 ### AC1. Container
 - Existe `Dockerfile` compatível com Python 3.12.
-- A imagem instala o projeto e expõe `aignt --help` como comando padrão verificável.
+- A imagem instala o projeto e expõe `synapse --help` como comando padrão verificável.
 
 ### AC2. Build/Rebuild
 - Existe script de build explícito.

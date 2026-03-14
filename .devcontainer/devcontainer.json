@@ -1,5 +1,5 @@
 {
-  "name": "aignt-os-codex-dev",
+  "name": "synapse-os-codex-dev",
   "dockerComposeFile": [
     "../compose.yaml",
     "../compose.dev.yaml"

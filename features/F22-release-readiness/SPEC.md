@@ -12,13 +12,13 @@ inputs:
   - CHANGELOG.md
   - features/F17-artifact-preview/SPEC.md
   - features/F20-public-onboarding/SPEC.md
-  - src/aignt_os/cli/app.py
+  - src/synapse_os/cli/app.py
 outputs:
   - release_readiness_docs
   - release_readiness_tests
   - feature_notes
 constraints:
-  - "manter o AIgnt-Synapse-Flow como a engine propria de pipeline do AIgnt OS"
+  - "manter o Synapse-Flow como a engine propria de pipeline do SynapseOS"
   - "nao abrir nova superficie publica de produto alem da CLI e docs ja existentes"
   - "nao alterar schema SQLite, worker, state machine ou pipeline por inercia"
   - "preservar o quickstart publico atual como local e sync-first"
@@ -47,7 +47,7 @@ dependencies:
 
 # Contexto
 
-A etapa 2 do AIgnt OS ja consolidou submit publico, detalhe de run, contrato de erros, caminho canonico, doctor, onboarding e preview controlado de artifacts, enquanto o AIgnt-Synapse-Flow continua sendo a engine propria de pipeline do AIgnt OS. Falta empacotar esse estado como uma release tecnica coerente e auditavel, sem prometer maturidade acima da realmente entregue.
+A etapa 2 do SynapseOS ja consolidou submit publico, detalhe de run, contrato de erros, caminho canonico, doctor, onboarding e preview controlado de artifacts, enquanto o Synapse-Flow continua sendo a engine propria de pipeline do SynapseOS. Falta empacotar esse estado como uma release tecnica coerente e auditavel, sem prometer maturidade acima da realmente entregue.
 
 # Objetivo
 

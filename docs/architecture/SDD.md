@@ -1,9 +1,9 @@
-# Software Design Document (SDD) — AIgnt OS v3
+# Software Design Document (SDD) — SynapseOS v3
 
 ## 1. Visão Geral
 
 ### 1.1 Propósito
-AIgnt OS é um meta-orquestrador de agentes de IA via CLI. Seu papel é coordenar múltiplas ferramentas externas de IA, organizar hand-offs entre etapas de uma esteira controlada e produzir artefatos de software com rastreabilidade, resiliência e baixo custo operacional.
+SynapseOS é um meta-orquestrador de agentes de IA via CLI. Seu papel é coordenar múltiplas ferramentas externas de IA, organizar hand-offs entre etapas de uma esteira controlada e produzir artefatos de software com rastreabilidade, resiliência e baixo custo operacional.
 
 ### 1.2 Objetivos
 - Orquestrar ferramentas de IA via CLI de forma uniforme.
@@ -37,7 +37,7 @@ O sistema recebe uma tarefa, produz uma especificação estruturada, planeja sua
 - Observabilidade do MVP: **local**, com logs estruturados e `RUN_REPORT.md` por execução.
 - Memória semântica no MVP: **advisory/read-only**.
 - SPEC oficial: **Markdown estruturado com front matter YAML obrigatório**.
-- Núcleo de orquestração: **AIgnt-Synapse-Flow**, a **engine própria de pipeline** do AIgnt OS, state-driven e implementada em Python.
+- Núcleo de orquestração: **Synapse-Flow**, a **engine própria de pipeline** do SynapseOS, state-driven e implementada em Python.
 
 ---
 
@@ -62,7 +62,7 @@ Responsável por estado, pipeline, supervisão, memória e decisão.
 
 Componentes:
 - Orchestrator Engine
-- AIgnt-Synapse-Flow
+- Synapse-Flow
 - State Machine Manager
 - Pipeline Manager
 - Adaptive Supervisor
@@ -106,7 +106,7 @@ Regras:
 - `security-review` atua como gate antes de `REPORT` e `COMMIT`.
 - O fluxo oficial organiza o trabalho por feature sem substituir os estados internos do runtime.
 
-### 5.2 Subetapas internas do AIgnt-Synapse-Flow
+### 5.2 Subetapas internas do Synapse-Flow
 
 ```text
 REQUEST → SPEC_DISCOVERY → SPEC_NORMALIZATION → SPEC_VALIDATION → PLAN → TEST_RED → CODE_GREEN → QUALITY_GATE → REVIEW → SECURITY → DOCUMENT → COMPLETE
@@ -116,7 +116,7 @@ O macroestágio `SPEC` do fluxo oficial engloba `SPEC_DISCOVERY`, `SPEC_NORMALIZ
 
 ### 5.3 Mapeamento macro ↔ estados internos
 
-| Macroestágio (fluxo oficial) | Estados internos do AIgnt-Synapse-Flow |
+| Macroestágio (fluxo oficial) | Estados internos do Synapse-Flow |
 |---|---|
 | `SPEC` | `SPEC_DISCOVERY` → `SPEC_NORMALIZATION` → `SPEC_VALIDATION` |
 | `TEST_RED` | `PLAN` → `TEST_RED` |
@@ -152,7 +152,7 @@ Usado para:
 ### 6.2 Worker/daemon residente leve
 Usado para:
 - consumir runs pendentes,
-- executar o AIgnt-Synapse-Flow,
+- executar o Synapse-Flow,
 - aplicar retries longos,
 - persistir progresso,
 - gerar artefatos e relatório final.
@@ -220,7 +220,7 @@ O runtime dual permite preservar a experiência CLI e, ao mesmo tempo, suportar 
 ## 8. Módulos Principais
 
 ### 8.1 Orchestrator Engine
-Coordena a execução ponta a ponta, cria o contexto da run, invoca o AIgnt-Synapse-Flow e consolida resultados.
+Coordena a execução ponta a ponta, cria o contexto da run, invoca o Synapse-Flow e consolida resultados.
 
 ### 8.2 State Machine Manager
 Modela e valida estados e transições.
@@ -261,7 +261,7 @@ Subcomponentes sugeridos:
 ### 8.5 CLI Adapter Layer
 Abstrai a execução das ferramentas externas.
 
-Contrato mínimo (implementado em `src/aignt_os/contracts.py`):
+Contrato mínimo (implementado em `src/synapse_os/contracts.py`):
 
 ```python
 @dataclass
@@ -330,8 +330,8 @@ Responsabilidades:
 - decidir se a execução será inline ou assíncrona,
 - consolidar estado final.
 
-### 8.10 AIgnt-Synapse-Flow
-O AIgnt-Synapse-Flow é a engine própria de pipeline do AIgnt OS. Ele coordena os estados internos da run, os hand-offs entre steps, o encadeamento `SPEC → TEST_RED → CODE_GREEN → REFACTOR → SECURITY_REVIEW → REPORT` e a integração com supervisor, memória e adapters.
+### 8.10 Synapse-Flow
+O Synapse-Flow é a engine própria de pipeline do SynapseOS. Ele coordena os estados internos da run, os hand-offs entre steps, o encadeamento `SPEC → TEST_RED → CODE_GREEN → REFACTOR → SECURITY_REVIEW → REPORT` e a integração com supervisor, memória e adapters.
 
 ---
 
@@ -340,7 +340,7 @@ O AIgnt-Synapse-Flow é a engine própria de pipeline do AIgnt OS. Ele coordena 
 2. Usuário envia uma tarefa.
 3. O CLI cria ou dispara uma run.
 4. O Spec Engine produz e valida a SPEC.
-5. O AIgnt-Synapse-Flow seleciona o step atual.
+5. O Synapse-Flow seleciona o step atual.
 6. O Adapter executa a ferramenta externa.
 7. O Parsing Engine limpa e valida a saída.
 8. O Supervisor decide o próximo movimento.
@@ -433,7 +433,7 @@ Conteúdo mínimo:
 ### Curto prazo
 - paralelizar alguns steps com `asyncio`;
 - permitir worker residente consumir múltiplas runs;
-- expandir o AIgnt-Synapse-Flow para DAG simples.
+- expandir o Synapse-Flow para DAG simples.
 
 ### Médio prazo
 - DAG pipeline real;
@@ -449,7 +449,7 @@ Conteúdo mínimo:
 ---
 
 ## 15. Documentos Relacionados
-- TDD do AIgnt OS
+- TDD do SynapseOS
 - template oficial de SPEC
 - documentação de stack e runtime
 - ADR-001 a ADR-009

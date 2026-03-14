@@ -62,7 +62,7 @@ Para validar uma SPEC localmente:
 
 ```bash
 uv run --no-sync python -c "
-from aignt_os.specs.validator import SpecValidator
+from synapse_os.specs.validator import SpecValidator
 v = SpecValidator()
 result = v.validate_file('features/<feature>/SPEC.md')
 print(result)

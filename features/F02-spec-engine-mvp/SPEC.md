@@ -1,7 +1,7 @@
 ---
 id: F02-spec-engine-mvp
 type: feature
-summary: Validar a SPEC hibrida do AIgnt OS com parser de front matter YAML, checagem estrutural minima e bloqueio explicito quando o documento for invalido.
+summary: Validar a SPEC hibrida do SynapseOS com parser de front matter YAML, checagem estrutural minima e bloqueio explicito quando o documento for invalido.
 workspace: .
 inputs:
   - docs/architecture/SPEC_FORMAT.md
@@ -29,7 +29,7 @@ acceptance_criteria:
 non_goals:
   - gerar ou editar SPEC automaticamente
   - implementar state machine
-  - implementar pipeline do AIgnt-Synapse-Flow
+  - implementar pipeline do Synapse-Flow
   - validar semantica profunda de cada secao narrativa
   - integrar adapters, worker ou persistencia
 dependencies:
@@ -38,9 +38,9 @@ dependencies:
 
 # Contexto
 
-O AIgnt OS adota desenvolvimento spec-first e depende de uma SPEC hibrida com front matter YAML obrigatorio. No estado atual do projeto, a arquitetura e o formato estao definidos em documentacao, mas ainda falta o primeiro incremento executavel que valide esse contrato antes da pipeline avancar.
+O SynapseOS adota desenvolvimento spec-first e depende de uma SPEC hibrida com front matter YAML obrigatorio. No estado atual do projeto, a arquitetura e o formato estao definidos em documentacao, mas ainda falta o primeiro incremento executavel que valide esse contrato antes da pipeline avancar.
 
-Essa feature introduz apenas o menor recorte necessario para iniciar `SPEC_VALIDATION` no AIgnt-Synapse-Flow, a engine propria de pipeline do AIgnt OS, sem antecipar state machine, parser generico ou fluxo completo da pipeline.
+Essa feature introduz apenas o menor recorte necessario para iniciar `SPEC_VALIDATION` no Synapse-Flow, a engine propria de pipeline do SynapseOS, sem antecipar state machine, parser generico ou fluxo completo da pipeline.
 
 # Objetivo
 
