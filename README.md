@@ -1,16 +1,16 @@
-# AIgnt OS
+# SynapseOS
 
 > Meta-orquestrador de agentes de IA via CLI — produz software com rastreabilidade, resiliência e baixo custo operacional.
 
 ---
 
-## O que é o AIgnt OS?
+## O que é o SynapseOS?
 
-O AIgnt OS é um **orquestrador de ferramentas externas de IA via CLI**. Em vez de chamar APIs diretamente, ele executa ferramentas como Gemini CLI, Codex CLI, Claude CLI e outras por subprocess, coordenando hand-offs entre etapas de uma esteira de desenvolvimento autônomo.
+O SynapseOS é um **orquestrador de ferramentas externas de IA via CLI**. Em vez de chamar APIs diretamente, ele executa ferramentas como Gemini CLI, Codex CLI, Claude CLI e outras por subprocess, coordenando hand-offs entre etapas de uma esteira de desenvolvimento autônomo.
 
 O sistema recebe uma tarefa, produz uma especificação estruturada, planeja a execução, aciona agentes externos, limpa e valida suas saídas, reage a falhas e entrega um relatório auditável por run.
 
-O runtime interno é coordenado pelo **AIgnt-Synapse-Flow**, a **engine própria de pipeline** do AIgnt OS.
+O runtime interno é coordenado pelo **Synapse-Flow**, a **engine própria de pipeline** do SynapseOS.
 
 ### Princípios fundamentais
 
@@ -27,7 +27,7 @@ O runtime interno é coordenado pelo **AIgnt-Synapse-Flow**, a **engine própria
 
 ## Baseline Atual do Repositório
 
-O AIgnt OS ja ultrapassou o recorte inicial de MVP e hoje expõe um baseline tecnico coerente para submissao, observabilidade e operacao local de runs. O AIgnt-Synapse-Flow continua sendo a engine propria de pipeline do AIgnt OS e o repositorio atual ja incorpora:
+O SynapseOS ja ultrapassou o recorte inicial de MVP e hoje expõe um baseline tecnico coerente para submissao, observabilidade e operacao local de runs. O Synapse-Flow continua sendo a engine propria de pipeline do SynapseOS e o repositorio atual ja incorpora:
 
 - etapa 2 consolidada com `doctor`, `runs submit`, `runs show`, artifact preview e onboarding publico local
 - guardrails pos-release absorvidos (`F23 -> F27`) para sanitizacao, boundary de workspace/artifacts, AST guard, provenance e concorrencia local
@@ -42,21 +42,21 @@ O AIgnt OS ja ultrapassou o recorte inicial de MVP e hoje expõe um baseline tec
 SPEC → TEST_RED → CODE_GREEN → REFACTOR → QUALITY_GATE → SECURITY_REVIEW → REPORT → COMMIT
 ```
 
-Dentro do macroestágio `SPEC`, o AIgnt-Synapse-Flow pode decompor a execução em `SPEC_DISCOVERY`, `SPEC_NORMALIZATION` e `SPEC_VALIDATION`.
+Dentro do macroestágio `SPEC`, o Synapse-Flow pode decompor a execução em `SPEC_DISCOVERY`, `SPEC_NORMALIZATION` e `SPEC_VALIDATION`.
 
 O `DOCKER_PREFLIGHT` do projeto continua sendo gate operacional condicional. Por padrão, ele é leve: valida apenas `compose config`, sem build nem `up`. O build explícito fica para workflows e comandos de imagem, e o runtime completo fica para workflow dedicado de integração/runtime ou para execução explícita quando a feature tocar boot, ciclo de vida, persistência ou integração. Os hooks locais continuam leves e não substituem o `DOCKER_PREFLIGHT` operacional real.
 
 ### Superfície pública atual da CLI
 
-- `aignt doctor`
-- `aignt runs submit <spec_path> --mode auto|sync|async --stop-at <STEP>`
-- `aignt runs list`
-- `aignt runs show <run_id>`
-- `aignt runs show <run_id> --preview report`
-- `aignt runs watch <run_id>`
-- `aignt runs cancel <run_id>`
-- `aignt auth init|issue|disable`
-- `aignt runtime start|status|run|ready|stop`
+- `synapse doctor`
+- `synapse runs submit <spec_path> --mode auto|sync|async --stop-at <STEP>`
+- `synapse runs list`
+- `synapse runs show <run_id>`
+- `synapse runs show <run_id> --preview report`
+- `synapse runs watch <run_id>`
+- `synapse runs cancel <run_id>`
+- `synapse auth init|issue|disable`
+- `synapse runtime start|status|run|ready|stop`
 
 ### Boundaries atuais do baseline
 
@@ -116,7 +116,7 @@ O `DOCKER_PREFLIGHT` do projeto continua sendo gate operacional condicional. Por
 ## Como navegar no repositório
 
 ```
-aignt-os/
+synapse-os/
 ├── docs/
 │   ├── architecture/      # Documentação técnica de referência
 │   │   ├── SDD.md             # Software Design Document — arquitetura completa
@@ -137,7 +137,7 @@ aignt-os/
 │       ├── 007-local-llms-offline-reasoning.md
 │       ├── 008-spec-driven-development.md
 │       ├── 009-runtime-dual-cli-worker.md
-│       ├── 010-adopt-aignt-synapse-flow-name.md
+│       ├── 010-adopt-synapse-synapse-flow-name.md
 │       ├── 011-lightweight-docker-preflight-default.md
 │       └── 012-mandatory-integration-tests.md
 │
@@ -148,7 +148,7 @@ aignt-os/
 │   └── init_feature_worktrees.sh  # Script para criar worktrees das features
 │
 ├── src/
-│   └── aignt_os/          # Código-fonte principal
+│   └── synapse_os/          # Código-fonte principal
 │
 └── tests/                 # Suíte de testes
     ├── unit/              # Testes unitários (parser, spec, state machine…)
@@ -187,14 +187,14 @@ O caminho oficial atual da primeira run continua local e `sync-first`. Use esta 
 
 ### Quickstart oficial
 
-1. Diagnostique o ambiente local com `aignt doctor`.
-2. Se o doctor fechar sem falha bloqueante, envie a SPEC com `aignt runs submit <spec_path> --mode sync --stop-at SPEC_VALIDATION`.
+1. Diagnostique o ambiente local com `synapse doctor`.
+2. Se o doctor fechar sem falha bloqueante, envie a SPEC com `synapse runs submit <spec_path> --mode sync --stop-at SPEC_VALIDATION`.
 3. Capture o `run_id` retornado pelo submit.
-4. Inspecione o resultado com `aignt runs show <run_id>`.
+4. Inspecione o resultado com `synapse runs show <run_id>`.
 
 ### Boundary operacional
 
-- `aignt doctor` e diagnostico local e advisory: ele verifica `runtime_state`, `runs_db` e `artifacts_dir` no ambiente atual.
+- `synapse doctor` e diagnostico local e advisory: ele verifica `runtime_state`, `runs_db` e `artifacts_dir` no ambiente atual.
 - O doctor nao substitui `repo-preflight` para cenarios com Docker, container, build de imagem, boot de runtime persistente, persistencia operacional ou integracao real.
 - Se a sua primeira execucao depender desses cenarios, saia do quickstart e rode o preflight operacional do projeto via `repo-preflight` (`./scripts/docker-preflight.sh`).
 - `runtime_state=warn` nao bloqueia o caminho minimo atual, porque a demonstracao oficial continua local e `sync-first`; o status `warn` e advisory, nao falha bloqueante.
@@ -205,8 +205,8 @@ O preview de artifacts e uma capacidade adicional da CLI publica, nao um requisi
 
 Exemplos suportados:
 
-- `aignt runs show <run_id> --preview report`
-- `aignt runs show <run_id> --preview PLAN.clean`
+- `synapse runs show <run_id> --preview report`
+- `synapse runs show <run_id> --preview PLAN.clean`
 
 Limites do recorte atual:
 
@@ -217,12 +217,12 @@ Limites do recorte atual:
 
 ## TUI Watch e Cancelamento Local
 
-O dashboard TUI atual do AIgnt OS continua local e terminal-first. Ele observa uma run especifica ja persistida e renderiza o estado atual do AIgnt-Synapse-Flow, a engine propria de pipeline do AIgnt OS, sem abrir web UI nem operacao distribuida.
+O dashboard TUI atual do SynapseOS continua local e terminal-first. Ele observa uma run especifica ja persistida e renderiza o estado atual do Synapse-Flow, a engine propria de pipeline do SynapseOS, sem abrir web UI nem operacao distribuida.
 
 Superficie publica atual:
 
-- `aignt runs watch <run_id>` abre o dashboard TUI local da run
-- `aignt runs cancel <run_id>` solicita cancelamento local e gracioso da run
+- `synapse runs watch <run_id>` abre o dashboard TUI local da run
+- `synapse runs cancel <run_id>` solicita cancelamento local e gracioso da run
 
 Atalhos reais do dashboard atual:
 
@@ -242,14 +242,14 @@ Boundary do recorte atual:
 
 ## Auth Registry Local
 
-A `F29` introduziu auth opt-in para os comandos mutaveis da CLI, a `F30` adicionou o provisionamento local desse registry sem editar JSON manualmente, a `F44` desacoplou o provider atual em torno de `auth_provider=file` e a `F47` consolidou RBAC local com roles fixas (`viewer`, `operator`, `admin`). O AIgnt-Synapse-Flow continua sendo a engine propria de pipeline do AIgnt OS; esta capacidade permanece estritamente local e nao abre socket, auth remota ou RBAC distribuido.
+A `F29` introduziu auth opt-in para os comandos mutaveis da CLI, a `F30` adicionou o provisionamento local desse registry sem editar JSON manualmente, a `F44` desacoplou o provider atual em torno de `auth_provider=file` e a `F47` consolidou RBAC local com roles fixas (`viewer`, `operator`, `admin`). O Synapse-Flow continua sendo a engine propria de pipeline do SynapseOS; esta capacidade permanece estritamente local e nao abre socket, auth remota ou RBAC distribuido.
 
 Fluxo minimo de provisionamento:
 
-1. Inicialize o registry com `aignt auth init --principal-id local-admin --role admin`.
-2. Emita um token adicional com `aignt auth issue --principal-id local-viewer --role viewer`.
-3. Emita um token operacional com `aignt auth issue --principal-id local-operator --role operator`.
-4. Se precisar revogar um token emitido, use `aignt auth disable --token-id <token_id>`.
+1. Inicialize o registry com `synapse auth init --principal-id local-admin --role admin`.
+2. Emita um token adicional com `synapse auth issue --principal-id local-viewer --role viewer`.
+3. Emita um token operacional com `synapse auth issue --principal-id local-operator --role operator`.
+4. Se precisar revogar um token emitido, use `synapse auth disable --token-id <token_id>`.
 
 Boundary de roles no recorte atual:
 
@@ -273,7 +273,7 @@ Boundary do recorte atual:
 |---|---|---|
 | `runtime_state = warn` | O runtime persistente esta parado, mas o fluxo minimo atual ainda pode seguir. | Continue no quickstart `sync-first`; so escale para preflight/runtime se precisar de modo operacional mais pesado. |
 | `runtime_state = fail` | O estado persistido do runtime esta inconsistente. | Corrija o estado local antes de prosseguir; se a execucao depender de runtime persistente ou container, use `repo-preflight`. |
-| `runs_db = fail` | O caminho de persistencia SQLite nao pode ser preparado pelo processo atual. | Ajuste permissao ou configuracao do path antes de rodar `aignt runs submit`. |
+| `runs_db = fail` | O caminho de persistencia SQLite nao pode ser preparado pelo processo atual. | Ajuste permissao ou configuracao do path antes de rodar `synapse runs submit`. |
 | `artifacts_dir = fail` | O diretório de artifacts nao pode ser preparado pelo processo atual. | Ajuste permissao ou configuracao do path antes de inspecionar outputs persistidos. |
 | `SPEC invalida` no submit | A SPEC nao passou em `SPEC_VALIDATION`. | Corrija o front matter YAML e as secoes `# Contexto` e `# Objetivo` antes de reenviar. |
 
@@ -293,7 +293,7 @@ O desenvolvimento continua feature-by-feature, com `SPEC.md` validada antes de c
 
 ### Ambiente isolado do Codex
 
-- O runtime da aplicação continua no serviço `aignt-os` definido em `compose.yaml`.
+- O runtime da aplicação continua no serviço `synapse-os` definido em `compose.yaml`.
 - O Codex roda isolado no serviço `codex-dev` definido em `compose.dev.yaml`, com apenas o repositório montado em `/workspace`.
 - Para subir o ambiente e abrir o Codex dentro do container de desenvolvimento, use `./scripts/dev-codex.sh`.
 - Para subir também o runtime existente junto com o ambiente de desenvolvimento, use `./scripts/dev-codex.sh --with-runtime`.

@@ -8,15 +8,15 @@ inputs:
   - docs/architecture/TDD.md
   - docs/architecture/SPEC_FORMAT.md
   - docs/IDEAS.md
-  - src/aignt_os/runtime/dispatch.py
-  - src/aignt_os/persistence.py
-  - src/aignt_os/reporting.py
+  - src/synapse_os/runtime/dispatch.py
+  - src/synapse_os/persistence.py
+  - src/synapse_os/reporting.py
 outputs:
   - run_provenance_persistence
   - security_audit_trail
   - feature_notes
 constraints:
-  - "manter o AIgnt-Synapse-Flow como a engine propria de pipeline do AIgnt OS"
+  - "manter o Synapse-Flow como a engine propria de pipeline do SynapseOS"
   - "trabalhar apenas o recorte de G-06 e G-08"
   - "nao introduzir Alembic ou infraestrutura nova de migration"
   - "nao alterar a CLI publica alem da exposicao de provenance em runs show e RUN_REPORT.md"
@@ -45,7 +45,7 @@ dependencies:
 
 # Contexto
 
-Depois de fechar sanitizacao publica na F23, boundary de workspace na F24 e AST guard na F25, o proximo gap de seguranca da IDEA-001 fica na rastreabilidade da run. Hoje o AIgnt-Synapse-Flow, a engine propria de pipeline do AIgnt OS, persiste `spec_path`, steps e events, mas ainda nao registra quem iniciou a run nem garante que a SPEC consumida pelo worker continua identica ao arquivo validado no submit.
+Depois de fechar sanitizacao publica na F23, boundary de workspace na F24 e AST guard na F25, o proximo gap de seguranca da IDEA-001 fica na rastreabilidade da run. Hoje o Synapse-Flow, a engine propria de pipeline do SynapseOS, persiste `spec_path`, steps e events, mas ainda nao registra quem iniciou a run nem garante que a SPEC consumida pelo worker continua identica ao arquivo validado no submit.
 
 Esse gap aparece com mais clareza no runtime dual: uma run pode ser enfileirada em `async`, a SPEC pode ser alterada no workspace antes do worker consumi-la e o sistema atual nao deixa evidencias suficientes para auditoria posterior. A mesma superficie tambem limita a explicacao de falhas de guardrail ja existentes, porque o audit trail atual se resume a `run_failed` e `supervisor_decision`.
 

@@ -8,15 +8,15 @@ inputs:
   - docs/architecture/TDD.md
   - docs/architecture/SPEC_FORMAT.md
   - docs/IDEAS.md
-  - src/aignt_os/adapters.py
-  - src/aignt_os/config.py
-  - src/aignt_os/runtime/state.py
+  - src/synapse_os/adapters.py
+  - src/synapse_os/config.py
+  - src/synapse_os/runtime/state.py
 outputs:
   - adapter_circuit_breaker_state
   - adapter_health_guard
   - feature_notes
 constraints:
-  - "manter o AIgnt-Synapse-Flow como a engine propria de pipeline do AIgnt OS"
+  - "manter o Synapse-Flow como a engine propria de pipeline do SynapseOS"
   - "trabalhar apenas o recorte de G-09"
   - "integrar o breaker persistido apenas ao CodexCLIAdapter nesta frente"
   - "nao alterar a CLI publica nem exigir novo subcomando"
@@ -49,7 +49,7 @@ dependencies:
 
 Depois da F27, o adapter layer ja possui classificacao operacional explicita do Codex e um guard de concorrencia local por processo, mas ainda nao existe memoria persistida de health/cooldown entre runs. Hoje o `CodexCLIAdapter` continua tentando spawns repetidos mesmo quando o ambiente ja deixou claro que esta bloqueado por launcher, container ou autenticacao.
 
-No baseline atual, o AIgnt-Synapse-Flow continua sendo a engine propria de pipeline do AIgnt OS e opera em modo local, CLI-first e single-host. O menor recorte util para `G-09` e adicionar apenas um circuit breaker persistido em arquivo local, sem abrir SQLite, auth ou coordenacao distribuida.
+No baseline atual, o Synapse-Flow continua sendo a engine propria de pipeline do SynapseOS e opera em modo local, CLI-first e single-host. O menor recorte util para `G-09` e adicionar apenas um circuit breaker persistido em arquivo local, sem abrir SQLite, auth ou coordenacao distribuida.
 
 # Objetivo
 

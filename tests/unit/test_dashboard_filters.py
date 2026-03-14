@@ -1,7 +1,7 @@
 from unittest.mock import MagicMock
 
-from aignt_os.cli.dashboard import RunDashboard
-from aignt_os.persistence import RunStepRecord
+from synapse_os.cli.dashboard import RunDashboard
+from synapse_os.persistence import RunStepRecord
 
 
 # Helper to create mock steps

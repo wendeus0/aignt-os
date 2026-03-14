@@ -2,7 +2,7 @@
 
 ## Sobre este documento
 
-Este documento registra ideias, melhorias e candidatos de evolução do AIgnt OS que
+Este documento registra ideias, melhorias e candidatos de evolução do SynapseOS que
 **ainda não são SPECs** — não têm escopo fechado, critérios de aceite validados por testes
 nem feature aberta na fila ativa.
 
@@ -164,7 +164,7 @@ Ao promover:
 | **Absorção recomendada** | ver tabela interna por item |
 | **Depende de** | — |
 
-Esta IDEA consolida os gaps de proteção identificados na análise de guardrails do AIgnt OS.
+Esta IDEA consolida os gaps de proteção identificados na análise de guardrails do SynapseOS.
 Cada item tem prioridade e absorção independentes. Parte do programa já foi absorvida
 em `F23 -> F27`; os itens remanescentes continuam candidatos a novas SPECs próprias.
 
@@ -186,7 +186,7 @@ em `F23 -> F27`; os itens remanescentes continuam candidatos a novas SPECs próp
 
 ### Problema
 
-O AIgnt-Synapse-Flow — a engine própria de pipeline do AIgnt OS — expõe superfície de
+O Synapse-Flow — a engine própria de pipeline do SynapseOS — expõe superfície de
 ataque crescente à medida que a Fase 2 amplia a interface pública (`runs submit`,
 `runs show`, `runs list`). Os gaps de maior risco imediato são:
 
@@ -229,7 +229,7 @@ Absorções já concluídas no baseline atual:
 - `F47`: RBAC local com roles `viewer`, `operator` e `admin`
 
 Centralização técnica já realizada:
-- `src/aignt_os/security.py` foi criado como módulo de segurança compartilhado
+- `src/synapse_os/security.py` foi criado como módulo de segurança compartilhado
 - a sanitização pública passou a reutilizar helpers compartilhados no baseline atual
 
 Boundary ainda adiado:

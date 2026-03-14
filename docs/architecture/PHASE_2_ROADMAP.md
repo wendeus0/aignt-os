@@ -2,13 +2,13 @@
 
 ## Objetivo
 
-Registrar a proxima etapa do projeto apos a conclusao do MVP inicial e dos follow-ups `F13` e `F14`, mantendo o AIgnt-Synapse-Flow como a engine propria de pipeline do AIgnt OS e priorizando evolucao incremental da CLI publica.
+Registrar a proxima etapa do projeto apos a conclusao do MVP inicial e dos follow-ups `F13` e `F14`, mantendo o Synapse-Flow como a engine propria de pipeline do SynapseOS e priorizando evolucao incremental da CLI publica.
 
 ## Estado de partida
 
 - `main` sincronizada e baseline estavel
 - MVP inicial concluido ate `DOCUMENT`
-- `aignt runs list`, `aignt runs show <run_id>` e `aignt runs submit <spec_path>` ja expostos pela CLI publica
+- `synapse runs list`, `synapse runs show <run_id>` e `synapse runs submit <spec_path>` ja expostos pela CLI publica
 - nenhuma nova feature de produto aberta no momento
 
 ## Estrategia adotada
@@ -44,7 +44,7 @@ Alocacao recomendada quando esses itens voltarem:
 ### F15 — Public Run Submission
 - **Objetivo**: abrir um caminho oficial para criar runs pela CLI publica.
 - **Valor para a fase**: transforma o sistema de apenas inspecionavel em executavel por interface publica.
-- **Superficie publica afetada**: `aignt runs submit <spec_path>`, `--mode auto|sync|async`, `--stop-at <state>`.
+- **Superficie publica afetada**: `synapse runs submit <spec_path>`, `--mode auto|sync|async`, `--stop-at <state>`.
 - **Dependencias**: F14, runtime dual, dispatch interno ja existente.
 - **Fora de escopo**: preview de artifacts, onboarding, TUI.
 - **Criterio de pronto**: um operador consegue iniciar uma run e obter `run_id`, `status` e `mode`.
@@ -53,7 +53,7 @@ Alocacao recomendada quando esses itens voltarem:
 ### F16 — Run Detail Expansion
 - **Objetivo**: aprofundar `runs show` para explicar onde a run esta, falhou ou travou.
 - **Valor para a fase**: reduz atrito operacional logo apos a submissao publica.
-- **Superficie publica afetada**: extensoes de `aignt runs show` para steps, events e artifacts listados com mais contexto.
+- **Superficie publica afetada**: extensoes de `synapse runs show` para steps, events e artifacts listados com mais contexto.
 - **Dependencias**: F14 concluida; idealmente F15 concluida ou em reta final.
 - **Fora de escopo**: preview bruto de conteudo e TUI.
 - **Criterio de pronto**: um operador consegue localizar o proximo ponto de diagnostico apenas pela CLI.
@@ -80,7 +80,7 @@ Alocacao recomendada quando esses itens voltarem:
 ### F19 — Environment Doctor
 - **Objetivo**: oferecer diagnostico local para os pre-requisitos do fluxo publico.
 - **Valor para a fase**: reduz troubleshooting antes da primeira run real.
-- **Superficie publica afetada**: `aignt doctor`.
+- **Superficie publica afetada**: `synapse doctor`.
 - **Dependencias**: happy path ja conhecido o suficiente para virar checklist.
 - **Fora de escopo**: auto-correcao de ambiente.
 - **Criterio de pronto**: o usuario entende o que falta para executar o fluxo oficial.
@@ -100,7 +100,7 @@ Alocacao recomendada quando esses itens voltarem:
 ### F17 — Artifact Preview
 - **Objetivo**: permitir consulta de report e outputs uteis pela CLI.
 - **Valor para a fase**: melhora conforto de operacao depois do caminho principal estar estavel.
-- **Superficie publica afetada**: extensoes de `aignt runs show <run_id>` para preview controlado de `RUN_REPORT.md` e de output limpo por step.
+- **Superficie publica afetada**: extensoes de `synapse runs show <run_id>` para preview controlado de `RUN_REPORT.md` e de output limpo por step.
 - **Dependencias**: F16 e caminho canonico ja consolidados.
 - **Fora de escopo**: dump irrestrito de arquivos e leitura arbitraria do host.
 - **Criterio de pronto**: o usuario le report e outputs-chave sem abrir arquivos manualmente.

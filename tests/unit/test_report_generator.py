@@ -5,8 +5,8 @@ from pathlib import Path
 
 
 def test_run_report_generator_matches_expected_fixture(tmp_path: Path) -> None:
-    persistence = import_module("aignt_os.persistence")
-    reporting = import_module("aignt_os.reporting")
+    persistence = import_module("synapse_os.persistence")
+    reporting = import_module("synapse_os.reporting")
 
     repository = persistence.RunRepository(tmp_path / "runs.sqlite3")
     artifact_store = persistence.ArtifactStore(tmp_path / "artifacts")
@@ -32,7 +32,7 @@ def test_run_report_generator_matches_expected_fixture(tmp_path: Path) -> None:
         run_id=run_id,
         step_state="SPEC_VALIDATION",
         artifact_name="spec_summary",
-        content="Implementar a primeira engine linear do AIgnt-Synapse-Flow",
+        content="Implementar a primeira engine linear do Synapse-Flow",
     )
     repository.record_step(run_id, state="SPEC_VALIDATION", status="completed")
     repository.record_step(

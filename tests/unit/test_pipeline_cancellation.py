@@ -2,7 +2,7 @@ from unittest.mock import MagicMock
 
 import pytest
 
-from aignt_os.pipeline import PipelineCancelledError, PipelineContext, PipelineEngine
+from synapse_os.pipeline import PipelineCancelledError, PipelineContext, PipelineEngine
 
 
 class MockCancellationChecker:

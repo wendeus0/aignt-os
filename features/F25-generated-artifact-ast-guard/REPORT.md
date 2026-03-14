@@ -21,8 +21,8 @@
 - Leitura e alinhamento com `CONTEXT.md`, `docs/architecture/SDD.md`, `docs/architecture/TDD.md` e `docs/architecture/SPEC_FORMAT.md`.
 - Validacao da SPEC com `validate_spec_file(Path('features/F25-generated-artifact-ast-guard/SPEC.md'))`.
 - `uv run --no-sync python -m pytest tests/unit/test_parsing_engine.py tests/unit/test_persistence.py tests/unit/test_report_generator.py tests/integration/test_pipeline_persistence.py tests/integration/test_adapter_parser_flow.py tests/integration/test_runs_cli.py -q`
-- `uv run --no-sync ruff check src/aignt_os/parsing.py src/aignt_os/persistence.py tests/unit/test_parsing_engine.py tests/unit/test_persistence.py tests/unit/test_report_generator.py tests/integration/test_pipeline_persistence.py tests/integration/test_adapter_parser_flow.py tests/integration/test_runs_cli.py`
-- `uv run --no-sync mypy src/aignt_os/parsing.py src/aignt_os/persistence.py`
+- `uv run --no-sync ruff check src/synapse_os/parsing.py src/synapse_os/persistence.py tests/unit/test_parsing_engine.py tests/unit/test_persistence.py tests/unit/test_report_generator.py tests/integration/test_pipeline_persistence.py tests/integration/test_adapter_parser_flow.py tests/integration/test_runs_cli.py`
+- `uv run --no-sync mypy src/synapse_os/parsing.py src/synapse_os/persistence.py`
 - `./scripts/security-gate.sh`
 
 ## Security review

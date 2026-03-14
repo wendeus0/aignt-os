@@ -35,8 +35,8 @@ Fixture objective.
 
 
 def test_run_dispatch_service_executes_inline_when_mode_is_sync(tmp_path: Path) -> None:
-    persistence = import_module("aignt_os.persistence")
-    dispatch_module = import_module("aignt_os.runtime.dispatch")
+    persistence = import_module("synapse_os.persistence")
+    dispatch_module = import_module("synapse_os.runtime.dispatch")
 
     spec_path = tmp_path / "SPEC.md"
     _write_valid_spec(spec_path)
@@ -65,8 +65,8 @@ def test_run_dispatch_service_executes_inline_when_mode_is_sync(tmp_path: Path) 
 
 
 def test_run_dispatch_service_auto_queues_when_runtime_is_ready(tmp_path: Path) -> None:
-    persistence = import_module("aignt_os.persistence")
-    dispatch_module = import_module("aignt_os.runtime.dispatch")
+    persistence = import_module("synapse_os.persistence")
+    dispatch_module = import_module("synapse_os.runtime.dispatch")
 
     spec_path = tmp_path / "SPEC.md"
     _write_valid_spec(spec_path)
@@ -96,8 +96,8 @@ def test_run_dispatch_service_auto_queues_when_runtime_is_ready(tmp_path: Path) 
 
 
 def test_run_dispatch_service_explicit_async_queues_pending_run(tmp_path: Path) -> None:
-    persistence = import_module("aignt_os.persistence")
-    dispatch_module = import_module("aignt_os.runtime.dispatch")
+    persistence = import_module("synapse_os.persistence")
+    dispatch_module = import_module("synapse_os.runtime.dispatch")
 
     spec_path = tmp_path / "SPEC.md"
     _write_valid_spec(spec_path)
@@ -128,9 +128,9 @@ def test_run_dispatch_service_explicit_async_queues_pending_run(tmp_path: Path) 
 def test_run_dispatch_service_requires_running_runtime_for_authenticated_async(
     tmp_path: Path,
 ) -> None:
-    persistence = import_module("aignt_os.persistence")
-    dispatch_module = import_module("aignt_os.runtime.dispatch")
-    runtime_state_module = import_module("aignt_os.runtime.state")
+    persistence = import_module("synapse_os.persistence")
+    dispatch_module = import_module("synapse_os.runtime.dispatch")
+    runtime_state_module = import_module("synapse_os.runtime.state")
 
     spec_path = tmp_path / "SPEC.md"
     _write_valid_spec(spec_path)
@@ -162,9 +162,9 @@ def test_run_dispatch_service_requires_running_runtime_for_authenticated_async(
 def test_run_dispatch_service_rejects_authenticated_async_for_other_runtime_owner(
     tmp_path: Path,
 ) -> None:
-    persistence = import_module("aignt_os.persistence")
-    dispatch_module = import_module("aignt_os.runtime.dispatch")
-    runtime_state_module = import_module("aignt_os.runtime.state")
+    persistence = import_module("synapse_os.persistence")
+    dispatch_module = import_module("synapse_os.runtime.dispatch")
+    runtime_state_module = import_module("synapse_os.runtime.state")
 
     spec_path = tmp_path / "SPEC.md"
     _write_valid_spec(spec_path)
@@ -201,9 +201,9 @@ def test_run_dispatch_service_rejects_authenticated_async_for_other_runtime_owne
 def test_run_dispatch_service_allows_authenticated_async_for_legacy_runtime_binding(
     tmp_path: Path,
 ) -> None:
-    persistence = import_module("aignt_os.persistence")
-    dispatch_module = import_module("aignt_os.runtime.dispatch")
-    runtime_state_module = import_module("aignt_os.runtime.state")
+    persistence = import_module("synapse_os.persistence")
+    dispatch_module = import_module("synapse_os.runtime.dispatch")
+    runtime_state_module = import_module("synapse_os.runtime.state")
 
     spec_path = tmp_path / "SPEC.md"
     _write_valid_spec(spec_path)
@@ -238,8 +238,8 @@ def test_run_dispatch_service_allows_authenticated_async_for_legacy_runtime_bind
 
 
 def test_run_dispatch_service_rejects_missing_spec_path(tmp_path: Path) -> None:
-    persistence = import_module("aignt_os.persistence")
-    dispatch_module = import_module("aignt_os.runtime.dispatch")
+    persistence = import_module("synapse_os.persistence")
+    dispatch_module = import_module("synapse_os.runtime.dispatch")
 
     repository = persistence.RunRepository(tmp_path / "runs.sqlite3")
     artifact_store = persistence.ArtifactStore(tmp_path / "artifacts")
@@ -261,9 +261,9 @@ def test_run_dispatch_service_rejects_missing_spec_path(tmp_path: Path) -> None:
 
 
 def test_run_dispatch_service_rejects_invalid_spec_before_persisting_run(tmp_path: Path) -> None:
-    persistence = import_module("aignt_os.persistence")
-    dispatch_module = import_module("aignt_os.runtime.dispatch")
-    specs_module = import_module("aignt_os.specs")
+    persistence = import_module("synapse_os.persistence")
+    dispatch_module = import_module("synapse_os.runtime.dispatch")
+    specs_module = import_module("synapse_os.specs")
 
     spec_path = tmp_path / "SPEC.md"
     spec_path.write_text("# Contexto\n\nSem front matter.\n", encoding="utf-8")
@@ -287,8 +287,8 @@ def test_run_dispatch_service_rejects_invalid_spec_before_persisting_run(tmp_pat
 
 
 def test_run_dispatch_service_rejects_invalid_mode(tmp_path: Path) -> None:
-    persistence = import_module("aignt_os.persistence")
-    dispatch_module = import_module("aignt_os.runtime.dispatch")
+    persistence = import_module("synapse_os.persistence")
+    dispatch_module = import_module("synapse_os.runtime.dispatch")
 
     spec_path = tmp_path / "SPEC.md"
     _write_valid_spec(spec_path)
@@ -310,8 +310,8 @@ def test_run_dispatch_service_rejects_invalid_mode(tmp_path: Path) -> None:
 
 
 def test_run_dispatch_service_rejects_spec_outside_workspace_root(tmp_path: Path) -> None:
-    persistence = import_module("aignt_os.persistence")
-    dispatch_module = import_module("aignt_os.runtime.dispatch")
+    persistence = import_module("synapse_os.persistence")
+    dispatch_module = import_module("synapse_os.runtime.dispatch")
 
     workspace_root = tmp_path / "workspace"
     workspace_root.mkdir()
@@ -338,8 +338,8 @@ def test_run_dispatch_service_rejects_spec_outside_workspace_root(tmp_path: Path
 
 
 def test_run_dispatch_service_rejects_directory_outside_workspace_root(tmp_path: Path) -> None:
-    persistence = import_module("aignt_os.persistence")
-    dispatch_module = import_module("aignt_os.runtime.dispatch")
+    persistence = import_module("synapse_os.persistence")
+    dispatch_module = import_module("synapse_os.runtime.dispatch")
 
     workspace_root = tmp_path / "workspace"
     workspace_root.mkdir()
@@ -365,8 +365,8 @@ def test_run_dispatch_service_rejects_directory_outside_workspace_root(tmp_path:
 
 
 def test_run_dispatch_service_persists_canonical_spec_path_for_valid_run(tmp_path: Path) -> None:
-    persistence = import_module("aignt_os.persistence")
-    dispatch_module = import_module("aignt_os.runtime.dispatch")
+    persistence = import_module("synapse_os.persistence")
+    dispatch_module = import_module("synapse_os.runtime.dispatch")
 
     workspace_root = tmp_path / "workspace"
     workspace_root.mkdir()

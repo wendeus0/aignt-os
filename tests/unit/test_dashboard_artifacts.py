@@ -4,8 +4,8 @@ from unittest.mock import MagicMock, PropertyMock, patch
 import pytest
 from textual.widgets import ListView, Static
 
-from aignt_os.cli.dashboard import ArtifactExplorer
-from aignt_os.persistence import ArtifactStore
+from synapse_os.cli.dashboard import ArtifactExplorer
+from synapse_os.persistence import ArtifactStore
 
 
 class TestArtifactExplorer:

@@ -21,7 +21,7 @@ non_goals:
 
 # Context
 
-The AIgnt OS dashboard can open persisted step logs inside a TUI modal. Large logs can degrade responsiveness and force the UI to repaint far more text than the operator needs.
+The SynapseOS dashboard can open persisted step logs inside a TUI modal. Large logs can degrade responsiveness and force the UI to repaint far more text than the operator needs.
 
 # Objective
 

@@ -6,15 +6,15 @@ from pathlib import Path
 
 def _runs_env(tmp_path: Path) -> dict[str, str]:
     return {
-        "AIGNT_OS_ENVIRONMENT": "test",
-        "AIGNT_OS_RUNS_DB_PATH": str(tmp_path / "runs" / "runs.sqlite3"),
-        "AIGNT_OS_ARTIFACTS_DIR": str(tmp_path / "artifacts"),
-        "AIGNT_OS_WORKSPACE_ROOT": str(tmp_path),
+        "SYNAPSE_OS_ENVIRONMENT": "test",
+        "SYNAPSE_OS_RUNS_DB_PATH": str(tmp_path / "runs" / "runs.sqlite3"),
+        "SYNAPSE_OS_ARTIFACTS_DIR": str(tmp_path / "artifacts"),
+        "SYNAPSE_OS_WORKSPACE_ROOT": str(tmp_path),
     }
 
 
 def _seed_run(tmp_path: Path, *, status: str, current_state: str) -> str:
-    persistence = import_module("aignt_os.persistence")
+    persistence = import_module("synapse_os.persistence")
 
     spec_path = tmp_path / f"{status}-{current_state}.md"
     spec_path.write_text("# Fixture\n", encoding="utf-8")
@@ -70,11 +70,11 @@ def test_runs_show_reports_run_metadata_steps_events_and_artifacts(
     cli_runner,
     cli_app,
 ) -> None:
-    persistence = import_module("aignt_os.persistence")
+    persistence = import_module("synapse_os.persistence")
 
     env = _runs_env(tmp_path)
-    repository = persistence.RunRepository(Path(env["AIGNT_OS_RUNS_DB_PATH"]))
-    artifact_store = persistence.ArtifactStore(Path(env["AIGNT_OS_ARTIFACTS_DIR"]))
+    repository = persistence.RunRepository(Path(env["SYNAPSE_OS_RUNS_DB_PATH"]))
+    artifact_store = persistence.ArtifactStore(Path(env["SYNAPSE_OS_ARTIFACTS_DIR"]))
     spec_path = tmp_path / "SPEC.md"
     spec_path.write_text("# Fixture\n", encoding="utf-8")
 
@@ -149,10 +149,10 @@ def test_runs_show_reports_failure_diagnostic_summary(
     cli_runner,
     cli_app,
 ) -> None:
-    persistence = import_module("aignt_os.persistence")
+    persistence = import_module("synapse_os.persistence")
 
     env = _runs_env(tmp_path)
-    repository = persistence.RunRepository(Path(env["AIGNT_OS_RUNS_DB_PATH"]))
+    repository = persistence.RunRepository(Path(env["SYNAPSE_OS_RUNS_DB_PATH"]))
     spec_path = tmp_path / "SPEC.md"
     spec_path.write_text("# Fixture\n", encoding="utf-8")
 
@@ -206,7 +206,7 @@ def test_runs_list_fails_with_environment_error_when_runs_db_path_escapes_worksp
     cli_app,
 ) -> None:
     env = _runs_env(tmp_path)
-    env["AIGNT_OS_RUNS_DB_PATH"] = str((tmp_path / ".." / "outside" / "runs.sqlite3").resolve())
+    env["SYNAPSE_OS_RUNS_DB_PATH"] = str((tmp_path / ".." / "outside" / "runs.sqlite3").resolve())
 
     result = cli_runner.invoke(cli_app, ["runs", "list"], env=env)
 
@@ -223,7 +223,7 @@ def test_runs_show_fails_with_environment_error_when_artifacts_dir_escapes_works
     cli_app,
 ) -> None:
     env = _runs_env(tmp_path)
-    env["AIGNT_OS_ARTIFACTS_DIR"] = str((tmp_path / ".." / "outside-artifacts").resolve())
+    env["SYNAPSE_OS_ARTIFACTS_DIR"] = str((tmp_path / ".." / "outside-artifacts").resolve())
 
     result = cli_runner.invoke(cli_app, ["runs", "show", "missing-run"], env=env)
 
@@ -239,11 +239,11 @@ def test_runs_show_preview_report_renders_truncated_content_and_source_path(
     cli_runner,
     cli_app,
 ) -> None:
-    persistence = import_module("aignt_os.persistence")
+    persistence = import_module("synapse_os.persistence")
 
     env = _runs_env(tmp_path)
-    repository = persistence.RunRepository(Path(env["AIGNT_OS_RUNS_DB_PATH"]))
-    artifact_store = persistence.ArtifactStore(Path(env["AIGNT_OS_ARTIFACTS_DIR"]))
+    repository = persistence.RunRepository(Path(env["SYNAPSE_OS_RUNS_DB_PATH"]))
+    artifact_store = persistence.ArtifactStore(Path(env["SYNAPSE_OS_ARTIFACTS_DIR"]))
     spec_path = tmp_path / "SPEC.md"
     spec_path.write_text("# Fixture\n", encoding="utf-8")
 
@@ -279,11 +279,11 @@ def test_runs_show_preview_clean_output_uses_requested_step_without_raw_content(
     cli_runner,
     cli_app,
 ) -> None:
-    persistence = import_module("aignt_os.persistence")
+    persistence = import_module("synapse_os.persistence")
 
     env = _runs_env(tmp_path)
-    repository = persistence.RunRepository(Path(env["AIGNT_OS_RUNS_DB_PATH"]))
-    artifact_store = persistence.ArtifactStore(Path(env["AIGNT_OS_ARTIFACTS_DIR"]))
+    repository = persistence.RunRepository(Path(env["SYNAPSE_OS_RUNS_DB_PATH"]))
+    artifact_store = persistence.ArtifactStore(Path(env["SYNAPSE_OS_ARTIFACTS_DIR"]))
     spec_path = tmp_path / "SPEC.md"
     spec_path.write_text("# Fixture\n", encoding="utf-8")
 
@@ -335,10 +335,10 @@ def test_runs_show_preview_rejects_invalid_target_with_usage_error(
     cli_runner,
     cli_app,
 ) -> None:
-    persistence = import_module("aignt_os.persistence")
+    persistence = import_module("synapse_os.persistence")
 
     env = _runs_env(tmp_path)
-    repository = persistence.RunRepository(Path(env["AIGNT_OS_RUNS_DB_PATH"]))
+    repository = persistence.RunRepository(Path(env["SYNAPSE_OS_RUNS_DB_PATH"]))
     spec_path = tmp_path / "SPEC.md"
     spec_path.write_text("# Fixture\n", encoding="utf-8")
 
@@ -363,10 +363,10 @@ def test_runs_show_preview_returns_not_found_when_requested_artifact_is_missing(
     cli_runner,
     cli_app,
 ) -> None:
-    persistence = import_module("aignt_os.persistence")
+    persistence = import_module("synapse_os.persistence")
 
     env = _runs_env(tmp_path)
-    repository = persistence.RunRepository(Path(env["AIGNT_OS_RUNS_DB_PATH"]))
+    repository = persistence.RunRepository(Path(env["SYNAPSE_OS_RUNS_DB_PATH"]))
     spec_path = tmp_path / "SPEC.md"
     spec_path.write_text("# Fixture\n", encoding="utf-8")
 
@@ -390,11 +390,11 @@ def test_runs_show_preview_report_rejects_symlink_outside_artifacts_root(
     cli_runner,
     cli_app,
 ) -> None:
-    persistence = import_module("aignt_os.persistence")
+    persistence = import_module("synapse_os.persistence")
 
     env = _runs_env(tmp_path)
-    repository = persistence.RunRepository(Path(env["AIGNT_OS_RUNS_DB_PATH"]))
-    artifact_store = persistence.ArtifactStore(Path(env["AIGNT_OS_ARTIFACTS_DIR"]))
+    repository = persistence.RunRepository(Path(env["SYNAPSE_OS_RUNS_DB_PATH"]))
+    artifact_store = persistence.ArtifactStore(Path(env["SYNAPSE_OS_ARTIFACTS_DIR"]))
     spec_path = tmp_path / "SPEC.md"
     spec_path.write_text("# Fixture\n", encoding="utf-8")
     external_path = tmp_path / "outside-report.md"
@@ -423,11 +423,11 @@ def test_runs_show_preview_returns_execution_error_for_non_utf8_artifact(
     cli_runner,
     cli_app,
 ) -> None:
-    persistence = import_module("aignt_os.persistence")
+    persistence = import_module("synapse_os.persistence")
 
     env = _runs_env(tmp_path)
-    repository = persistence.RunRepository(Path(env["AIGNT_OS_RUNS_DB_PATH"]))
-    artifact_store = persistence.ArtifactStore(Path(env["AIGNT_OS_ARTIFACTS_DIR"]))
+    repository = persistence.RunRepository(Path(env["SYNAPSE_OS_RUNS_DB_PATH"]))
+    artifact_store = persistence.ArtifactStore(Path(env["SYNAPSE_OS_ARTIFACTS_DIR"]))
     spec_path = tmp_path / "SPEC.md"
     spec_path.write_text("# Fixture\n", encoding="utf-8")
 
@@ -467,11 +467,11 @@ def test_runs_show_hides_artifact_listing_entries_that_escape_artifacts_root(
     cli_runner,
     cli_app,
 ) -> None:
-    persistence = import_module("aignt_os.persistence")
+    persistence = import_module("synapse_os.persistence")
 
     env = _runs_env(tmp_path)
-    repository = persistence.RunRepository(Path(env["AIGNT_OS_RUNS_DB_PATH"]))
-    artifact_store = persistence.ArtifactStore(Path(env["AIGNT_OS_ARTIFACTS_DIR"]))
+    repository = persistence.RunRepository(Path(env["SYNAPSE_OS_RUNS_DB_PATH"]))
+    artifact_store = persistence.ArtifactStore(Path(env["SYNAPSE_OS_ARTIFACTS_DIR"]))
     spec_path = tmp_path / "SPEC.md"
     spec_path.write_text("# Fixture\n", encoding="utf-8")
     external_path = tmp_path / "outside-plan.txt"
@@ -500,10 +500,10 @@ def test_runs_show_preview_clean_rejects_db_path_outside_artifacts_root(
     cli_runner,
     cli_app,
 ) -> None:
-    persistence = import_module("aignt_os.persistence")
+    persistence = import_module("synapse_os.persistence")
 
     env = _runs_env(tmp_path)
-    repository = persistence.RunRepository(Path(env["AIGNT_OS_RUNS_DB_PATH"]))
+    repository = persistence.RunRepository(Path(env["SYNAPSE_OS_RUNS_DB_PATH"]))
     spec_path = tmp_path / "SPEC.md"
     spec_path.write_text("# Fixture\n", encoding="utf-8")
     external_path = tmp_path / "outside-clean.txt"

@@ -2,30 +2,30 @@
 
 ## Resumo executivo
 
-- A F29 introduziu uma fundacao local e opt-in de autenticacao com RBAC para a CLI do AIgnt OS.
+- A F29 introduziu uma fundacao local e opt-in de autenticacao com RBAC para a CLI do SynapseOS.
 - O recorte ficou deliberadamente limitado ao baseline atual: `runs submit` e `runtime start|run|stop` agora podem exigir token, enquanto a leitura local continua aberta.
-- O AIgnt-Synapse-Flow permanece a engine propria de pipeline do AIgnt OS; a frente reaproveitou `initiated_by` e o contrato publico de erro da CLI sem abrir socket, auth remota ou gerenciamento completo de credenciais.
+- O Synapse-Flow permanece a engine propria de pipeline do SynapseOS; a frente reaproveitou `initiated_by` e o contrato publico de erro da CLI sem abrir socket, auth remota ou gerenciamento completo de credenciais.
 
 ## Escopo entregue
 
-- Novo modulo `src/aignt_os/auth.py` com:
+- Novo modulo `src/synapse_os/auth.py` com:
   - registry privado em JSON com escrita atomica
   - principals e tokens por hash SHA-256
   - verificacao de permissao por papel (`viewer`, `operator`)
 - `AppSettings` estendido com `auth_enabled` e `auth_registry_file`.
-- `src/aignt_os/cli/errors.py` ampliado com exit codes `7` e `8` para authn/authz.
-- `src/aignt_os/cli/app.py` endurecido para:
+- `src/synapse_os/cli/errors.py` ampliado com exit codes `7` e `8` para authn/authz.
+- `src/synapse_os/cli/app.py` endurecido para:
   - exigir token apenas em comandos mutaveis quando auth estiver habilitada
-  - aceitar `--auth-token` com fallback em `AIGNT_OS_AUTH_TOKEN`
+  - aceitar `--auth-token` com fallback em `SYNAPSE_OS_AUTH_TOKEN`
   - persistir `principal_id` autenticado em `initiated_by` no submit bem-sucedido
 - Cobertura unitaria e de integracao para registry, baseline sem auth, falha de autenticacao, falha de autorizacao, fail-closed por registry ausente e provenance autenticada.
 
 ## Validacoes executadas
 
 - Validacao da SPEC com `validate_spec_file(Path('features/F29-auth-rbac-foundation/SPEC.md'))`.
-- `env UV_CACHE_DIR=/home/g0dsssp33d/work/projects/aignt-os/.cache/uv uv run --no-sync python -m pytest tests/unit/test_config.py tests/unit/test_auth.py tests/integration/test_cli_auth_rbac.py tests/integration/test_runs_submit_cli.py tests/integration/test_runtime_cli.py tests/integration/test_cli_error_model.py -q`
-- `env UV_CACHE_DIR=/home/g0dsssp33d/work/projects/aignt-os/.cache/uv uv run --no-sync ruff check src/aignt_os/auth.py src/aignt_os/config.py src/aignt_os/cli/errors.py src/aignt_os/cli/app.py tests/unit/test_config.py tests/unit/test_auth.py tests/integration/test_cli_auth_rbac.py`
-- `env UV_CACHE_DIR=/home/g0dsssp33d/work/projects/aignt-os/.cache/uv uv run --no-sync python -m mypy src/aignt_os/auth.py src/aignt_os/config.py src/aignt_os/cli/errors.py src/aignt_os/cli/app.py`
+- `env UV_CACHE_DIR=/home/g0dsssp33d/work/projects/synapse-os/.cache/uv uv run --no-sync python -m pytest tests/unit/test_config.py tests/unit/test_auth.py tests/integration/test_cli_auth_rbac.py tests/integration/test_runs_submit_cli.py tests/integration/test_runtime_cli.py tests/integration/test_cli_error_model.py -q`
+- `env UV_CACHE_DIR=/home/g0dsssp33d/work/projects/synapse-os/.cache/uv uv run --no-sync ruff check src/synapse_os/auth.py src/synapse_os/config.py src/synapse_os/cli/errors.py src/synapse_os/cli/app.py tests/unit/test_config.py tests/unit/test_auth.py tests/integration/test_cli_auth_rbac.py`
+- `env UV_CACHE_DIR=/home/g0dsssp33d/work/projects/synapse-os/.cache/uv uv run --no-sync python -m mypy src/synapse_os/auth.py src/synapse_os/config.py src/synapse_os/cli/errors.py src/synapse_os/cli/app.py`
 
 ## Security review
 

@@ -1,7 +1,7 @@
 """Pipeline rework and review state tests.
 
 Tests cover the state machine's support for REVIEW and backward transition
-patterns in the AIgnt-Synapse-Flow, validating that:
+patterns in the Synapse-Flow, validating that:
 - REVIEW is a valid state in the linear flow
 - transitions from CODE_GREEN to REVIEW are valid
 - REVIEW can transition to SECURITY (forward path)
@@ -16,12 +16,12 @@ from __future__ import annotations
 
 import pytest
 
-from aignt_os.state_machine import AIgntStateMachine, InvalidStateTransition
+from synapse_os.state_machine import InvalidStateTransition, SynapseStateMachine
 
 
-def _make_sm_at(state: str) -> AIgntStateMachine:
+def _make_sm_at(state: str) -> SynapseStateMachine:
     """Create a fresh state machine positioned at the given state by advancing through the flow."""
-    sm = AIgntStateMachine()
+    sm = SynapseStateMachine()
     flow = [
         "SPEC_DISCOVERY",
         "SPEC_NORMALIZATION",
@@ -114,7 +114,7 @@ def test_review_rework_full_path_code_green_through_security_to_complete() -> No
 
 
 def test_review_rework_review_state_is_present_in_linear_flow() -> None:
-    from aignt_os.state_machine import LINEAR_STATE_FLOW
+    from synapse_os.state_machine import LINEAR_STATE_FLOW
 
     assert "REVIEW" in LINEAR_STATE_FLOW
     assert "CODE_GREEN" in LINEAR_STATE_FLOW
@@ -124,7 +124,7 @@ def test_review_rework_review_state_is_present_in_linear_flow() -> None:
 
 
 def test_review_rework_security_follows_review_in_linear_flow() -> None:
-    from aignt_os.state_machine import LINEAR_STATE_FLOW
+    from synapse_os.state_machine import LINEAR_STATE_FLOW
 
     review_idx = LINEAR_STATE_FLOW.index("REVIEW")
     security_idx = LINEAR_STATE_FLOW.index("SECURITY")

@@ -2,7 +2,7 @@
 
 - [x] SPEC da F30 criada e validavel
 - [x] Recorte limitado a provisionamento local do registry
-- [x] `aignt auth init|issue|disable` implementados
+- [x] `synapse auth init|issue|disable` implementados
 - [x] `token_id` persistido sem vazar token bruto
 - [x] REDs cobrindo init, issue, conflito de role e disable
 - [x] Quality gate local relevante executado com `pytest`, `ruff` e `mypy`

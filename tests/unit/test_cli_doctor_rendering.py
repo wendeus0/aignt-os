@@ -6,7 +6,7 @@ from rich.console import Console
 
 
 def test_render_environment_doctor_is_legible_without_tty() -> None:
-    cli_rendering = __import__("aignt_os.cli.rendering", fromlist=["render_environment_doctor"])
+    cli_rendering = __import__("synapse_os.cli.rendering", fromlist=["render_environment_doctor"])
     output = StringIO()
     console = Console(file=output, force_terminal=False, color_system=None, width=120)
 
@@ -16,23 +16,23 @@ def test_render_environment_doctor_is_legible_without_tty() -> None:
             {
                 "name": "runtime_state",
                 "status": "warn",
-                "target": ".aignt-os/runtime/runtime-state.json",
+                "target": ".synapse-os/runtime/runtime-state.json",
                 "message": "Runtime is stopped but the sync happy path remains available.",
                 "next_step": "Start the runtime only if you need async dispatch.",
             },
             {
                 "name": "runs_db",
                 "status": "pass",
-                "target": ".aignt-os/runs/runs.sqlite3",
+                "target": ".synapse-os/runs/runs.sqlite3",
                 "message": "Run persistence path is writable.",
-                "next_step": "You can submit a run with `aignt runs submit`.",
+                "next_step": "You can submit a run with `synapse runs submit`.",
             },
             {
                 "name": "artifacts_dir",
                 "status": "pass",
-                "target": ".aignt-os/artifacts",
+                "target": ".synapse-os/artifacts",
                 "message": "Artifacts directory is writable.",
-                "next_step": "Inspect persisted outputs with `aignt runs show <run_id>`.",
+                "next_step": "Inspect persisted outputs with `synapse runs show <run_id>`.",
             },
         ],
         console=console,
@@ -47,11 +47,11 @@ def test_render_environment_doctor_is_legible_without_tty() -> None:
     assert "artifacts_dir" in rendered
     assert "warn" in rendered.lower()
     assert "Start the runtime only if you need async dispatch." in rendered
-    assert "You can submit a run with `aignt runs submit`." in rendered
+    assert "You can submit a run with `synapse runs submit`." in rendered
 
 
 def test_render_environment_doctor_surfaces_blocking_failures() -> None:
-    cli_rendering = __import__("aignt_os.cli.rendering", fromlist=["render_environment_doctor"])
+    cli_rendering = __import__("synapse_os.cli.rendering", fromlist=["render_environment_doctor"])
     output = StringIO()
     console = Console(file=output, force_terminal=False, color_system=None, width=120)
 

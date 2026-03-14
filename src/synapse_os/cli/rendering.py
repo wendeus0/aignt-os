@@ -8,9 +8,9 @@ from rich.panel import Panel
 from rich.table import Table
 from rich.text import Text
 
-from aignt_os.persistence import RunEventRecord, RunRecord, RunStepRecord
-from aignt_os.runtime.dispatch import RunDispatchResult
-from aignt_os.runtime.state import RuntimeState
+from synapse_os.persistence import RunEventRecord, RunRecord, RunStepRecord
+from synapse_os.runtime.dispatch import RunDispatchResult
+from synapse_os.runtime.state import RuntimeState
 
 
 @dataclass(frozen=True, slots=True)
@@ -45,7 +45,7 @@ def render_runtime_status(
     status_style = _status_style(state.status)
 
     lines: list[Text] = [
-        Text("AIgnt OS Runtime", style="bold cyan"),
+        Text("SynapseOS Runtime", style="bold cyan"),
         Text.assemble(("Status: ", "dim"), (state.status, status_style)),
     ]
     if state.pid is not None:

@@ -4,7 +4,7 @@
 Aceito
 
 ## Contexto
-O AIgnt OS será usado principalmente via CLI, mas certas runs exigirão retries longos, acompanhamento de estado e execução sem bloquear a interface. Adotar uma infraestrutura de filas distribuídas desde o início aumentaria desnecessariamente a complexidade operacional do MVP.
+O SynapseOS será usado principalmente via CLI, mas certas runs exigirão retries longos, acompanhamento de estado e execução sem bloquear a interface. Adotar uma infraestrutura de filas distribuídas desde o início aumentaria desnecessariamente a complexidade operacional do MVP.
 
 ## Decisão
 O MVP adotará um runtime dual:
@@ -14,7 +14,7 @@ O MVP adotará um runtime dual:
 ## Consequências
 ### Positivas
 - suporte a tarefas longas desde o início;
-- reaproveitamento da mesma base técnica do AIgnt-Synapse-Flow, a engine própria de pipeline do AIgnt OS;
+- reaproveitamento da mesma base técnica do Synapse-Flow, a engine própria de pipeline do SynapseOS;
 - menor complexidade que Celery/Temporal no MVP;
 - preservação da experiência CLI.
 

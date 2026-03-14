@@ -3,7 +3,7 @@
 ## Resumo executivo
 
 - A `F33-post-f32-handoff-sync` realinhou o handoff operacional ao estado real do baseline apos a merge da `F32`.
-- A frente permaneceu doc-only: nao houve mudanca funcional de CLI, runtime, auth registry nem do AIgnt-Synapse-Flow, a engine propria de pipeline do AIgnt OS.
+- A frente permaneceu doc-only: nao houve mudanca funcional de CLI, runtime, auth registry nem do Synapse-Flow, a engine propria de pipeline do SynapseOS.
 - O backlog de `G-11` agora reflete explicitamente que a fundacao local foi absorvida em `F29`/`F30` e que a `F32` entregou o primeiro slice do bucket `resident_transport_auth`.
 
 ## Escopo alterado
@@ -17,8 +17,8 @@
 
 ## Validacoes executadas
 
-- `env UV_CACHE_DIR=/home/g0dsssp33d/work/projects/aignt-os/.cache/uv uv run --no-sync python - <<'PY' ... validate_spec_file(Path('features/F33-post-f32-handoff-sync/SPEC.md')) ... PY`
-- `env UV_CACHE_DIR=/home/g0dsssp33d/work/projects/aignt-os/.cache/uv uv run --no-sync python -m pytest tests/unit/test_auth_registry_docs.py -q`
+- `env UV_CACHE_DIR=/home/g0dsssp33d/work/projects/synapse-os/.cache/uv uv run --no-sync python - <<'PY' ... validate_spec_file(Path('features/F33-post-f32-handoff-sync/SPEC.md')) ... PY`
+- `env UV_CACHE_DIR=/home/g0dsssp33d/work/projects/synapse-os/.cache/uv uv run --no-sync python -m pytest tests/unit/test_auth_registry_docs.py -q`
 - `./scripts/commit-check.sh --no-sync --skip-branch-validation --skip-docker --skip-security`
 - `./scripts/security-gate.sh`
 

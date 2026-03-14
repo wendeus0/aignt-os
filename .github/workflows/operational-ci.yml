@@ -29,13 +29,13 @@ jobs:
 
       - name: Validate branch alignment
         env:
-          AIGNT_EVENT_NAME: ${{ github.event_name }}
-          AIGNT_HEAD_REF: ${{ github.head_ref }}
-          AIGNT_REF_NAME: ${{ github.ref_name }}
+          SYNAPSE_EVENT_NAME: ${{ github.event_name }}
+          SYNAPSE_HEAD_REF: ${{ github.head_ref }}
+          SYNAPSE_REF_NAME: ${{ github.ref_name }}
         run: |
-          branch_name="$AIGNT_REF_NAME"
-          if [[ "$AIGNT_EVENT_NAME" == "pull_request" ]]; then
-            branch_name="$AIGNT_HEAD_REF"
+          branch_name="$SYNAPSE_REF_NAME"
+          if [[ "$SYNAPSE_EVENT_NAME" == "pull_request" ]]; then
+            branch_name="$SYNAPSE_HEAD_REF"
           fi
           ./scripts/validate-branch.sh --fetch --allow-main --base-ref origin/main --branch-name "$branch_name"
 

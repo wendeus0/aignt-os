@@ -2,8 +2,8 @@
 
 ## Resumo executivo
 
-- A `F42-tui-filters` adicionou filtros visuais simples ao dashboard TUI de `aignt runs watch`.
-- A feature manteve o recorte local do AIgnt-Synapse-Flow como a engine propria de pipeline do AIgnt OS, sem alterar persistencia nem logica de execucao.
+- A `F42-tui-filters` adicionou filtros visuais simples ao dashboard TUI de `synapse runs watch`.
+- A feature manteve o recorte local do Synapse-Flow como a engine propria de pipeline do SynapseOS, sem alterar persistencia nem logica de execucao.
 
 ## Escopo alterado
 

@@ -1,7 +1,8 @@
-from aignt_os.persistence import ArtifactStore, PersistedPipelineRunner, RunRepository
-from aignt_os.specs import SpecValidationError
+
 import pytest
-from pathlib import Path
+
+from synapse_os.persistence import ArtifactStore, PersistedPipelineRunner, RunRepository
+from synapse_os.specs import SpecValidationError
 
 
 def test_run_fails_with_invalid_spec_and_generates_report(tmp_path):
@@ -53,8 +54,7 @@ Invalid
     # Verify status
     record = repo.get_run(run_id)
     assert record.status == "failed"
-    # failure_message might be None if mark_run_failed wasn't called correctly or didn't save message?
-    # Actually mark_run_failed updates status and failure_message.
+    # failure_message is set by mark_run_failed.
     assert record.failure_message is not None
     assert "SPEC" in record.failure_message
 

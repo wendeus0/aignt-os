@@ -4,12 +4,12 @@
 
 - Esta chore restaurou o `repo-checks` na baseline atual removendo a divida confirmada de `ruff format --check .` em 6 arquivos.
 - O delta funcional permaneceu fechado: nos arquivos Python/teste houve apenas formatacao; o restante da frente foi sincronizacao de handoff pos-F30.
-- O AIgnt-Synapse-Flow continua sendo a engine propria de pipeline do AIgnt OS; nenhuma mudanca de produto, workflow ou arquitetura foi introduzida.
+- O Synapse-Flow continua sendo a engine propria de pipeline do SynapseOS; nenhuma mudanca de produto, workflow ou arquitetura foi introduzida.
 
 ## Escopo entregue
 
 - `ruff format` aplicado somente em:
-  - `src/aignt_os/persistence.py`
+  - `src/synapse_os/persistence.py`
   - `tests/integration/test_runs_cli.py`
   - `tests/unit/test_cli_adapter.py`
   - `tests/unit/test_parsing_engine.py`
@@ -22,7 +22,7 @@
 ## Validacoes executadas
 
 - Validacao da SPEC com `validate_spec_file(Path('features/chore-repo-checks-baseline-restore/SPEC.md'))`
-- `env UV_CACHE_DIR=/home/g0dsssp33d/work/projects/aignt-os/.cache/uv uv run --no-sync ruff format --check .`
+- `env UV_CACHE_DIR=/home/g0dsssp33d/work/projects/synapse-os/.cache/uv uv run --no-sync ruff format --check .`
 - `./scripts/commit-check.sh --sync-dev --skip-branch-validation --skip-docker --skip-security`
 - `./scripts/security-gate.sh`
 

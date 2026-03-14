@@ -3,7 +3,7 @@
 ## Resumo executivo
 
 - A `F39-persistence-path-root-hardening` endurece `runs_db_path` e `artifacts_dir` contra escapes do `workspace_root`.
-- O boundary passa a ser aplicado em `AppSettings` e consumido pelos entrypoints de CLI, worker e dashboard, preservando o AIgnt-Synapse-Flow como a engine propria de pipeline do AIgnt OS.
+- O boundary passa a ser aplicado em `AppSettings` e consumido pelos entrypoints de CLI, worker e dashboard, preservando o Synapse-Flow como a engine propria de pipeline do SynapseOS.
 - O recorte permaneceu pequeno e independente da frente visual: sem alterar watch mode como produto, sem migracao de schema e sem tocar auth remota.
 
 ## Escopo alterado
@@ -18,8 +18,8 @@
 
 - `validate_spec_file(Path("features/F39-persistence-path-root-hardening/SPEC.md"))`
 - `pytest tests/unit/test_config.py tests/integration/test_runs_submit_cli.py tests/integration/test_runs_cli.py tests/integration/test_doctor_cli.py -q`
-- `ruff check src/aignt_os/config.py src/aignt_os/cli/app.py src/aignt_os/runtime/worker.py src/aignt_os/cli/dashboard.py tests/unit/test_config.py tests/integration/test_runs_submit_cli.py tests/integration/test_runs_cli.py tests/integration/test_doctor_cli.py`
-- `mypy src/aignt_os/config.py src/aignt_os/cli/app.py src/aignt_os/runtime/worker.py src/aignt_os/cli/dashboard.py`
+- `ruff check src/synapse_os/config.py src/synapse_os/cli/app.py src/synapse_os/runtime/worker.py src/synapse_os/cli/dashboard.py tests/unit/test_config.py tests/integration/test_runs_submit_cli.py tests/integration/test_runs_cli.py tests/integration/test_doctor_cli.py`
+- `mypy src/synapse_os/config.py src/synapse_os/cli/app.py src/synapse_os/runtime/worker.py src/synapse_os/cli/dashboard.py`
 - `./scripts/commit-check.sh --no-sync --skip-branch-validation --skip-docker --skip-security`
 - `./scripts/security-gate.sh`
 
@@ -33,7 +33,7 @@
 - Mitigacoes aplicadas:
   - canonicalizacao de `runs_db_path` e `artifacts_dir` com `resolve_path_within_root`
   - tradução consistente de `ValueError` em `Environment error:` nos entrypoints de CLI
-  - integração ajustada para declarar `AIGNT_OS_WORKSPACE_ROOT` coerente com os paths persistidos
+  - integração ajustada para declarar `SYNAPSE_OS_WORKSPACE_ROOT` coerente com os paths persistidos
 
 ## Riscos residuais
 

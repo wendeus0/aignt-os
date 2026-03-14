@@ -7,10 +7,10 @@ inputs:
   - docs/architecture/SDD.md
   - docs/architecture/TDD.md
   - docs/architecture/SPEC_FORMAT.md
-  - src/aignt_os/config.py
-  - src/aignt_os/cli/app.py
-  - src/aignt_os/runtime/worker.py
-  - src/aignt_os/cli/dashboard.py
+  - src/synapse_os/config.py
+  - src/synapse_os/cli/app.py
+  - src/synapse_os/runtime/worker.py
+  - src/synapse_os/cli/dashboard.py
   - tests/unit/test_config.py
   - tests/integration/test_runs_submit_cli.py
   - tests/integration/test_runs_cli.py
@@ -19,15 +19,15 @@ outputs:
   - trusted_persistence_paths
   - persistence_boundary_red_tests
 constraints:
-  - "manter o AIgnt-Synapse-Flow como a engine propria de pipeline do AIgnt OS"
+  - "manter o Synapse-Flow como a engine propria de pipeline do SynapseOS"
   - "restringir a frente a `runs_db_path` e `artifacts_dir`, sem tocar TUI como produto, auth remota ou transporte"
   - "preservar a CLI publica atual, mudando apenas o erro configuracional para paths de persistencia fora da raiz confiavel"
   - "nao exigir DOCKER_PREFLIGHT porque a frente nao depende de Docker, build, boot em container ou integracao externa"
 acceptance_criteria:
-  - "`AIGNT_OS_RUNS_DB_PATH` passa a resolver apenas para um path canonico dentro de `workspace_root`, rejeitando escapes por path absoluto fora da raiz ou por symlink."
-  - "`AIGNT_OS_ARTIFACTS_DIR` passa a resolver apenas para um path canonico dentro de `workspace_root`, rejeitando escapes por path absoluto fora da raiz ou por symlink."
-  - "`aignt runs submit`, `aignt runs list` e `aignt runs show` falham com `Environment error:` previsivel quando o banco ou artifacts configurados escapam da raiz confiavel."
-  - "`aignt doctor` marca `runs_db` e `artifacts_dir` como `fail` sem traceback quando a configuracao de persistencia escapa do `workspace_root`."
+  - "`SYNAPSE_OS_RUNS_DB_PATH` passa a resolver apenas para um path canonico dentro de `workspace_root`, rejeitando escapes por path absoluto fora da raiz ou por symlink."
+  - "`SYNAPSE_OS_ARTIFACTS_DIR` passa a resolver apenas para um path canonico dentro de `workspace_root`, rejeitando escapes por path absoluto fora da raiz ou por symlink."
+  - "`synapse runs submit`, `synapse runs list` e `synapse runs show` falham com `Environment error:` previsivel quando o banco ou artifacts configurados escapam da raiz confiavel."
+  - "`synapse doctor` marca `runs_db` e `artifacts_dir` como `fail` sem traceback quando a configuracao de persistencia escapa do `workspace_root`."
   - "Existe cobertura unitaria e de integracao para configuracao valida, path invalido fora do workspace e escape por symlink."
 non_goals:
   - "alterar `runtime_state_dir`, que ja foi endurecido na F38"
@@ -46,7 +46,7 @@ dois pontos centrais de persistencia configuravel: `runs_db_path` e `artifacts_d
 
 Essa lacuna permite que a configuracao aponte para um banco SQLite ou diretorio de artifacts
 fora da raiz confiavel do workspace, o que quebra a consistencia do boundary operacional do
-AIgnt-Synapse-Flow, a engine propria de pipeline do AIgnt OS.
+Synapse-Flow, a engine propria de pipeline do SynapseOS.
 
 # Objetivo
 
@@ -88,7 +88,7 @@ runs e diretório base de artifacts, mantendo erros previsiveis na CLI e sem amp
 
 - Dado `workspace_root` configurado
 - E `runs_db_path` apontando para um path absoluto fora dessa raiz
-- Quando `aignt runs submit` ou `aignt runs list` forem executados
+- Quando `synapse runs submit` ou `synapse runs list` forem executados
 - Entao a CLI falha com `Environment error:` previsivel
 
 ## Cenario 3: artifacts nao permitem escape por symlink

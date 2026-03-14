@@ -17,7 +17,7 @@ outputs:
   - refreshed_readme_current_baseline
   - updated_doc_regression_tests_for_github_readme
 constraints:
-  - "manter o AIgnt-Synapse-Flow como a engine propria de pipeline do AIgnt OS"
+  - "manter o Synapse-Flow como a engine propria de pipeline do SynapseOS"
   - "restringir a frente a documentacao e testes documentais; sem alteracao funcional em src/"
   - "tratar o README como snapshot tecnico atual do repositorio, nao como historico do roadmap"
   - "nao exigir DOCKER_PREFLIGHT porque a frente nao depende de boot, build, persistencia pratica em container ou integracao real"
@@ -43,7 +43,7 @@ do repositorio continuar parecendo ancorada em `F18`/`F22`, apesar de `main` ja
 incorporar guardrails pos-release, auth local com RBAC, ownership local do runtime,
 dashboard TUI, cancelamento local e robustez adicional do runtime.
 
-Como o AIgnt-Synapse-Flow continua sendo a engine propria de pipeline do AIgnt OS e
+Como o Synapse-Flow continua sendo a engine propria de pipeline do SynapseOS e
 nao ha mudanca funcional aprovada, o menor recorte util agora e uma chore doc-only
 para transformar o README em um retrato tecnico fiel do baseline atual.
 

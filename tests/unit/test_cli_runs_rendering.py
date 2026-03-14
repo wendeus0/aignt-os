@@ -4,12 +4,12 @@ from io import StringIO
 
 from rich.console import Console
 
-from aignt_os.cli.rendering import RunArtifactPreview
-from aignt_os.persistence import RunEventRecord, RunRecord, RunStepRecord
+from synapse_os.cli.rendering import RunArtifactPreview
+from synapse_os.persistence import RunEventRecord, RunRecord, RunStepRecord
 
 
 def test_render_run_detail_is_legible_without_tty() -> None:
-    cli_rendering = __import__("aignt_os.cli.rendering", fromlist=["render_run_detail"])
+    cli_rendering = __import__("synapse_os.cli.rendering", fromlist=["render_run_detail"])
     output = StringIO()
     console = Console(file=output, force_terminal=False, color_system=None, width=160)
 
@@ -79,7 +79,7 @@ def test_render_run_detail_is_legible_without_tty() -> None:
 
 
 def test_render_run_detail_completed_at_spec_validation_guides_canonical_happy_path() -> None:
-    cli_rendering = __import__("aignt_os.cli.rendering", fromlist=["render_run_detail"])
+    cli_rendering = __import__("synapse_os.cli.rendering", fromlist=["render_run_detail"])
     output = StringIO()
     console = Console(file=output, force_terminal=False, color_system=None, width=160)
 
@@ -111,7 +111,7 @@ def test_render_run_detail_completed_at_spec_validation_guides_canonical_happy_p
 
 
 def test_render_run_detail_surfaces_artifact_preview_panel() -> None:
-    cli_rendering = __import__("aignt_os.cli.rendering", fromlist=["render_run_detail"])
+    cli_rendering = __import__("synapse_os.cli.rendering", fromlist=["render_run_detail"])
     output = StringIO()
     console = Console(file=output, force_terminal=False, color_system=None, width=160)
 

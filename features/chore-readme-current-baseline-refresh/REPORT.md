@@ -3,7 +3,7 @@
 ## Resumo executivo
 
 - A `chore-readme-current-baseline-refresh` atualiza o `README.md` para funcionar como snapshot tecnico atual do repositorio no GitHub.
-- A frente permaneceu doc-only: nao houve mudanca funcional em CLI, runtime, auth, persistencia ou no AIgnt-Synapse-Flow, a engine propria de pipeline do AIgnt OS.
+- A frente permaneceu doc-only: nao houve mudanca funcional em CLI, runtime, auth, persistencia ou no Synapse-Flow, a engine propria de pipeline do SynapseOS.
 - O README deixa de depender de uma narrativa antiga centrada em `F18`/`F22` e passa a refletir o baseline pos-`F23 -> F47`.
 
 ## Escopo alterado

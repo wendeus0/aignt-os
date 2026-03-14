@@ -8,9 +8,9 @@ inputs:
   - docs/architecture/TDD.md
   - docs/architecture/SPEC_FORMAT.md
   - features/F35-worker-runtime-ownership-filter/SPEC.md
-  - src/aignt_os/runtime/worker.py
-  - src/aignt_os/persistence.py
-  - src/aignt_os/cli/rendering.py
+  - src/synapse_os/runtime/worker.py
+  - src/synapse_os/persistence.py
+  - src/synapse_os/cli/rendering.py
   - tests/unit/test_worker_runtime.py
   - tests/integration/test_worker_runtime_flow.py
   - tests/integration/test_runs_cli.py
@@ -18,7 +18,7 @@ outputs:
   - worker_owner_skip_event
   - owner_skip_observability_red_tests
 constraints:
-  - "manter o AIgnt-Synapse-Flow como a engine propria de pipeline do AIgnt OS"
+  - "manter o Synapse-Flow como a engine propria de pipeline do SynapseOS"
   - "restringir a frente a observabilidade do skip no worker; sem mudar CLI publica, schema SQLite, socket, IPC ou transporte remoto"
   - "preservar a politica atual de skip e seguir para runs incompatíveis"
   - "nao exigir DOCKER_PREFLIGHT porque a frente nao depende de Docker, build, boot em container ou integracao externa"
@@ -27,7 +27,7 @@ acceptance_criteria:
   - "A run incompatível continua `pending` e `locked=false`, e o worker segue para a próxima run compatível sem falhar a fila."
   - "Polls consecutivos sem mudança no motivo do skip nao duplicam o mesmo evento `runtime_owner_skip` na mesma run."
   - "Runs legadas compativeis (`unknown`, `system`, `local_cli`) nao recebem evento de skip."
-  - "Existe cobertura unitaria e de integracao para registro do evento, deduplicacao e exibicao em `aignt runs show <run_id>`."
+  - "Existe cobertura unitaria e de integracao para registro do evento, deduplicacao e exibicao em `synapse runs show <run_id>`."
 non_goals:
   - "alterar o contrato de `runs submit` ou `runtime start|run|stop|status`"
   - "criar novo comando publico, painel novo ou migration de persistencia"
@@ -41,8 +41,8 @@ dependencies:
 
 A `F35` fechou o ownership local no consumo da fila: o worker autenticado so processa
 runs pendentes compativeis com `started_by`, pulando runs de outro principal e seguindo
-para a proxima compativel. O AIgnt-Synapse-Flow continua sendo a engine propria de
-pipeline do AIgnt OS.
+para a proxima compativel. O Synapse-Flow continua sendo a engine propria de
+pipeline do SynapseOS.
 
 O residual local mais imediato agora e observabilidade. Hoje o skip acontece de forma
 segura, mas a run incompatível continua pendente sem explicar por que nao foi
@@ -96,7 +96,7 @@ principal, reutilizando os eventos persistidos e a observabilidade local ja exis
 ## Cenario 3: observabilidade aparece em runs show
 
 - Dado uma run pendente incompatível com `runtime_owner_skip`
-- Quando `aignt runs show <run_id>` for executado
+- Quando `synapse runs show <run_id>` for executado
 - Entao `Latest Signal` exibe `runtime_owner_skip @ REQUEST`
 - E a mensagem do evento aparece na secao de eventos
 

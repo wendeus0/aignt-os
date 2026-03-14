@@ -26,7 +26,7 @@ TERMINAL_STATES = {"COMPLETE", "FAILED"}
 
 
 @dataclass
-class AIgntStateMachine:
+class SynapseStateMachine:
     current_state: str = "REQUEST"
     _allowed_transitions: dict[str, set[str]] = field(init=False, repr=False)
 

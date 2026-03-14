@@ -1,4 +1,4 @@
-# Project-local Codex configuration for AIgnt OS.
+# Project-local Codex configuration for SynapseOS.
 # Repo defaults should be safe for daily work and explicit about multi-agent roles.
 
 model = "gpt-5.4"
@@ -30,7 +30,7 @@ max_threads = 6
 max_depth = 1
 
 [agents.explorer]
-description = "Read-only codebase explorer for mapping AIgnt OS architecture, affected code paths, specs, ADRs, and operational evidence before changes."
+description = "Read-only codebase explorer for mapping SynapseOS architecture, affected code paths, specs, ADRs, and operational evidence before changes."
 config_file = "agents/explorer.toml"
 
 [agents.reviewer]

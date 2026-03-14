@@ -56,7 +56,7 @@ Liste aqui observações que ainda não são tarefas, mas merecem monitoramento.
 
 ### [2026-03-09] Nome formal da engine
 
-- **Resumo:** a engine própria de pipeline passa a se chamar AIgnt-Synapse-Flow
+- **Resumo:** a engine própria de pipeline passa a se chamar Synapse-Flow
 - **Motivo:** reduzir ambiguidade terminológica
 - **Impacto:** SDD, TDD, AGENTS, CONTEXT e ADRs
 - **Status:** ativa

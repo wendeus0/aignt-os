@@ -3,7 +3,7 @@ id: F47-advanced-rbac
 type: feature
 summary: "Implementação de controle de acesso baseado em papéis (RBAC) para comandos da CLI"
 inputs:
-  - "Flag --role no comando aignt auth issue"
+  - "Flag --role no comando synapse auth issue"
   - "Configuração de papéis e permissões no AuthRegistryStore"
 outputs:
   - "Tokens vinculados a papéis específicos (admin, operator, viewer)"
@@ -23,7 +23,7 @@ non_goals:
 
 ## Contexto
 
-Atualmente, a autenticação no AIgnt OS é binária: ou o cliente possui um token válido e tem acesso total (sujeito apenas a restrições de `initiated_by` para operações de runtime), ou não tem acesso. Com a evolução para um modelo multi-usuário ou multi-agente, é necessário limitar o raio de ação de certos tokens (ex: um dashboard de visualização não deve poder parar o runtime).
+Atualmente, a autenticação no SynapseOS é binária: ou o cliente possui um token válido e tem acesso total (sujeito apenas a restrições de `initiated_by` para operações de runtime), ou não tem acesso. Com a evolução para um modelo multi-usuário ou multi-agente, é necessário limitar o raio de ação de certos tokens (ex: um dashboard de visualização não deve poder parar o runtime).
 
 ## Objetivo
 
@@ -37,7 +37,7 @@ Implementar um sistema de RBAC (Role-Based Access Control) nativo na CLI.
     -   Mapear `AuthRole` para lista de `Permission` (strings como `run:read`, `run:write`, `runtime:manage`, `auth:manage`).
 
 2.  **CLI de Auth**:
-    -   Adicionar opção `--role` ao comando `aignt auth issue`.
+    -   Adicionar opção `--role` ao comando `synapse auth issue`.
 
 3.  **Enforcement**:
     -   Atualizar `Authenticator` ou `RequireAuth` para validar permissões exigidas por cada comando.

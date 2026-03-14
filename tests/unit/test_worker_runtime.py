@@ -32,8 +32,8 @@ Fixture objective.
 
 
 def test_runtime_worker_processes_oldest_pending_run(tmp_path: Path) -> None:
-    persistence = import_module("aignt_os.persistence")
-    worker_module = import_module("aignt_os.runtime.worker")
+    persistence = import_module("synapse_os.persistence")
+    worker_module = import_module("synapse_os.runtime.worker")
 
     repository = persistence.RunRepository(tmp_path / "runs.sqlite3")
     artifact_store = persistence.ArtifactStore(tmp_path / "artifacts")
@@ -67,8 +67,8 @@ def test_runtime_worker_processes_oldest_pending_run(tmp_path: Path) -> None:
 
 
 def test_runtime_worker_ignores_locked_or_finalized_runs(tmp_path: Path) -> None:
-    persistence = import_module("aignt_os.persistence")
-    worker_module = import_module("aignt_os.runtime.worker")
+    persistence = import_module("synapse_os.persistence")
+    worker_module = import_module("synapse_os.runtime.worker")
 
     repository = persistence.RunRepository(tmp_path / "runs.sqlite3")
     artifact_store = persistence.ArtifactStore(tmp_path / "artifacts")
@@ -104,8 +104,8 @@ def test_runtime_worker_ignores_locked_or_finalized_runs(tmp_path: Path) -> None
 
 
 def test_runtime_worker_fails_pending_run_when_spec_hash_changes(tmp_path: Path) -> None:
-    persistence = import_module("aignt_os.persistence")
-    worker_module = import_module("aignt_os.runtime.worker")
+    persistence = import_module("synapse_os.persistence")
+    worker_module = import_module("synapse_os.runtime.worker")
 
     repository = persistence.RunRepository(tmp_path / "runs.sqlite3")
     artifact_store = persistence.ArtifactStore(tmp_path / "artifacts")
@@ -137,9 +137,9 @@ def test_runtime_worker_fails_pending_run_when_spec_hash_changes(tmp_path: Path)
 def test_runtime_worker_skips_incompatible_owner_and_processes_next_compatible(
     tmp_path: Path,
 ) -> None:
-    persistence = import_module("aignt_os.persistence")
-    worker_module = import_module("aignt_os.runtime.worker")
-    runtime_state_module = import_module("aignt_os.runtime.state")
+    persistence = import_module("synapse_os.persistence")
+    worker_module = import_module("synapse_os.runtime.worker")
+    runtime_state_module = import_module("synapse_os.runtime.state")
 
     repository = persistence.RunRepository(tmp_path / "runs.sqlite3")
     artifact_store = persistence.ArtifactStore(tmp_path / "artifacts")
@@ -190,9 +190,9 @@ def test_runtime_worker_skips_incompatible_owner_and_processes_next_compatible(
 
 
 def test_runtime_worker_accepts_legacy_run_for_authenticated_runtime(tmp_path: Path) -> None:
-    persistence = import_module("aignt_os.persistence")
-    worker_module = import_module("aignt_os.runtime.worker")
-    runtime_state_module = import_module("aignt_os.runtime.state")
+    persistence = import_module("synapse_os.persistence")
+    worker_module = import_module("synapse_os.runtime.worker")
+    runtime_state_module = import_module("synapse_os.runtime.state")
 
     repository = persistence.RunRepository(tmp_path / "runs.sqlite3")
     artifact_store = persistence.ArtifactStore(tmp_path / "artifacts")
@@ -230,9 +230,9 @@ def test_runtime_worker_accepts_legacy_run_for_authenticated_runtime(tmp_path: P
 
 
 def test_runtime_worker_deduplicates_same_owner_skip_message(tmp_path: Path) -> None:
-    persistence = import_module("aignt_os.persistence")
-    worker_module = import_module("aignt_os.runtime.worker")
-    runtime_state_module = import_module("aignt_os.runtime.state")
+    persistence = import_module("synapse_os.persistence")
+    worker_module = import_module("synapse_os.runtime.worker")
+    runtime_state_module = import_module("synapse_os.runtime.state")
 
     repository = persistence.RunRepository(tmp_path / "runs.sqlite3")
     artifact_store = persistence.ArtifactStore(tmp_path / "artifacts")

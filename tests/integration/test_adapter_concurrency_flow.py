@@ -24,9 +24,9 @@ class _BlockingProcess:
 def test_adapter_concurrency_flow_uses_env_limit_to_serialize_subprocess_spawns(
     monkeypatch: pytest.MonkeyPatch,
 ) -> None:
-    adapters = import_module("aignt_os.adapters")
+    adapters = import_module("synapse_os.adapters")
     adapters._ADAPTER_EXECUTION_GUARDS.clear()
-    monkeypatch.setenv("AIGNT_OS_MAX_CONCURRENT_ADAPTERS", "1")
+    monkeypatch.setenv("SYNAPSE_OS_MAX_CONCURRENT_ADAPTERS", "1")
 
     class FakeAdapter(adapters.BaseCLIAdapter):
         def build_command(self, prompt: str) -> list[str]:

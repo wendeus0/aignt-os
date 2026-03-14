@@ -22,16 +22,16 @@ def cli_runner() -> CliRunner:
 @pytest.fixture()
 def cli_app():
     """Return the main Typer app."""
-    return import_module("aignt_os.cli.app").app
+    return import_module("synapse_os.cli.app").app
 
 
 @pytest.fixture()
 def runtime_env(tmp_path: Path) -> dict[str, str]:
     """Return environment variables pointing the runtime to a temporary directory."""
     return {
-        "AIGNT_OS_ENVIRONMENT": "test",
-        "AIGNT_OS_RUNTIME_STATE_DIR": str(tmp_path),
-        "AIGNT_OS_WORKSPACE_ROOT": str(tmp_path),
+        "SYNAPSE_OS_ENVIRONMENT": "test",
+        "SYNAPSE_OS_RUNTIME_STATE_DIR": str(tmp_path),
+        "SYNAPSE_OS_WORKSPACE_ROOT": str(tmp_path),
     }
 
 
@@ -42,9 +42,9 @@ def subprocess_env(tmp_path: Path) -> dict[str, str]:
     python_path = str(REPO_ROOT / "src")
     existing = env.get("PYTHONPATH")
     env["PYTHONPATH"] = f"{python_path}{os.pathsep}{existing}" if existing else python_path
-    env["AIGNT_OS_ENVIRONMENT"] = "test"
-    env["AIGNT_OS_RUNTIME_STATE_DIR"] = str(tmp_path)
-    env["AIGNT_OS_WORKSPACE_ROOT"] = str(tmp_path)
+    env["SYNAPSE_OS_ENVIRONMENT"] = "test"
+    env["SYNAPSE_OS_RUNTIME_STATE_DIR"] = str(tmp_path)
+    env["SYNAPSE_OS_WORKSPACE_ROOT"] = str(tmp_path)
     return env
 
 

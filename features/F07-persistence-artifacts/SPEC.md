@@ -1,7 +1,7 @@
 ---
 id: F07-persistence-artifacts
 type: feature
-summary: Persistir runs, steps, eventos e artefatos do AIgnt-Synapse-Flow em SQLite + filesystem sem puxar escopo de worker.
+summary: Persistir runs, steps, eventos e artefatos do Synapse-Flow em SQLite + filesystem sem puxar escopo de worker.
 workspace: .
 inputs:
   - docs/architecture/SDD.md
@@ -20,7 +20,7 @@ constraints:
   - nao substituir nem reutilizar o runtime-state.json da F11 como repositorio de runs
   - nao implementar worker, polling, lease, retomada ou scheduler
   - nao introduzir nova CLI publica nesta feature
-  - manter o AIgnt-Synapse-Flow como engine propria de pipeline do AIgnt OS
+  - manter o Synapse-Flow como engine propria de pipeline do SynapseOS
 acceptance_criteria:
   - Existe um RunRepository em SQLite para persistir runs, steps e eventos da pipeline.
   - Existe um ArtifactStore em filesystem para persistir outputs raw, outputs clean e artefatos nomeados por run e step.
@@ -42,13 +42,13 @@ dependencies:
 
 # Contexto
 
-Depois da F06, o AIgnt-Synapse-Flow, a engine propria de pipeline do AIgnt OS, ja consegue validar SPEC e encadear hand-offs minimos em memoria. O proximo incremento natural do MVP e tornar a run auditavel fora da memoria do processo, registrando metadados operacionais em SQLite e artefatos em filesystem.
+Depois da F06, o Synapse-Flow, a engine propria de pipeline do SynapseOS, ja consegue validar SPEC e encadear hand-offs minimos em memoria. O proximo incremento natural do MVP e tornar a run auditavel fora da memoria do processo, registrando metadados operacionais em SQLite e artefatos em filesystem.
 
 Ja existe persistencia local endurecida para o lifecycle do runtime na F11, mas ela cobre apenas `runtime-state.json` do processo residente. Essa persistencia nao substitui a necessidade de um repositorio operacional para runs da pipeline.
 
 # Objetivo
 
-Entregar a base minima de persistencia operacional do AIgnt OS para runs lineares:
+Entregar a base minima de persistencia operacional do SynapseOS para runs lineares:
 - `RunRepository` em SQLite para runs, steps e eventos;
 - `ArtifactStore` em filesystem para raw, clean e artefatos nomeados por step;
 - lock inicial por run;

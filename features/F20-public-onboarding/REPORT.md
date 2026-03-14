@@ -3,7 +3,7 @@
 ## Resumo executivo
 
 - A F20 adiciona um onboarding publico curto para a primeira run diretamente no `README.md`.
-- A mitigacao do risco residual da F19 entrou pelo eixo correto: clarificar expectativa do operador, sem ampliar `aignt doctor` nem substituir preflight operacional.
+- A mitigacao do risco residual da F19 entrou pelo eixo correto: clarificar expectativa do operador, sem ampliar `synapse doctor` nem substituir preflight operacional.
 - O caminho oficial permaneceu local e `sync-first`, com troubleshooting essencial e boundary explicito para `repo-preflight`.
 
 ## Escopo alterado
@@ -14,15 +14,15 @@
 
 ## Validacoes executadas
 
-- `env UV_CACHE_DIR=/home/g0dsssp33d/work/projects/aignt-os/.cache/uv uv run --no-sync python -m pytest tests/unit/test_public_onboarding_docs.py tests/integration/test_public_onboarding_flow.py -q`
-- `env UV_CACHE_DIR=/home/g0dsssp33d/work/projects/aignt-os/.cache/uv uv run --no-sync python -m pytest tests/unit/test_public_onboarding_docs.py tests/integration/test_public_onboarding_flow.py tests/integration/test_doctor_cli.py tests/integration/test_runs_submit_cli.py tests/integration/test_runs_cli.py -q`
-- `env UV_CACHE_DIR=/home/g0dsssp33d/work/projects/aignt-os/.cache/uv uv run --no-sync ruff check tests/unit/test_public_onboarding_docs.py tests/integration/test_public_onboarding_flow.py`
-- `env UV_CACHE_DIR=/home/g0dsssp33d/work/projects/aignt-os/.cache/uv uv run --no-sync python -m mypy tests/unit/test_public_onboarding_docs.py tests/integration/test_public_onboarding_flow.py`
+- `env UV_CACHE_DIR=/home/g0dsssp33d/work/projects/synapse-os/.cache/uv uv run --no-sync python -m pytest tests/unit/test_public_onboarding_docs.py tests/integration/test_public_onboarding_flow.py -q`
+- `env UV_CACHE_DIR=/home/g0dsssp33d/work/projects/synapse-os/.cache/uv uv run --no-sync python -m pytest tests/unit/test_public_onboarding_docs.py tests/integration/test_public_onboarding_flow.py tests/integration/test_doctor_cli.py tests/integration/test_runs_submit_cli.py tests/integration/test_runs_cli.py -q`
+- `env UV_CACHE_DIR=/home/g0dsssp33d/work/projects/synapse-os/.cache/uv uv run --no-sync ruff check tests/unit/test_public_onboarding_docs.py tests/integration/test_public_onboarding_flow.py`
+- `env UV_CACHE_DIR=/home/g0dsssp33d/work/projects/synapse-os/.cache/uv uv run --no-sync python -m mypy tests/unit/test_public_onboarding_docs.py tests/integration/test_public_onboarding_flow.py`
 
 ## Security review
 
 - Risco identificado: baixo. O delta nao adiciona shell, subprocesso novo, Docker, rede, leitura arbitraria nem mudanca no contrato de execucao da CLI.
-- Mitigacao aplicada: o onboarding deixa explicito que `aignt doctor` e advisory/local e nao deve ser usado como bypass de `repo-preflight` para cenarios operacionais mais pesados.
+- Mitigacao aplicada: o onboarding deixa explicito que `synapse doctor` e advisory/local e nao deve ser usado como bypass de `repo-preflight` para cenarios operacionais mais pesados.
 - Parecer: aprovado com ressalvas baixas.
 
 ## Riscos residuais

@@ -16,9 +16,9 @@
 
 ## Validacoes executadas
 
-- `env UV_CACHE_DIR=/home/g0dsssp33d/work/projects/aignt-os/.cache/uv uv run --no-sync python -m pytest tests/unit/test_release_readiness_docs.py tests/integration/test_release_readiness_flow.py -q`
-- `env UV_CACHE_DIR=/home/g0dsssp33d/work/projects/aignt-os/.cache/uv uv run --no-sync ruff check README.md CHANGELOG.md docs/release/phase-2-technical-release.md tests/unit/test_release_readiness_docs.py tests/integration/test_release_readiness_flow.py`
-- `env UV_CACHE_DIR=/home/g0dsssp33d/work/projects/aignt-os/.cache/uv uv run --no-sync python -m mypy tests/unit/test_release_readiness_docs.py tests/integration/test_release_readiness_flow.py`
+- `env UV_CACHE_DIR=/home/g0dsssp33d/work/projects/synapse-os/.cache/uv uv run --no-sync python -m pytest tests/unit/test_release_readiness_docs.py tests/integration/test_release_readiness_flow.py -q`
+- `env UV_CACHE_DIR=/home/g0dsssp33d/work/projects/synapse-os/.cache/uv uv run --no-sync ruff check README.md CHANGELOG.md docs/release/phase-2-technical-release.md tests/unit/test_release_readiness_docs.py tests/integration/test_release_readiness_flow.py`
+- `env UV_CACHE_DIR=/home/g0dsssp33d/work/projects/synapse-os/.cache/uv uv run --no-sync python -m mypy tests/unit/test_release_readiness_docs.py tests/integration/test_release_readiness_flow.py`
 
 ## Security review
 

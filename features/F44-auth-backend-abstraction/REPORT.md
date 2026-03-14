@@ -9,12 +9,12 @@ Abstração do backend de autenticação para permitir a integração futura com
 - Adicionado campo `auth_provider` em `AppSettings` (default: "file").
 - Validado via Pydantic para garantir apenas valores suportados.
 
-### 2. Core de Autenticação (`src/aignt_os/auth.py`)
+### 2. Core de Autenticação (`src/synapse_os/auth.py`)
 - Definido protocolo `AuthProvider` com método `authenticate`.
 - Implementada factory `get_auth_provider(settings)` para resolver a implementação correta.
 - `AuthRegistryStore` agora satisfaz implicitamente o protocolo `AuthProvider`.
 
-### 3. CLI (`src/aignt_os/cli/app.py`)
+### 3. CLI (`src/synapse_os/cli/app.py`)
 - Refatorado `_resolve_principal_id` para utilizar a factory `get_auth_provider`.
 - Comandos de gerenciamento de tokens (`auth init`, `auth issue`, `auth disable`) agora verificam se o provider ativo suporta gerenciamento local (atualmente restrito a "file").
 

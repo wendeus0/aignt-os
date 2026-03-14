@@ -45,12 +45,12 @@ def _submit_env(tmp_path: Path, *, workspace_root: Path | None = None) -> dict[s
     python_path = str(REPO_ROOT / "src")
     existing = env.get("PYTHONPATH")
     env["PYTHONPATH"] = f"{python_path}{os.pathsep}{existing}" if existing else python_path
-    env["AIGNT_OS_ENVIRONMENT"] = "test"
-    env["AIGNT_OS_RUNTIME_STATE_DIR"] = str(trusted_workspace_root / ".aignt-os" / "runtime")
-    env["AIGNT_OS_RUNS_DB_PATH"] = str(trusted_workspace_root / "runs" / "runs.sqlite3")
-    env["AIGNT_OS_ARTIFACTS_DIR"] = str(trusted_workspace_root / "artifacts")
-    env["AIGNT_OS_WORKSPACE_ROOT"] = str(trusted_workspace_root)
-    env["AIGNT_OS_RUNTIME_POLL_INTERVAL_SECONDS"] = "0.05"
+    env["SYNAPSE_OS_ENVIRONMENT"] = "test"
+    env["SYNAPSE_OS_RUNTIME_STATE_DIR"] = str(trusted_workspace_root / ".synapse-os" / "runtime")
+    env["SYNAPSE_OS_RUNS_DB_PATH"] = str(trusted_workspace_root / "runs" / "runs.sqlite3")
+    env["SYNAPSE_OS_ARTIFACTS_DIR"] = str(trusted_workspace_root / "artifacts")
+    env["SYNAPSE_OS_WORKSPACE_ROOT"] = str(trusted_workspace_root)
+    env["SYNAPSE_OS_RUNTIME_POLL_INTERVAL_SECONDS"] = "0.05"
     return env
 
 
@@ -66,7 +66,7 @@ def _spawn_runtime_foreground(tmp_path: Path) -> subprocess.Popen[str]:
         [
             sys.executable,
             "-c",
-            "from aignt_os.cli.app import app; app()",
+            "from synapse_os.cli.app import app; app()",
             "runtime",
             "run",
         ],
@@ -80,7 +80,7 @@ def _spawn_runtime_foreground(tmp_path: Path) -> subprocess.Popen[str]:
 
 
 def _wait_for_runtime_ready(tmp_path: Path, process: subprocess.Popen[str]) -> None:
-    cli_module = import_module("aignt_os.cli.app")
+    cli_module = import_module("synapse_os.cli.app")
     runner = import_module("typer.testing").CliRunner()
     deadline = time.monotonic() + 5.0
     env = _submit_env(tmp_path)
@@ -117,7 +117,7 @@ def test_runs_submit_sync_executes_inline_and_reports_contract(
     cli_runner,
     cli_app,
 ) -> None:
-    persistence = import_module("aignt_os.persistence")
+    persistence = import_module("synapse_os.persistence")
 
     spec_path = tmp_path / "SPEC.md"
     _write_valid_spec(spec_path)
@@ -186,14 +186,14 @@ def test_runs_submit_auto_queues_when_runtime_is_ready(
     cli_runner,
     cli_app,
 ) -> None:
-    persistence = import_module("aignt_os.persistence")
-    runtime_service_module = import_module("aignt_os.runtime.service")
+    persistence = import_module("synapse_os.persistence")
+    runtime_service_module = import_module("synapse_os.runtime.service")
 
     spec_path = tmp_path / "SPEC.md"
     _write_valid_spec(spec_path)
 
     runtime_service = runtime_service_module.RuntimeService(
-        tmp_path / ".aignt-os" / "runtime" / "runtime-state.json"
+        tmp_path / ".synapse-os" / "runtime" / "runtime-state.json"
     )
     try:
         runtime_service.start()
@@ -231,7 +231,7 @@ def test_runs_submit_fails_predictably_when_spec_is_missing(
         env=_submit_env(tmp_path),
     )
 
-    persistence = import_module("aignt_os.persistence")
+    persistence = import_module("synapse_os.persistence")
     repository = persistence.RunRepository(tmp_path / "runs" / "runs.sqlite3")
 
     assert result.exit_code == 3
@@ -253,7 +253,7 @@ def test_runs_submit_fails_predictably_when_spec_is_invalid(
         env=_submit_env(tmp_path),
     )
 
-    persistence = import_module("aignt_os.persistence")
+    persistence = import_module("synapse_os.persistence")
     repository = persistence.RunRepository(tmp_path / "runs" / "runs.sqlite3")
 
     assert result.exit_code == 4
@@ -273,7 +273,7 @@ def test_runs_submit_fails_with_environment_error_when_runs_db_path_escapes_work
     spec_path = trusted_workspace_root / "SPEC.md"
     _write_valid_spec(spec_path)
     env = _submit_env(tmp_path, workspace_root=trusted_workspace_root)
-    env["AIGNT_OS_RUNS_DB_PATH"] = str(tmp_path / "outside" / "runs.sqlite3")
+    env["SYNAPSE_OS_RUNS_DB_PATH"] = str(tmp_path / "outside" / "runs.sqlite3")
 
     result = cli_runner.invoke(
         cli_app,
@@ -307,7 +307,7 @@ def test_runs_submit_rejects_spec_outside_workspace_root(
         env=env,
     )
 
-    persistence = import_module("aignt_os.persistence")
+    persistence = import_module("synapse_os.persistence")
     repository = persistence.RunRepository(tmp_path / "runs" / "runs.sqlite3")
 
     assert result.exit_code == 3
@@ -336,7 +336,7 @@ def test_runs_submit_rejects_symlinked_spec_that_resolves_outside_workspace_root
         env=env,
     )
 
-    persistence = import_module("aignt_os.persistence")
+    persistence = import_module("synapse_os.persistence")
     repository = persistence.RunRepository(tmp_path / "runs" / "runs.sqlite3")
 
     assert result.exit_code == 3

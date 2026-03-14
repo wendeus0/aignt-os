@@ -19,9 +19,9 @@ from textual.widgets import (
     TabPane,
 )
 
-from aignt_os.cli.rendering import truncate_logs
-from aignt_os.config import AppSettings
-from aignt_os.persistence import ArtifactStore, RunRecord, RunRepository, RunStepRecord
+from synapse_os.cli.rendering import truncate_logs
+from synapse_os.config import AppSettings
+from synapse_os.persistence import ArtifactStore, RunRecord, RunRepository, RunStepRecord
 
 
 class LogViewer(ModalScreen[None]):
@@ -343,7 +343,7 @@ class ArtifactExplorer(Static):
 
 
 class RunDashboard(App[None]):
-    """Dashboard TUI Moderno para AIgnt OS."""
+    """Dashboard TUI Moderno para SynapseOS."""
 
     CSS = """
     Screen {
@@ -578,7 +578,7 @@ class RunDashboard(App[None]):
         yield Footer()
 
     def on_mount(self) -> None:
-        self.title = f"AIgnt OS Watcher - {self.run_id}"
+        self.title = f"SynapseOS Watcher - {self.run_id}"
         self.set_interval(self.refresh_interval, self.refresh_data)
         self.refresh_data()
 
@@ -619,7 +619,7 @@ class RunDashboard(App[None]):
             filter_text = ""
             if self.current_filter != "all":
                 filter_text = f" [FILTER: {self.current_filter}]"
-            self.title = f"AIgnt OS Watcher - {self.run_id}{filter_text}"
+            self.title = f"SynapseOS Watcher - {self.run_id}{filter_text}"
 
             # Simple diff: rebuild list if count changes or status changes
             # For MVP simplicity, verify if rebuild is needed

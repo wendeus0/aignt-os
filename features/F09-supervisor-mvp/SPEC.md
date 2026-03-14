@@ -1,7 +1,7 @@
 ---
 id: F09-supervisor-mvp
 type: feature
-summary: Adicionar um supervisor deterministico ao runtime linear para suportar retry, reroute simples e rework de review no AIgnt-Synapse-Flow.
+summary: Adicionar um supervisor deterministico ao runtime linear para suportar retry, reroute simples e rework de review no Synapse-Flow.
 inputs:
   - CONTEXT.md
   - docs/architecture/SDD.md
@@ -13,7 +13,7 @@ outputs:
   - extended_pipeline_steps
   - supervisor_tests
 constraints:
-  - manter o AIgnt-Synapse-Flow como engine propria de pipeline do AIgnt OS
+  - manter o Synapse-Flow como engine propria de pipeline do SynapseOS
   - manter a pipeline linear e state-driven no MVP
   - nao introduzir heuristica aberta, memoria semantica decisoria ou multiplos workers
   - nao gerar RUN_REPORT.md nesta feature
@@ -39,7 +39,7 @@ dependencies:
 
 # Contexto
 
-A F08 conectou persistencia operacional e runtime dual, permitindo que o worker leve consuma runs pendentes do AIgnt-Synapse-Flow, a engine propria de pipeline do AIgnt OS. O gap restante do MVP nao esta mais na fila simples nem no lock local. O gap esta no comportamento da pipeline quando um step falha, quando uma revisao pede retrabalho e quando existe mais de um executor possivel para o mesmo step.
+A F08 conectou persistencia operacional e runtime dual, permitindo que o worker leve consuma runs pendentes do Synapse-Flow, a engine propria de pipeline do SynapseOS. O gap restante do MVP nao esta mais na fila simples nem no lock local. O gap esta no comportamento da pipeline quando um step falha, quando uma revisao pede retrabalho e quando existe mais de um executor possivel para o mesmo step.
 
 O repositório ja documenta esse recorte no `TDD.md` e nos testes de rework/failure recovery, mas a implementacao atual ainda para em `TEST_RED` e trata falha como terminal imediata. A F09 fecha esse degrau com um supervisor pequeno, deterministico e explicitamente limitado ao MVP.
 

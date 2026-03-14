@@ -35,12 +35,12 @@ Fixture objective.
 
 def _auth_env(tmp_path: Path) -> dict[str, str]:
     env = {
-        "AIGNT_OS_ENVIRONMENT": "test",
-        "AIGNT_OS_RUNTIME_STATE_DIR": str(tmp_path / "runtime"),
-        "AIGNT_OS_RUNS_DB_PATH": str(tmp_path / "runs" / "runs.sqlite3"),
-        "AIGNT_OS_ARTIFACTS_DIR": str(tmp_path / "artifacts"),
-        "AIGNT_OS_WORKSPACE_ROOT": str(tmp_path),
-        "AIGNT_OS_AUTH_ENABLED": "true",
+        "SYNAPSE_OS_ENVIRONMENT": "test",
+        "SYNAPSE_OS_RUNTIME_STATE_DIR": str(tmp_path / "runtime"),
+        "SYNAPSE_OS_RUNS_DB_PATH": str(tmp_path / "runs" / "runs.sqlite3"),
+        "SYNAPSE_OS_ARTIFACTS_DIR": str(tmp_path / "artifacts"),
+        "SYNAPSE_OS_WORKSPACE_ROOT": str(tmp_path),
+        "SYNAPSE_OS_AUTH_ENABLED": "true",
     }
     return env
 
@@ -103,12 +103,12 @@ def test_runs_submit_preserves_baseline_when_auth_is_disabled(
     cli_runner,
     cli_app,
 ) -> None:
-    persistence = import_module("aignt_os.persistence")
+    persistence = import_module("synapse_os.persistence")
 
     spec_path = tmp_path / "SPEC.md"
     _write_valid_spec(spec_path)
     env = _auth_env(tmp_path)
-    env["AIGNT_OS_AUTH_ENABLED"] = "false"
+    env["SYNAPSE_OS_AUTH_ENABLED"] = "false"
 
     result = cli_runner.invoke(
         cli_app,
@@ -128,7 +128,7 @@ def test_runs_submit_requires_authentication_when_auth_is_enabled(
     cli_runner,
     cli_app,
 ) -> None:
-    persistence = import_module("aignt_os.persistence")
+    persistence = import_module("synapse_os.persistence")
 
     spec_path = tmp_path / "SPEC.md"
     _write_valid_spec(spec_path)
@@ -155,7 +155,7 @@ def test_runs_submit_fails_closed_when_auth_registry_is_missing(
     cli_runner,
     cli_app,
 ) -> None:
-    persistence = import_module("aignt_os.persistence")
+    persistence = import_module("synapse_os.persistence")
 
     spec_path = tmp_path / "SPEC.md"
     _write_valid_spec(spec_path)
@@ -191,7 +191,7 @@ def test_runs_submit_rejects_viewer_role_for_mutation(
     cli_runner,
     cli_app,
 ) -> None:
-    persistence = import_module("aignt_os.persistence")
+    persistence = import_module("synapse_os.persistence")
 
     spec_path = tmp_path / "SPEC.md"
     _write_valid_spec(spec_path)
@@ -228,13 +228,13 @@ def test_runs_submit_accepts_operator_and_persists_authenticated_principal(
     cli_runner,
     cli_app,
 ) -> None:
-    persistence = import_module("aignt_os.persistence")
+    persistence = import_module("synapse_os.persistence")
 
     spec_path = tmp_path / "SPEC.md"
     _write_valid_spec(spec_path)
     _write_auth_registry(tmp_path)
     env = _auth_env(tmp_path)
-    env["AIGNT_OS_AUTH_TOKEN"] = "operator-token"
+    env["SYNAPSE_OS_AUTH_TOKEN"] = "operator-token"
 
     result = cli_runner.invoke(
         cli_app,
@@ -254,13 +254,13 @@ def test_runs_submit_async_requires_running_runtime_when_auth_is_enabled(
     cli_runner,
     cli_app,
 ) -> None:
-    persistence = import_module("aignt_os.persistence")
+    persistence = import_module("synapse_os.persistence")
 
     spec_path = tmp_path / "SPEC.md"
     _write_valid_spec(spec_path)
     _write_auth_registry(tmp_path)
     env = _auth_env(tmp_path)
-    env["AIGNT_OS_AUTH_TOKEN"] = "operator-token"
+    env["SYNAPSE_OS_AUTH_TOKEN"] = "operator-token"
 
     result = cli_runner.invoke(
         cli_app,
@@ -283,7 +283,7 @@ def test_runs_submit_async_rejects_runtime_started_by_another_operator(
     cli_runner,
     cli_app,
 ) -> None:
-    persistence = import_module("aignt_os.persistence")
+    persistence = import_module("synapse_os.persistence")
 
     spec_path = tmp_path / "SPEC.md"
     _write_valid_spec(spec_path)
@@ -323,7 +323,7 @@ def test_runs_submit_auto_rejects_runtime_started_by_another_operator(
     cli_runner,
     cli_app,
 ) -> None:
-    persistence = import_module("aignt_os.persistence")
+    persistence = import_module("synapse_os.persistence")
 
     spec_path = tmp_path / "SPEC.md"
     _write_valid_spec(spec_path)
@@ -363,13 +363,13 @@ def test_runs_submit_async_allows_legacy_runtime_binding_without_started_by(
     cli_runner,
     cli_app,
 ) -> None:
-    persistence = import_module("aignt_os.persistence")
+    persistence = import_module("synapse_os.persistence")
 
     spec_path = tmp_path / "SPEC.md"
     _write_valid_spec(spec_path)
     _write_auth_registry(tmp_path)
     env = _auth_env(tmp_path)
-    env["AIGNT_OS_AUTH_TOKEN"] = "operator-token"
+    env["SYNAPSE_OS_AUTH_TOKEN"] = "operator-token"
 
     start_result = cli_runner.invoke(cli_app, ["runtime", "start"], env=env)
     runtime_state_path = tmp_path / "runtime" / "runtime-state.json"
@@ -439,7 +439,7 @@ def test_runtime_start_and_stop_accept_operator_token(
 ) -> None:
     _write_auth_registry(tmp_path)
     env = _auth_env(tmp_path)
-    env["AIGNT_OS_AUTH_TOKEN"] = "operator-token"
+    env["SYNAPSE_OS_AUTH_TOKEN"] = "operator-token"
 
     start_result = cli_runner.invoke(cli_app, ["runtime", "start"], env=env)
     stop_result = cli_runner.invoke(cli_app, ["runtime", "stop"], env=env)
@@ -457,7 +457,7 @@ def test_runtime_status_shows_started_by_for_authenticated_runtime(
 ) -> None:
     _write_auth_registry(tmp_path)
     env = _auth_env(tmp_path)
-    env["AIGNT_OS_AUTH_TOKEN"] = "operator-token"
+    env["SYNAPSE_OS_AUTH_TOKEN"] = "operator-token"
 
     start_result = cli_runner.invoke(cli_app, ["runtime", "start"], env=env)
     status_result = cli_runner.invoke(cli_app, ["runtime", "status"], env=env)
@@ -532,7 +532,7 @@ def test_runtime_status_marks_legacy_binding_unavailable_under_auth(
 ) -> None:
     _write_auth_registry(tmp_path)
     env = _auth_env(tmp_path)
-    env["AIGNT_OS_AUTH_TOKEN"] = "operator-token"
+    env["SYNAPSE_OS_AUTH_TOKEN"] = "operator-token"
 
     start_result = cli_runner.invoke(cli_app, ["runtime", "start"], env=env)
     runtime_state_path = tmp_path / "runtime" / "runtime-state.json"

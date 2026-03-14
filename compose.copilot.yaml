@@ -6,7 +6,7 @@
 # O config de auth é copiado para a tmpfs pelo dev-copilot.sh ao iniciar.
 #
 # Uso: ./scripts/dev-copilot.sh [--build] [-- <copilot-args>]
-# Alias sugerido: sonnet='cd ~/work/projects/aignt-os && ./scripts/dev-copilot.sh'
+# Alias sugerido: sonnet='cd ~/work/projects/synapse-os && ./scripts/dev-copilot.sh'
 
 services:
   copilot-dev:
@@ -14,9 +14,9 @@ services:
       context: .
       dockerfile: .devcontainer/Dockerfile
       args:
-        DEV_UID: ${AIGNT_DEV_UID:-1000}
-        DEV_GID: ${AIGNT_DEV_GID:-1000}
-    image: aignt-os-codex-dev:dev
+        DEV_UID: ${SYNAPSE_DEV_UID:-1000}
+        DEV_GID: ${SYNAPSE_DEV_GID:-1000}
+    image: synapse-os-codex-dev:dev
     command: ["sleep", "infinity"]
     environment:
       HOME: /home/codex
@@ -28,7 +28,7 @@ services:
       XDG_DATA_HOME: /home/codex/.local/share
       GITHUB_PERSONAL_ACCESS_TOKEN: ${GITHUB_PERSONAL_ACCESS_TOKEN:-}
       GITHUB_TOKEN: ${GITHUB_TOKEN:-}
-    user: "${AIGNT_DEV_UID:-1000}:${AIGNT_DEV_GID:-1000}"
+    user: "${SYNAPSE_DEV_UID:-1000}:${SYNAPSE_DEV_GID:-1000}"
     volumes:
       - .:/workspace
       # Binário do Copilot CLI — montado read-only do host (133 MB, não copiado na imagem)

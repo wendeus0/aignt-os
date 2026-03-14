@@ -1,6 +1,6 @@
 # Operação e Ciclo de Vida (Lifecycle)
 
-Este documento centraliza as instruções operacionais para desenvolvimento local (bootstrap), gerenciamento do runtime residente e controle de execução do pipeline (AIgnt-Synapse-Flow).
+Este documento centraliza as instruções operacionais para desenvolvimento local (bootstrap), gerenciamento do runtime residente e controle de execução do pipeline (Synapse-Flow).
 
 ## 1. Bootstrap e Desenvolvimento Local
 
@@ -46,7 +46,7 @@ O `DOCKER_PREFLIGHT` é um gate operacional.
 
 ## 2. Runtime Lifecycle
 
-O AIgnt OS opera em modelo dual: **CLI Efêmera** (cliente) e **Runtime Residente** (servidor/worker).
+O SynapseOS opera em modelo dual: **CLI Efêmera** (cliente) e **Runtime Residente** (servidor/worker).
 
 O runtime residente é responsável por:
 *   Executar o loop do Worker (processamento de steps).
@@ -57,11 +57,11 @@ O runtime residente é responsável por:
 
 | Comando | Descrição |
 | :--- | :--- |
-| `aignt runtime start` | Inicia o processo residente em background (daemon). |
-| `aignt runtime stop` | Para o processo residente graciosamente. |
-| `aignt runtime status` | Exibe o status do processo (PID, uptime) e do worker. |
-| `aignt runtime run` | Executa o runtime em foreground (bloqueante), útil para debug. |
-| `aignt runtime ready` | Verifica se o runtime está pronto para aceitar comandos (healthcheck). |
+| `synapse runtime start` | Inicia o processo residente em background (daemon). |
+| `synapse runtime stop` | Para o processo residente graciosamente. |
+| `synapse runtime status` | Exibe o status do processo (PID, uptime) e do worker. |
+| `synapse runtime run` | Executa o runtime em foreground (bloqueante), útil para debug. |
+| `synapse runtime ready` | Verifica se o runtime está pronto para aceitar comandos (healthcheck). |
 
 **Nota**: O runtime deve estar ativo (`start` ou `run`) para que as runs submetidas em modo `async` sejam processadas pelo worker. Runs em modo `sync` são processadas pelo próprio processo da CLI.
 
@@ -69,40 +69,40 @@ O runtime residente é responsável por:
 
 ## 3. Pipeline Management (Runs)
 
-O gerenciamento de execuções do AIgnt-Synapse-Flow é feito via subcomandos `runs`.
+O gerenciamento de execuções do Synapse-Flow é feito via subcomandos `runs`.
 
 ### Submissão de Runs
 
 ```bash
 # Modo síncrono (bloqueia terminal, roda na CLI) - Ideal para debug/dev
-aignt runs submit features/F00-exemplo/SPEC.md --mode sync
+synapse runs submit features/F00-exemplo/SPEC.md --mode sync
 
 # Modo assíncrono (envia para fila, requer runtime start) - Produção
-aignt runs submit features/F00-exemplo/SPEC.md --mode async
+synapse runs submit features/F00-exemplo/SPEC.md --mode async
 
 # Parada programada (Stop At)
-aignt runs submit ... --stop-at PLAN
+synapse runs submit ... --stop-at PLAN
 ```
 
 ### Monitoramento e Controle
 
 | Comando | Descrição |
 | :--- | :--- |
-| `aignt runs list` | Lista as runs recentes e seus status. |
-| `aignt runs show <id>` | Exibe detalhes de uma run, incluindo status dos steps e artifacts. |
-| `aignt runs watch` | Abre o Dashboard TUI para monitoramento em tempo real. |
-| `aignt runs cancel <id>` | Solicita o cancelamento de uma run em execução. |
+| `synapse runs list` | Lista as runs recentes e seus status. |
+| `synapse runs show <id>` | Exibe detalhes de uma run, incluindo status dos steps e artifacts. |
+| `synapse runs watch` | Abre o Dashboard TUI para monitoramento em tempo real. |
+| `synapse runs cancel <id>` | Solicita o cancelamento de uma run em execução. |
 
 ### Cancelamento (F40)
 
-O cancelamento (`aignt runs cancel <id>` ou tecla `k` no TUI) envia um sinal para o motor de execução.
+O cancelamento (`synapse runs cancel <id>` ou tecla `k` no TUI) envia um sinal para o motor de execução.
 *   **Comportamento**: O cancelamento não é imediato (kill). O engine verifica o sinal entre steps.
 *   **Estado Final**: A run transita para `cancelling` e termina como `cancelled`.
 *   **Cleanup**: Artefatos gerados até o momento são preservados.
 
 ### Filtros de Dashboard (F42)
 
-No comando `aignt runs watch`:
+No comando `synapse runs watch`:
 *   Use as teclas de seta para navegar.
 *   Pressione `Enter` para ver logs do step.
 *   Pressione `f` para filtrar steps (ex: mostrar apenas steps com falha).
@@ -113,9 +113,9 @@ No comando `aignt runs watch`:
 
 O sistema possui um Auth Registry local baseado em arquivo para controle de acesso via CLI.
 
-*   `aignt auth init`: Inicializa o registry e cria o admin.
-*   `aignt auth issue`: Emite novos tokens com roles (`viewer`, `operator`, `admin`).
-*   `aignt auth disable`: Revoga tokens.
+*   `synapse auth init`: Inicializa o registry e cria o admin.
+*   `synapse auth issue`: Emite novos tokens com roles (`viewer`, `operator`, `admin`).
+*   `synapse auth disable`: Revoga tokens.
 
 ---
 
@@ -123,7 +123,7 @@ O sistema possui um Auth Registry local baseado em arquivo para controle de aces
 
 ### Aignt Doctor
 
-Use `aignt doctor` para diagnosticar o ambiente:
+Use `synapse doctor` para diagnosticar o ambiente:
 *   Verifica instalação do `uv`, `git`, `docker`.
 *   Verifica integridade do banco de dados SQLite.
 *   Verifica permissões de diretórios de artifacts e estado.
@@ -132,4 +132,4 @@ Use `aignt doctor` para diagnosticar o ambiente:
 
 *   **Logs da CLI**: Saída padrão no terminal.
 *   **Logs do Runtime**: Se iniciado com `start`, os logs vão para onde o daemon gerenciador definir (ou stdout se usar `run`).
-*   **Logs de Steps**: Acessíveis via `aignt runs show <id>` (caminhos dos arquivos de log) ou visualizador de logs no Dashboard (`Enter`).
+*   **Logs de Steps**: Acessíveis via `synapse runs show <id>` (caminhos dos arquivos de log) ou visualizador de logs no Dashboard (`Enter`).

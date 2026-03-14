@@ -9,14 +9,14 @@ inputs:
   - docs/architecture/SPEC_FORMAT.md
   - features/F29-auth-rbac-foundation/SPEC.md
   - features/F31-g11-remote-auth-decomposition/SPEC.md
-  - src/aignt_os/cli/app.py
-  - src/aignt_os/runtime/state.py
-  - src/aignt_os/runtime/service.py
+  - src/synapse_os/cli/app.py
+  - src/synapse_os/runtime/state.py
+  - src/synapse_os/runtime/service.py
 outputs:
   - runtime_started_by_binding
   - runtime_auth_red_tests
 constraints:
-  - "manter o AIgnt-Synapse-Flow como a engine propria de pipeline do AIgnt OS"
+  - "manter o Synapse-Flow como a engine propria de pipeline do SynapseOS"
   - "trabalhar apenas o menor recorte implementavel do bucket `resident_transport_auth`"
   - "nao introduzir socket, IPC, transporte em rede, RBAC novo ou coordenacao entre hosts"
   - "preservar compatibilidade com estado legado do runtime sem `started_by`"
@@ -48,7 +48,7 @@ arquivo e auth apenas na borda da CLI.
 
 O menor recorte implementavel agora e vincular esse runtime residente ao principal
 autenticado que o iniciou. Isso endurece o lifecycle local sem inventar transporte novo
-e preserva o AIgnt-Synapse-Flow como a engine propria de pipeline do AIgnt OS.
+e preserva o Synapse-Flow como a engine propria de pipeline do SynapseOS.
 
 # Objetivo
 

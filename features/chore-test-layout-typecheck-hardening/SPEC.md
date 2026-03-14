@@ -15,7 +15,7 @@ constraints:
   - manter o fluxo oficial `./scripts/commit-check.sh --sync-dev` como caminho operacional padrao
   - nao alterar logica de produto, runtime, pipeline ou adapters
   - nao introduzir dependencia de Docker nesta frente
-  - manter o AIgnt-Synapse-Flow como engine propria de pipeline do AIgnt OS sem mudancas comportamentais
+  - manter o Synapse-Flow como engine propria de pipeline do SynapseOS sem mudancas comportamentais
 acceptance_criteria:
   - `uv run mypy src tests` nao falha mais por `Duplicate module named "conftest"`.
   - `uv run --no-sync python -m mypy` continua verde no fluxo oficial do repositório.

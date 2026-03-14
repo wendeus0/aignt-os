@@ -1,7 +1,7 @@
 ---
 id: F03-state-machine-mvp
 type: feature
-summary: Modelar a state machine minima do AIgnt-Synapse-Flow com estados principais da pipeline e validacao explicita de transicoes validas e invalidas no MVP.
+summary: Modelar a state machine minima do Synapse-Flow com estados principais da pipeline e validacao explicita de transicoes validas e invalidas no MVP.
 workspace: .
 inputs:
   - docs/architecture/SDD.md
@@ -38,7 +38,7 @@ dependencies:
 
 # Contexto
 
-O AIgnt OS adota o AIgnt-Synapse-Flow como a engine propria de pipeline do projeto, e essa engine depende de uma modelagem state-driven auditavel. A arquitetura ja define os estados principais no SDD, mas ainda falta o primeiro incremento executavel dessa state machine para validar transicoes do fluxo do MVP.
+O SynapseOS adota o Synapse-Flow como a engine propria de pipeline do projeto, e essa engine depende de uma modelagem state-driven auditavel. A arquitetura ja define os estados principais no SDD, mas ainda falta o primeiro incremento executavel dessa state machine para validar transicoes do fluxo do MVP.
 
 Depois da F02, que entrega a validacao minima da SPEC, o proximo passo natural do nucleo e explicitar os estados e as regras de transicao sem antecipar executor de passos, supervisor ou pipeline completa.
 
@@ -85,7 +85,7 @@ Entregar a state machine minima do MVP com:
 
 # Requisitos funcionais
 
-1. O sistema deve representar explicitamente os estados principais do AIgnt-Synapse-Flow no MVP.
+1. O sistema deve representar explicitamente os estados principais do Synapse-Flow no MVP.
 2. O estado inicial da run deve permitir entrada controlada no fluxo a partir de `REQUEST`.
 3. O sistema deve permitir a progressao linear do macrofluxo interno:
    `REQUEST -> SPEC_DISCOVERY -> SPEC_NORMALIZATION -> SPEC_VALIDATION -> PLAN -> TEST_RED -> CODE_GREEN -> REVIEW -> SECURITY -> DOCUMENT -> COMPLETE`.
@@ -136,4 +136,4 @@ Entregar a state machine minima do MVP com:
 
 # Observacoes
 
-Esta feature modela apenas a state machine minima do AIgnt-Synapse-Flow, a engine propria de pipeline do AIgnt OS. Ela nao executa steps reais nem decide retry, reroute ou rollback; esses comportamentos ficam para features posteriores.
+Esta feature modela apenas a state machine minima do Synapse-Flow, a engine propria de pipeline do SynapseOS. Ela nao executa steps reais nem decide retry, reroute ou rollback; esses comportamentos ficam para features posteriores.

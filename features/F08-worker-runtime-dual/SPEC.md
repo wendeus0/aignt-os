@@ -1,7 +1,7 @@
 ---
 id: F08-worker-runtime-dual
 type: feature
-summary: Adicionar worker leve para consumir runs pendentes e uma camada interna de dispatch sync/async sobre a persistencia operacional e o runtime dual do AIgnt OS.
+summary: Adicionar worker leve para consumir runs pendentes e uma camada interna de dispatch sync/async sobre a persistencia operacional e o runtime dual do SynapseOS.
 inputs:
   - docs/architecture/SDD.md
   - docs/architecture/TDD.md
@@ -19,7 +19,7 @@ constraints:
   - reutilizar o runtime dual e a persistencia operacional ja existentes
   - manter um unico worker por workspace no MVP
   - nao introduzir retry, reroute, scheduler complexo ou RUN_REPORT nesta feature
-  - manter o AIgnt-Synapse-Flow como engine propria de pipeline do AIgnt OS
+  - manter o Synapse-Flow como engine propria de pipeline do SynapseOS
 acceptance_criteria:
   - Existe uma camada interna de dispatch com modos `sync`, `async` e `auto`.
   - O modo `auto` executa inline quando o runtime nao esta pronto e enfileira a run quando o runtime esta pronto.
@@ -42,7 +42,7 @@ dependencies:
 
 # Contexto
 
-A F07 ja persistiu runs, steps, eventos e artefatos do AIgnt-Synapse-Flow, a engine propria de pipeline do AIgnt OS, mas deixou explicitamente fora do escopo o worker, o polling e a retomada basica. Em paralelo, a feature de runtime persistente minimo ja entregou o lifecycle do processo residente com `start`, `status`, `run`, `ready` e `stop`, incluindo hardening local do arquivo de estado.
+A F07 ja persistiu runs, steps, eventos e artefatos do Synapse-Flow, a engine propria de pipeline do SynapseOS, mas deixou explicitamente fora do escopo o worker, o polling e a retomada basica. Em paralelo, a feature de runtime persistente minimo ja entregou o lifecycle do processo residente com `start`, `status`, `run`, `ready` e `stop`, incluindo hardening local do arquivo de estado.
 
 O gap atual do MVP nao esta em mais uma superficie publica de CLI. O gap esta em conectar essas duas bases: criar runs pendentes de forma controlada, decidir entre execucao inline ou assincrona e permitir que o processo foreground do runtime drene a fila simples de runs pendentes.
 

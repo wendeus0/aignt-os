@@ -5,7 +5,7 @@ import pytest
 
 
 def _security_module():
-    return import_module("aignt_os.security")
+    return import_module("synapse_os.security")
 
 
 def test_strip_bidi_controls_removes_direction_override_characters() -> None:

@@ -1,4 +1,4 @@
-# Cronograma de 10 dias — AIgnt OS MVP
+# Cronograma de 10 dias — SynapseOS MVP
 
 > Documento histórico do MVP inicial. O roadmap ativo da etapa 2, agora pos-F15, está em `docs/architecture/PHASE_2_ROADMAP.md`.
 

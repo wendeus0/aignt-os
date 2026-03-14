@@ -3,7 +3,7 @@
 ## Resumo executivo
 
 - A `F34-async-submit-runtime-ownership` fecha o gap de ownership no `runs submit` autenticado quando o dispatch resolve para `async`.
-- O gate reaproveita o binding `started_by` entregue pela `F32` e mantém o AIgnt-Synapse-Flow como a engine propria de pipeline do AIgnt OS.
+- O gate reaproveita o binding `started_by` entregue pela `F32` e mantém o Synapse-Flow como a engine propria de pipeline do SynapseOS.
 - O recorte permaneceu local-only: sem socket, sem IPC, sem alteracao no worker e sem mudanca no caminho `sync`.
 
 ## Escopo alterado
@@ -17,10 +17,10 @@
 ## Validacoes executadas
 
 - `validate_spec_file(Path('features/F34-async-submit-runtime-ownership/SPEC.md'))`
-- `env UV_CACHE_DIR=/home/g0dsssp33d/work/projects/aignt-os/.cache/uv uv run --no-sync python -m pytest tests/unit/test_runtime_dispatch.py tests/integration/test_cli_auth_rbac.py -q`
-- `env UV_CACHE_DIR=/home/g0dsssp33d/work/projects/aignt-os/.cache/uv uv run --no-sync python -m pytest tests/unit/test_runtime_dispatch.py tests/integration/test_cli_auth_rbac.py tests/integration/test_runs_submit_cli.py tests/integration/test_worker_runtime_flow.py -q`
-- `env UV_CACHE_DIR=/home/g0dsssp33d/work/projects/aignt-os/.cache/uv uv run --no-sync ruff check src/aignt_os/cli/app.py src/aignt_os/runtime/dispatch.py tests/unit/test_runtime_dispatch.py tests/integration/test_cli_auth_rbac.py`
-- `env UV_CACHE_DIR=/home/g0dsssp33d/work/projects/aignt-os/.cache/uv uv run --no-sync python -m mypy src/aignt_os/cli/app.py src/aignt_os/runtime/dispatch.py`
+- `env UV_CACHE_DIR=/home/g0dsssp33d/work/projects/synapse-os/.cache/uv uv run --no-sync python -m pytest tests/unit/test_runtime_dispatch.py tests/integration/test_cli_auth_rbac.py -q`
+- `env UV_CACHE_DIR=/home/g0dsssp33d/work/projects/synapse-os/.cache/uv uv run --no-sync python -m pytest tests/unit/test_runtime_dispatch.py tests/integration/test_cli_auth_rbac.py tests/integration/test_runs_submit_cli.py tests/integration/test_worker_runtime_flow.py -q`
+- `env UV_CACHE_DIR=/home/g0dsssp33d/work/projects/synapse-os/.cache/uv uv run --no-sync ruff check src/synapse_os/cli/app.py src/synapse_os/runtime/dispatch.py tests/unit/test_runtime_dispatch.py tests/integration/test_cli_auth_rbac.py`
+- `env UV_CACHE_DIR=/home/g0dsssp33d/work/projects/synapse-os/.cache/uv uv run --no-sync python -m mypy src/synapse_os/cli/app.py src/synapse_os/runtime/dispatch.py`
 - `./scripts/commit-check.sh --no-sync --skip-branch-validation --skip-docker --skip-security`
 - `./scripts/security-gate.sh`
 

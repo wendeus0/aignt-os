@@ -7,7 +7,7 @@ import pytest
 
 
 def test_run_repository_handles_cancellation(tmp_path: Path) -> None:
-    persistence = import_module("aignt_os.persistence")
+    persistence = import_module("synapse_os.persistence")
 
     repository = persistence.RunRepository(tmp_path / "runs.sqlite3")
     run_id = repository.create_run(
@@ -42,7 +42,7 @@ def test_run_repository_handles_cancellation(tmp_path: Path) -> None:
 
 
 def test_run_repository_cannot_cancel_finished_run(tmp_path: Path) -> None:
-    persistence = import_module("aignt_os.persistence")
+    persistence = import_module("synapse_os.persistence")
 
     repository = persistence.RunRepository(tmp_path / "runs.sqlite3")
     run_id = repository.create_run(

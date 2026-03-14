@@ -1,14 +1,14 @@
 ---
 id: F21-cli-error-model-and-exit-codes
 type: feature
-summary: Organizar categorias de erro e exit codes previsiveis para a CLI publica do AIgnt OS.
+summary: Organizar categorias de erro e exit codes previsiveis para a CLI publica do SynapseOS.
 inputs:
   - CONTEXT.md
   - docs/architecture/SDD.md
   - docs/architecture/TDD.md
   - docs/architecture/SPEC_FORMAT.md
   - docs/architecture/PHASE_2_ROADMAP.md
-  - src/aignt_os/cli/app.py
+  - src/synapse_os/cli/app.py
   - tests/integration/test_runtime_cli.py
   - tests/integration/test_runs_cli.py
   - tests/integration/test_runs_submit_cli.py
@@ -17,7 +17,7 @@ outputs:
   - cli_error_tests
   - feature_notes_and_checklist
 constraints:
-  - manter o AIgnt-Synapse-Flow como a engine propria de pipeline do AIgnt OS
+  - manter o Synapse-Flow como a engine propria de pipeline do SynapseOS
   - manter o recorte restrito ao contrato de erro da CLI publica atual
   - nao introduzir novos subcomandos, novo modo verbose nem debug profundo
   - preservar os caminhos de sucesso existentes com exit code `0`
@@ -44,7 +44,7 @@ dependencies:
 
 # Contexto
 
-A CLI publica do AIgnt OS ja expõe `runs submit`, `runs show` e o grupo `runtime`, enquanto o AIgnt-Synapse-Flow continua como a engine propria de pipeline do AIgnt OS. Porem, os caminhos de falha ainda usam uma mistura de `typer.BadParameter`, `typer.Exit(code=1)` e mensagens ad hoc, o que dificulta automacoes e torna os erros menos previsiveis para operadores.
+A CLI publica do SynapseOS ja expõe `runs submit`, `runs show` e o grupo `runtime`, enquanto o Synapse-Flow continua como a engine propria de pipeline do SynapseOS. Porem, os caminhos de falha ainda usam uma mistura de `typer.BadParameter`, `typer.Exit(code=1)` e mensagens ad hoc, o que dificulta automacoes e torna os erros menos previsiveis para operadores.
 
 A etapa 2 prioriza endurecer o contrato operacional da CLI antes de consolidar o caminho canonico de demonstracao. A F21 existe para transformar falhas recorrentes em um modelo pequeno, legivel e testavel.
 

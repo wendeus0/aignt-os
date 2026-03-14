@@ -4,10 +4,10 @@ import asyncio
 import time
 from abc import ABC, abstractmethod
 
-from aignt_os.config import AppSettings
-from aignt_os.contracts import CLIExecutionResult, CodexExecutionAssessment
-from aignt_os.runtime.circuit_breaker import AdapterCircuitBreakerStore
-from aignt_os.security import sanitize_clean_text
+from synapse_os.config import AppSettings
+from synapse_os.contracts import CLIExecutionResult, CodexExecutionAssessment
+from synapse_os.runtime.circuit_breaker import AdapterCircuitBreakerStore
+from synapse_os.security import sanitize_clean_text
 
 _LAUNCHER_UNAVAILABLE_PATTERNS = (
     "docker: command not found",

@@ -9,15 +9,15 @@ inputs:
   - docs/architecture/SPEC_FORMAT.md
   - features/F32-runtime-resident-principal-binding/SPEC.md
   - features/F34-async-submit-runtime-ownership/SPEC.md
-  - src/aignt_os/runtime/worker.py
-  - src/aignt_os/persistence.py
+  - src/synapse_os/runtime/worker.py
+  - src/synapse_os/persistence.py
   - tests/unit/test_worker_runtime.py
   - tests/integration/test_worker_runtime_flow.py
 outputs:
   - worker_runtime_owner_filter
   - worker_owner_filter_red_tests
 constraints:
-  - "manter o AIgnt-Synapse-Flow como a engine propria de pipeline do AIgnt OS"
+  - "manter o Synapse-Flow como a engine propria de pipeline do SynapseOS"
   - "restringir a frente ao consumo da fila pelo worker; sem alterar CLI publica, socket, IPC, transporte remoto ou auth registry"
   - "preservar compatibilidade com runs legadas sem owner autenticado explicito"
   - "nao exigir DOCKER_PREFLIGHT porque a frente nao depende de Docker, build, boot em container ou integracao externa"
@@ -42,7 +42,7 @@ dependencies:
 A `F32` vinculou o runtime residente local ao principal autenticado que o iniciou por
 meio de `started_by`. A `F34` fechou o gap no submit autenticado, impedindo enqueue
 assinado para `async` quando o runtime residente nao esta pronto ou pertence a outro
-principal. O AIgnt-Synapse-Flow continua sendo a engine propria de pipeline do AIgnt OS.
+principal. O Synapse-Flow continua sendo a engine propria de pipeline do SynapseOS.
 
 Mesmo assim, o worker residente ainda consome a fila apenas por FIFO simples. Isso
 significa que um runtime autenticado pode executar runs pendentes de outro principal

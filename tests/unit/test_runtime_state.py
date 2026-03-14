@@ -8,7 +8,7 @@ import pytest
 
 
 def test_runtime_state_store_persists_minimum_runtime_metadata(tmp_path: Path) -> None:
-    state_module = import_module("aignt_os.runtime.state")
+    state_module = import_module("synapse_os.runtime.state")
 
     store = state_module.RuntimeStateStore(tmp_path / "runtime-state.json")
     store.write_running(pid=12345)
@@ -22,7 +22,7 @@ def test_runtime_state_store_persists_minimum_runtime_metadata(tmp_path: Path) -
 
 
 def test_runtime_state_store_persists_started_by_when_provided(tmp_path: Path) -> None:
-    state_module = import_module("aignt_os.runtime.state")
+    state_module = import_module("synapse_os.runtime.state")
 
     store = state_module.RuntimeStateStore(tmp_path / "runtime-state.json")
     store.write_running(pid=12345, started_by="operator-user")
@@ -36,7 +36,7 @@ def test_runtime_state_store_persists_started_by_when_provided(tmp_path: Path) -
 def test_runtime_state_store_accepts_legacy_running_state_without_started_by(
     tmp_path: Path,
 ) -> None:
-    state_module = import_module("aignt_os.runtime.state")
+    state_module = import_module("synapse_os.runtime.state")
 
     state_file = tmp_path / "runtime-state.json"
     state_file.write_text(
@@ -56,7 +56,7 @@ def test_runtime_state_store_accepts_legacy_running_state_without_started_by(
 
 
 def test_runtime_state_store_reports_stopped_when_state_file_is_missing(tmp_path: Path) -> None:
-    state_module = import_module("aignt_os.runtime.state")
+    state_module = import_module("synapse_os.runtime.state")
 
     store = state_module.RuntimeStateStore(tmp_path / "runtime-state.json")
 
@@ -69,7 +69,7 @@ def test_runtime_state_store_reports_stopped_when_state_file_is_missing(tmp_path
 def test_runtime_state_store_reports_inconsistent_for_corrupted_state_file(
     tmp_path: Path,
 ) -> None:
-    state_module = import_module("aignt_os.runtime.state")
+    state_module = import_module("synapse_os.runtime.state")
 
     state_file = tmp_path / "runtime-state.json"
     state_file.write_text("{invalid json", encoding="utf-8")
@@ -82,7 +82,7 @@ def test_runtime_state_store_reports_inconsistent_for_corrupted_state_file(
 
 
 def test_runtime_state_store_reports_inconsistent_for_nonexistent_pid(tmp_path: Path) -> None:
-    state_module = import_module("aignt_os.runtime.state")
+    state_module = import_module("synapse_os.runtime.state")
 
     store = state_module.RuntimeStateStore(tmp_path / "runtime-state.json")
     store.write_running(pid=999_999_999)
@@ -95,7 +95,7 @@ def test_runtime_state_store_reports_inconsistent_for_nonexistent_pid(tmp_path: 
 def test_runtime_state_store_writes_state_file_with_restricted_permissions(
     tmp_path: Path,
 ) -> None:
-    state_module = import_module("aignt_os.runtime.state")
+    state_module = import_module("synapse_os.runtime.state")
 
     state_file = tmp_path / "runtime-state.json"
     store = state_module.RuntimeStateStore(state_file)
@@ -108,7 +108,7 @@ def test_runtime_state_store_writes_state_file_with_restricted_permissions(
 def test_runtime_state_store_persists_atomically(
     tmp_path: Path, monkeypatch: pytest.MonkeyPatch
 ) -> None:
-    state_module = import_module("aignt_os.runtime.state")
+    state_module = import_module("synapse_os.runtime.state")
 
     state_file = tmp_path / "runtime-state.json"
     store = state_module.RuntimeStateStore(state_file)
@@ -128,7 +128,7 @@ def test_runtime_state_store_persists_atomically(
 
 
 def test_runtime_state_store_rejects_untrusted_state_directory(tmp_path: Path) -> None:
-    state_module = import_module("aignt_os.runtime.state")
+    state_module = import_module("synapse_os.runtime.state")
 
     untrusted_dir = tmp_path / ".." / "outside-runtime"
 

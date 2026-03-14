@@ -8,15 +8,15 @@ inputs:
   - docs/architecture/TDD.md
   - docs/architecture/SPEC_FORMAT.md
   - docs/IDEAS.md
-  - src/aignt_os/parsing.py
-  - src/aignt_os/persistence.py
-  - src/aignt_os/pipeline.py
+  - src/synapse_os/parsing.py
+  - src/synapse_os/persistence.py
+  - src/synapse_os/pipeline.py
 outputs:
   - ast_guard_validation
   - artifact_promotion_guard
   - feature_notes
 constraints:
-  - "manter o AIgnt-Synapse-Flow como a engine propria de pipeline do AIgnt OS"
+  - "manter o Synapse-Flow como a engine propria de pipeline do SynapseOS"
   - "trabalhar apenas o recorte de G-03"
   - "nao alterar schema SQLite ou adicionar migrations"
   - "nao alterar a superficie publica do CLI alem do comportamento ja audivel de falha da run"

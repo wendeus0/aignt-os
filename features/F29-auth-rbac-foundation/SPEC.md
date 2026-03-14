@@ -8,17 +8,17 @@ inputs:
   - docs/architecture/TDD.md
   - docs/architecture/SPEC_FORMAT.md
   - docs/IDEAS.md
-  - src/aignt_os/cli/app.py
-  - src/aignt_os/cli/errors.py
-  - src/aignt_os/config.py
-  - src/aignt_os/runtime/dispatch.py
-  - src/aignt_os/persistence.py
+  - src/synapse_os/cli/app.py
+  - src/synapse_os/cli/errors.py
+  - src/synapse_os/config.py
+  - src/synapse_os/runtime/dispatch.py
+  - src/synapse_os/persistence.py
 outputs:
   - auth_rbac_contract
   - cli_auth_guards
   - feature_notes
 constraints:
-  - "manter o AIgnt-Synapse-Flow como a engine propria de pipeline do AIgnt OS"
+  - "manter o Synapse-Flow como a engine propria de pipeline do SynapseOS"
   - "trabalhar apenas o menor recorte util de G-11 no baseline atual"
   - "proteger apenas `runs submit` e `runtime start|run|stop` nesta frente"
   - "manter leitura local (`doctor`, `version`, `runs list|show`, `runtime status|ready`) sem token"
@@ -29,7 +29,7 @@ acceptance_criteria:
   - "AppSettings expoe `auth_enabled: bool = False` e o path derivado `auth_registry_file` sob `runtime_state_dir`."
   - "Existe um registry local em arquivo JSON com escrita atomica e permissoes restritas para principals e tokens por hash SHA-256, sem persistir token em claro."
   - "Quando `auth_enabled=false`, o comportamento atual da CLI publica permanece inalterado."
-  - "Quando `auth_enabled=true`, `runs submit` e `runtime start|run|stop` exigem autenticacao via `--auth-token` com fallback em `AIGNT_OS_AUTH_TOKEN`."
+  - "Quando `auth_enabled=true`, `runs submit` e `runtime start|run|stop` exigem autenticacao via `--auth-token` com fallback em `SYNAPSE_OS_AUTH_TOKEN`."
   - "A CLI diferencia falha de autenticacao (`Authentication error:`, exit code `7`) e falha de autorizacao (`Authorization error:`, exit code `8`)."
   - "O papel `viewer` continua restrito a leitura e o papel `operator` permite `runs.submit` e `runtime.manage`."
   - "Um submit autenticado com sucesso persiste `initiated_by` com o `principal_id` autenticado em vez de `local_cli`."
@@ -51,13 +51,13 @@ dependencies:
 
 # Contexto
 
-Depois da `F28`, o backlog remanescente da `IDEA-001` ficou concentrado em `G-11`: autenticacao e autorizacao. No baseline atual, a CLI publica do AIgnt OS ja expoe `runs submit`, `runs list`, `runs show`, `doctor` e o grupo `runtime`, enquanto o AIgnt-Synapse-Flow continua sendo a engine propria de pipeline do AIgnt OS. Porem, ainda nao existe qualquer camada de auth local, e a ideia original menciona `socket + RBAC`, algo grande demais para abrir diretamente no MVP atual.
+Depois da `F28`, o backlog remanescente da `IDEA-001` ficou concentrado em `G-11`: autenticacao e autorizacao. No baseline atual, a CLI publica do SynapseOS ja expoe `runs submit`, `runs list`, `runs show`, `doctor` e o grupo `runtime`, enquanto o Synapse-Flow continua sendo a engine propria de pipeline do SynapseOS. Porem, ainda nao existe qualquer camada de auth local, e a ideia original menciona `socket + RBAC`, algo grande demais para abrir diretamente no MVP atual.
 
 O menor recorte util e coerente com o estado real do repositorio e introduzir uma base opt-in de autenticacao com RBAC estrutural apenas na CLI local. Isso permite endurecer os comandos mutaveis agora, reaproveitar `initiated_by` para provenance e evitar abrir transporte novo antes da hora.
 
 # Objetivo
 
-Adicionar uma fundacao local de autenticacao e autorizacao para a CLI do AIgnt OS, com registry privado de credentials por hash, papeis estaticos (`viewer` e `operator`) e enforcement apenas nos comandos mutaveis atuais, preservando o baseline existente quando auth estiver desabilitada.
+Adicionar uma fundacao local de autenticacao e autorizacao para a CLI do SynapseOS, com registry privado de credentials por hash, papeis estaticos (`viewer` e `operator`) e enforcement apenas nos comandos mutaveis atuais, preservando o baseline existente quando auth estiver desabilitada.
 
 # Escopo
 
@@ -66,7 +66,7 @@ Adicionar uma fundacao local de autenticacao e autorizacao para a CLI do AIgnt O
 - registry local de auth em arquivo JSON privado
 - modelos/contratos para principal, token hash e roles
 - enforcement opt-in em `runs submit` e `runtime start|run|stop`
-- fallback de token por `--auth-token` ou `AIGNT_OS_AUTH_TOKEN`
+- fallback de token por `--auth-token` ou `SYNAPSE_OS_AUTH_TOKEN`
 - extensao do contrato publico de erro da CLI para authn/authz
 - wiring de `principal_id` em `initiated_by` para submit autenticado
 - testes unitarios e de integracao para auth/RBAC

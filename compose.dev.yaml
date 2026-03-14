@@ -4,9 +4,9 @@ services:
       context: .
       dockerfile: .devcontainer/Dockerfile
       args:
-        DEV_UID: ${AIGNT_DEV_UID:-1000}
-        DEV_GID: ${AIGNT_DEV_GID:-1000}
-    image: aignt-os-codex-dev:dev
+        DEV_UID: ${SYNAPSE_DEV_UID:-1000}
+        DEV_GID: ${SYNAPSE_DEV_GID:-1000}
+    image: synapse-os-codex-dev:dev
     command: ["sleep", "infinity"]
     environment:
       HOME: /home/codex
@@ -18,7 +18,7 @@ services:
       XDG_DATA_HOME: /home/codex/.local/share
       GITHUB_PERSONAL_ACCESS_TOKEN: ${GITHUB_PERSONAL_ACCESS_TOKEN:-}
       GITHUB_TOKEN: ${GITHUB_TOKEN:-}
-    user: "${AIGNT_DEV_UID:-1000}:${AIGNT_DEV_GID:-1000}"
+    user: "${SYNAPSE_DEV_UID:-1000}:${SYNAPSE_DEV_GID:-1000}"
     volumes:
       - .:/workspace
       - codex-home:/home/codex/.codex

@@ -1,4 +1,4 @@
-# SPEC Template — AIgnt OS v2
+# SPEC Template — SynapseOS v2
 
 > Formato oficial de SPEC para o MVP: **Markdown estruturado com bloco YAML obrigatório**.
 

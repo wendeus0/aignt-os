@@ -5,14 +5,14 @@ from pydantic import ValidationError
 
 
 def test_run_request_requires_non_empty_prompt() -> None:
-    contracts_module = import_module("aignt_os.contracts")
+    contracts_module = import_module("synapse_os.contracts")
 
     with pytest.raises(ValidationError):
         contracts_module.RunRequest(prompt="")
 
 
 def test_run_request_serializes_to_plain_data() -> None:
-    contracts_module = import_module("aignt_os.contracts")
+    contracts_module = import_module("synapse_os.contracts")
 
     request = contracts_module.RunRequest(prompt="bootstrap project")
 
@@ -31,7 +31,7 @@ def test_run_request_serializes_to_plain_data() -> None:
     ids=["single_char", "normal", "very_long", "unicode", "whitespace"],
 )
 def test_run_request_accepts_any_non_empty_prompt(prompt: str) -> None:
-    contracts_module = import_module("aignt_os.contracts")
+    contracts_module = import_module("synapse_os.contracts")
 
     request = contracts_module.RunRequest(prompt=prompt)
 
@@ -39,15 +39,15 @@ def test_run_request_accepts_any_non_empty_prompt(prompt: str) -> None:
 
 
 def test_cli_execution_result_keeps_raw_and_clean_outputs_separate() -> None:
-    contracts_module = import_module("aignt_os.contracts")
+    contracts_module = import_module("synapse_os.contracts")
 
     result = contracts_module.CLIExecutionResult(
-        tool_name="aignt",
-        command=["aignt", "version"],
+        tool_name="synapse",
+        command=["synapse", "version"],
         return_code=0,
-        stdout_raw="AIgnt OS 0.1.0\n",
+        stdout_raw="SynapseOS 0.1.0\n",
         stderr_raw="\u001b[31mwarn\u001b[0m\n",
-        stdout_clean="AIgnt OS 0.1.0",
+        stdout_clean="SynapseOS 0.1.0",
         stderr_clean="warn",
         duration_ms=12,
         timed_out=False,
@@ -55,24 +55,24 @@ def test_cli_execution_result_keeps_raw_and_clean_outputs_separate() -> None:
     )
 
     assert result.stdout_raw.endswith("\n")
-    assert result.stdout_clean == "AIgnt OS 0.1.0"
+    assert result.stdout_clean == "SynapseOS 0.1.0"
     assert result.stderr_raw.startswith("\u001b[31m")
     assert result.stderr_clean == "warn"
     assert result.duration_ms == 12
-    assert result.model_dump()["command"] == ["aignt", "version"]
+    assert result.model_dump()["command"] == ["synapse", "version"]
 
 
 def test_cli_execution_result_rejects_invalid_return_code_type() -> None:
-    contracts_module = import_module("aignt_os.contracts")
+    contracts_module = import_module("synapse_os.contracts")
 
     with pytest.raises(ValidationError):
         contracts_module.CLIExecutionResult(
-            tool_name="aignt",
-            command=["aignt", "version"],
+            tool_name="synapse",
+            command=["synapse", "version"],
             return_code="0",
-            stdout_raw="AIgnt OS 0.1.0\n",
+            stdout_raw="SynapseOS 0.1.0\n",
             stderr_raw="warn\n",
-            stdout_clean="AIgnt OS 0.1.0",
+            stdout_clean="SynapseOS 0.1.0",
             stderr_clean="warn",
             duration_ms=12,
             timed_out=False,
@@ -88,7 +88,7 @@ def test_cli_execution_result_rejects_invalid_return_code_type() -> None:
         ({"duration_ms": 1.5}, "duration_ms"),
         ({"timed_out": "yes"}, "timed_out"),
         ({"success": 1}, "success"),
-        ({"command": "aignt version"}, "command"),
+        ({"command": "synapse version"}, "command"),
     ],
     ids=[
         "return_code_as_string",
@@ -102,11 +102,11 @@ def test_cli_execution_result_rejects_invalid_return_code_type() -> None:
 def test_cli_execution_result_rejects_invalid_field_types(
     field_override: dict, field_name: str
 ) -> None:
-    contracts_module = import_module("aignt_os.contracts")
+    contracts_module = import_module("synapse_os.contracts")
 
     base = {
-        "tool_name": "aignt",
-        "command": ["aignt", "version"],
+        "tool_name": "synapse",
+        "command": ["synapse", "version"],
         "return_code": 0,
         "stdout_raw": "",
         "stderr_raw": "",
@@ -123,11 +123,11 @@ def test_cli_execution_result_rejects_invalid_field_types(
 
 
 def test_cli_execution_result_allows_timed_out_with_nonzero_return_code() -> None:
-    contracts_module = import_module("aignt_os.contracts")
+    contracts_module = import_module("synapse_os.contracts")
 
     result = contracts_module.CLIExecutionResult(
-        tool_name="aignt",
-        command=["aignt", "runtime", "run"],
+        tool_name="synapse",
+        command=["synapse", "runtime", "run"],
         return_code=124,
         stdout_raw="",
         stderr_raw="timed out\n",
@@ -144,11 +144,11 @@ def test_cli_execution_result_allows_timed_out_with_nonzero_return_code() -> Non
 
 
 def test_cli_execution_result_allows_zero_duration() -> None:
-    contracts_module = import_module("aignt_os.contracts")
+    contracts_module = import_module("synapse_os.contracts")
 
     result = contracts_module.CLIExecutionResult(
-        tool_name="aignt",
-        command=["aignt", "version"],
+        tool_name="synapse",
+        command=["synapse", "version"],
         return_code=0,
         stdout_raw="",
         stderr_raw="",

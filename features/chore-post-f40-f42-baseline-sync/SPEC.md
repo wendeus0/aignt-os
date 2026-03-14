@@ -18,7 +18,7 @@ outputs:
   - post_f40_f42_baseline_sync
   - updated_public_docs_for_watch_and_cancel
 constraints:
-  - "manter o AIgnt-Synapse-Flow como a engine propria de pipeline do AIgnt OS"
+  - "manter o Synapse-Flow como a engine propria de pipeline do SynapseOS"
   - "restringir a frente a docs, handoff e testes documentais; sem alteracao funcional em src/"
   - "nao reabrir cancelamento distribuido, scheduler remoto, auth remota ou TUI fora do baseline ja mergeado"
   - "nao exigir DOCKER_PREFLIGHT porque a frente nao depende de boot, build, persistencia pratica em container ou integracao real"
@@ -27,7 +27,7 @@ acceptance_criteria:
   - "`features/F40-local-cancellation/` e `features/F42-tui-filters/` passam a ter `NOTES.md`, `CHECKLIST.md` e `REPORT.md`, refletindo exatamente o baseline ja mergeado."
   - "`memory.md` e `PENDING_LOG.md` deixam de tratar `F40` e `F42` como recortes apenas no archive branch e passam a refletir essas merges como baseline atual de `main`."
   - "`ERROR_LOG.md` registra que a PR `#87` entrou com delta misto alem do recorte funcional da `F40`, e que a mitigacao aplicada foi uma chore de sync/handoff."
-  - "`README.md` documenta `aignt runs watch <run_id>`, `aignt runs cancel <run_id>` e os atalhos reais `Enter`, `a`, `f`, `r`, `x` e `k`, deixando claro que o cancelamento atual e apenas local e gracioso."
+  - "`README.md` documenta `synapse runs watch <run_id>`, `synapse runs cancel <run_id>` e os atalhos reais `Enter`, `a`, `f`, `r`, `x` e `k`, deixando claro que o cancelamento atual e apenas local e gracioso."
   - "`CHANGELOG.md` ganha um `Unreleased` coerente com o baseline atual, incluindo filtros no dashboard TUI e cancelamento local de runs."
   - "Existe cobertura documental automatizada travando a superficie publica atual de watch/cancel e a presenca dos artefatos retrocompletados de `F40` e `F42`."
 non_goals:
@@ -48,7 +48,7 @@ tratando esses recortes como backlog apenas no archive branch. Alem disso, as du
 features ficaram sem `NOTES.md`, `CHECKLIST.md` e `REPORT.md`, e o `README.md` ainda
 nao documenta a superficie publica atual do dashboard TUI e do cancelamento local.
 
-Como o AIgnt-Synapse-Flow continua sendo a engine propria de pipeline do AIgnt OS e
+Como o Synapse-Flow continua sendo a engine propria de pipeline do SynapseOS e
 nao houve aprovacao para nova frente de produto, o menor recorte util agora e uma
 chore doc-only para consolidar esse baseline antes da proxima `technical-triage`.
 
@@ -84,7 +84,7 @@ sem mudar comportamento de produto e sem ampliar o escopo funcional ja mergeado.
 # Casos de erro
 
 - `memory.md` ou `PENDING_LOG.md` continuarem tratando `F40`/`F42` como backlog fora da fila ativa
-- `README.md` continuar omitindo `aignt runs cancel <run_id>` ou os atalhos reais do dashboard
+- `README.md` continuar omitindo `synapse runs cancel <run_id>` ou os atalhos reais do dashboard
 - `CHANGELOG.md` continuar sem mencionar filtros TUI ou cancelamento local
 - `F40` e `F42` continuarem sem artefatos minimos de encerramento
 
@@ -101,7 +101,7 @@ sem mudar comportamento de produto e sem ampliar o escopo funcional ja mergeado.
 
 - Dado `README.md` atualizado
 - Quando a documentacao publica for lida
-- Entao ela mostra `aignt runs watch <run_id>` e `aignt runs cancel <run_id>`
+- Entao ela mostra `synapse runs watch <run_id>` e `synapse runs cancel <run_id>`
 - E ela delimita que o cancelamento atual e apenas local e gracioso
 
 ## Cenario 3: F40 e F42 ficam auditaveis como features ja concluídas

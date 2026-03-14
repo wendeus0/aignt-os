@@ -9,10 +9,10 @@ import sys
 import time
 from pathlib import Path
 
-from aignt_os.runtime.state import RuntimeState, RuntimeStateStore
-from aignt_os.runtime.worker import RuntimeWorker
+from synapse_os.runtime.state import RuntimeState, RuntimeStateStore
+from synapse_os.runtime.worker import RuntimeWorker
 
-PROCESS_MARKER = "--aignt-runtime-process"
+PROCESS_MARKER = "--synapse-runtime-process"
 
 
 def _runtime_process_code() -> str:
@@ -78,7 +78,7 @@ class RuntimeService:
         previous_sigterm = signal.signal(signal.SIGTERM, handle_shutdown)
         previous_sigint = signal.signal(signal.SIGINT, handle_shutdown)
 
-        # This is the minimal resident process for the AIgnt-Synapse-Flow runtime.
+        # This is the minimal resident process for the Synapse-Flow runtime.
         self.state_store.write_running(
             os.getpid(),
             process_identity,

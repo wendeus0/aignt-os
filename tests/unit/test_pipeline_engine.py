@@ -7,7 +7,7 @@ import pytest
 
 
 def _pipeline_module():
-    return import_module("aignt_os.pipeline")
+    return import_module("synapse_os.pipeline")
 
 
 def _write_valid_spec(path: Path) -> None:
@@ -68,7 +68,7 @@ class _FlakyExecutor:
     def execute(self, step, context):  # type: ignore[no-untyped-def]
         self.calls += 1
         if self.calls <= self.fail_times:
-            supervisor = import_module("aignt_os.supervisor")
+            supervisor = import_module("synapse_os.supervisor")
             raise supervisor.RetryableStepError(f"temporary failure at {step.state}")
         pipeline = _pipeline_module()
         return pipeline.StepExecutionResult(
@@ -194,7 +194,7 @@ def test_pipeline_engine_can_retry_code_green_and_continue_to_security(tmp_path:
         artifact_key="security_md",
         artifact_value="security",
     )
-    supervisor = import_module("aignt_os.supervisor")
+    supervisor = import_module("synapse_os.supervisor")
 
     engine = pipeline.PipelineEngine(
         executors={
@@ -285,7 +285,7 @@ def test_pipeline_engine_can_return_from_review_to_code_green(tmp_path: Path) ->
         artifact_key="security_md",
         artifact_value="security",
     )
-    supervisor = import_module("aignt_os.supervisor")
+    supervisor = import_module("synapse_os.supervisor")
 
     class _RejectingReviewExecutor:
         def __init__(self) -> None:

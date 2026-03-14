@@ -8,7 +8,7 @@ import pytest
 
 
 def test_run_repository_persists_run_lifecycle(tmp_path: Path) -> None:
-    persistence = import_module("aignt_os.persistence")
+    persistence = import_module("synapse_os.persistence")
 
     repository = persistence.RunRepository(tmp_path / "runs.sqlite3")
     run_id = repository.create_run(
@@ -36,7 +36,7 @@ def test_run_repository_persists_run_lifecycle(tmp_path: Path) -> None:
 
 
 def test_run_repository_prevents_double_lock_for_same_run(tmp_path: Path) -> None:
-    persistence = import_module("aignt_os.persistence")
+    persistence = import_module("synapse_os.persistence")
 
     repository = persistence.RunRepository(tmp_path / "runs.sqlite3")
     run_id = repository.create_run(
@@ -52,7 +52,7 @@ def test_run_repository_prevents_double_lock_for_same_run(tmp_path: Path) -> Non
 
 
 def test_artifact_store_saves_raw_clean_and_named_artifacts(tmp_path: Path) -> None:
-    persistence = import_module("aignt_os.persistence")
+    persistence = import_module("synapse_os.persistence")
 
     store = persistence.ArtifactStore(tmp_path / "artifacts")
 
@@ -92,7 +92,7 @@ def test_artifact_store_saves_raw_clean_and_named_artifacts(tmp_path: Path) -> N
 
 
 def test_run_repository_records_step_execution_metadata(tmp_path: Path) -> None:
-    persistence = import_module("aignt_os.persistence")
+    persistence = import_module("synapse_os.persistence")
 
     repository = persistence.RunRepository(tmp_path / "runs.sqlite3")
     run_id = repository.create_run(
@@ -123,7 +123,7 @@ def test_run_repository_records_step_execution_metadata(tmp_path: Path) -> None:
 
 
 def test_run_repository_upgrades_legacy_schema_with_provenance_columns(tmp_path: Path) -> None:
-    persistence = import_module("aignt_os.persistence")
+    persistence = import_module("synapse_os.persistence")
 
     database_path = tmp_path / "runs.sqlite3"
     connection = sqlite3.connect(database_path)
@@ -191,8 +191,8 @@ def test_run_repository_upgrades_legacy_schema_with_provenance_columns(tmp_path:
 
 
 def test_artifact_store_blocks_unsafe_python_named_artifact(tmp_path: Path) -> None:
-    persistence = import_module("aignt_os.persistence")
-    parsing = import_module("aignt_os.parsing")
+    persistence = import_module("synapse_os.persistence")
+    parsing = import_module("synapse_os.parsing")
 
     store = persistence.ArtifactStore(tmp_path / "artifacts")
 

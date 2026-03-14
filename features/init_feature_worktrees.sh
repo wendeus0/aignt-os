@@ -4,11 +4,11 @@ set -euo pipefail
 # Uso:
 #   ./scripts/init_feature_worktrees.sh /caminho/para/repo [base-branch]
 # Exemplo:
-#   ./scripts/init_feature_worktrees.sh ~/code/aignt-os main
+#   ./scripts/init_feature_worktrees.sh ~/code/synapse-os main
 
 REPO_PATH="${1:-.}"
 BASE_BRANCH="${2:-main}"
-WORKTREE_ROOT="${REPO_PATH%/}/../aignt-os-worktrees"
+WORKTREE_ROOT="${REPO_PATH%/}/../synapse-os-worktrees"
 
 FEATURES=(
   "feature/f01-bootstrap-contracts:F01-bootstrap-contracts"

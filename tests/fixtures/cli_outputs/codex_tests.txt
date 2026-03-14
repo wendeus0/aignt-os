@@ -2,7 +2,7 @@ Generating test suite based on SPEC acceptance criteria...
 
 ```python
 import pytest
-from aignt_os.persistence import RunRepository, ArtifactStore
+from synapse_os.persistence import RunRepository, ArtifactStore
 
 
 def test_run_repository_persists_run_after_creation(tmp_path):

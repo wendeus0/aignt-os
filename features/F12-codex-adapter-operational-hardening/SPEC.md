@@ -14,7 +14,7 @@ outputs:
   - codex_operational_validation
   - codex_hardening_tests
 constraints:
-  - manter o AIgnt-Synapse-Flow como engine propria de pipeline do AIgnt OS
+  - manter o Synapse-Flow como engine propria de pipeline do SynapseOS
   - manter o fluxo container-first via ./scripts/dev-codex.sh
   - nao adicionar nova CLI publica nem segundo adapter real
   - nao reabrir escopo de runtime distribuido, DAG ou multiplos workers
@@ -41,7 +41,7 @@ dependencies:
 
 # Contexto
 
-Com a F10 mergeada, o AIgnt-Synapse-Flow, a engine propria de pipeline do AIgnt OS, ja fecha o MVP com `DOCUMENT`, `RUN_REPORT.md` e o primeiro adapter real (`CodexCLIAdapter`). O gap remanescente nao esta mais no contrato do adapter nem na persistencia do relatorio, e sim na validacao operacional do caminho real do Codex via launcher container-first.
+Com a F10 mergeada, o Synapse-Flow, a engine propria de pipeline do SynapseOS, ja fecha o MVP com `DOCUMENT`, `RUN_REPORT.md` e o primeiro adapter real (`CodexCLIAdapter`). O gap remanescente nao esta mais no contrato do adapter nem na persistencia do relatorio, e sim na validacao operacional do caminho real do Codex via launcher container-first.
 
 Hoje o repositório cobre a montagem do comando e o contrato do adapter majoritariamente com mocks e smoke parcial de launcher. Ainda falta um recorte pequeno e explícito que diga qual e o smoke real minimo do `CodexCLIAdapter`, como falhas operacionais devem aparecer e quando esse caminho precisa passar por `DOCKER_PREFLIGHT`.
 

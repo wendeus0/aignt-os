@@ -1,4 +1,4 @@
-# Copilot Instructions for `aignt-os`
+# Copilot Instructions for `synapse-os`
 
 ## Read first
 
@@ -153,7 +153,7 @@ That is only a lightweight repo check. It does **not** replace the operational `
 
 ## High-level architecture
 
-AIgnt OS is a CLI-first meta-orchestrator for external AI tools. The intended system is centered on **AIgnt-Synapse-Flow**, the repository's own pipeline engine, which is state-driven and spec-first.
+SynapseOS is a CLI-first meta-orchestrator for external AI tools. The intended system is centered on **Synapse-Flow**, the repository's own pipeline engine, which is state-driven and spec-first.
 
 There are two related flows to keep straight:
 
@@ -173,13 +173,13 @@ REQUEST → SPEC_DISCOVERY → SPEC_NORMALIZATION → SPEC_VALIDATION → PLAN �
 
 The docs describe a larger target system, but the current codebase now includes more than the earliest MVP slices. The implemented modules are concentrated in:
 
-- `src/aignt_os/cli/app.py` for the public Typer CLI
-- `src/aignt_os/runtime/` for the minimal persistent runtime lifecycle, worker loop, and dispatch service
-- `src/aignt_os/specs/validator.py` for SPEC validation
-- `src/aignt_os/state_machine.py` for the linear state machine
-- `src/aignt_os/pipeline.py`, `src/aignt_os/persistence.py`, and `src/aignt_os/reporting.py` for the current persisted pipeline path and `RUN_REPORT.md`
-- `src/aignt_os/adapters.py` and `src/aignt_os/supervisor.py` for the first real adapter and deterministic supervision behavior
-- `src/aignt_os/contracts.py` and `src/aignt_os/config.py` for base contracts and settings
+- `src/synapse_os/cli/app.py` for the public Typer CLI
+- `src/synapse_os/runtime/` for the minimal persistent runtime lifecycle, worker loop, and dispatch service
+- `src/synapse_os/specs/validator.py` for SPEC validation
+- `src/synapse_os/state_machine.py` for the linear state machine
+- `src/synapse_os/pipeline.py`, `src/synapse_os/persistence.py`, and `src/synapse_os/reporting.py` for the current persisted pipeline path and `RUN_REPORT.md`
+- `src/synapse_os/adapters.py` and `src/synapse_os/supervisor.py` for the first real adapter and deterministic supervision behavior
+- `src/synapse_os/contracts.py` and `src/synapse_os/config.py` for base contracts and settings
 
 `observability/` is still effectively future-facing, and future sessions should verify concrete implementation before assuming a dedicated observability module exists.
 
@@ -187,7 +187,7 @@ The docs describe a larger target system, but the current codebase now includes 
 
 The current runtime is a minimal dual-mode foundation:
 
-- The CLI exposes `aignt version`, `aignt runtime {start,status,run,ready,stop}`, and `aignt runs {list,show,submit}`.
+- The CLI exposes `synapse version`, `synapse runtime {start,status,run,ready,stop}`, and `synapse runs {list,show,submit}`.
 - `RuntimeService` manages a resident process and persists runtime state to a JSON file.
 - `RunDispatchService` already backs the public submit path and resolves synchronous vs. queued dispatch.
 - `RuntimeStateStore` treats missing state as `stopped` and corrupted or mismatched persisted state as `inconsistent`.
@@ -224,7 +224,7 @@ To validate a SPEC locally:
 ```bash
 uv run --no-sync python -c "
 from pathlib import Path
-from aignt_os.specs.validator import validate_spec_file
+from synapse_os.specs.validator import validate_spec_file
 result = validate_spec_file(Path('features/<feature>/SPEC.md'))
 print(result)
 "
@@ -266,7 +266,7 @@ The architecture docs are important and should guide naming and design, but the 
 
 ### Use the official terminology
 
-When referring to the internal runtime flow, use **AIgnt-Synapse-Flow** and make clear at least once that it is the repository's own pipeline engine.
+When referring to the internal runtime flow, use **Synapse-Flow** and make clear at least once that it is the repository's own pipeline engine.
 
 Keep these terms stable:
 
@@ -290,7 +290,7 @@ Do not treat a green local hook as equivalent to the operational preflight.
 
 ### Configuration and environment variables
 
-All `AppSettings` fields are overridable via environment variables with the `AIGNT_OS_` prefix (e.g., `AIGNT_OS_ENVIRONMENT`, `AIGNT_OS_RUNTIME_STATE_DIR`). Never use `os.environ` directly — always read settings through `AppSettings`.
+All `AppSettings` fields are overridable via environment variables with the `SYNAPSE_OS_` prefix (e.g., `SYNAPSE_OS_ENVIRONMENT`, `SYNAPSE_OS_RUNTIME_STATE_DIR`). Never use `os.environ` directly — always read settings through `AppSettings`.
 
 ### Follow the repo's Python execution style
 

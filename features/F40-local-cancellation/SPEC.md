@@ -3,7 +3,7 @@ id: F40-local-cancellation
 type: feature
 summary: "Cancelamento local de runs via CLI e TUI com sinalização de graceful shutdown."
 inputs:
-  - "Comando CLI `aignt runs cancel <run_id>`"
+  - "Comando CLI `synapse runs cancel <run_id>`"
   - "Atalho de teclado no dashboard TUI (ex: 'k')"
 outputs:
   - "Run transita para estado `cancelling` e depois `cancelled`"
@@ -22,7 +22,7 @@ non_goals:
 
 # Contexto
 
-Atualmente, uma run iniciada no AIgnt OS (especialmente em modo `worker` residente) só para quando termina todos os steps ou falha. Se o usuário perceber um erro ou mudar de ideia durante uma execução longa, a única opção é matar o processo do worker/CLI, o que pode deixar o estado inconsistente (`running` para sempre no banco) ou corromper arquivos. É necessário um mecanismo oficial para solicitar a interrupção.
+Atualmente, uma run iniciada no SynapseOS (especialmente em modo `worker` residente) só para quando termina todos os steps ou falha. Se o usuário perceber um erro ou mudar de ideia durante uma execução longa, a única opção é matar o processo do worker/CLI, o que pode deixar o estado inconsistente (`running` para sempre no banco) ou corromper arquivos. É necessário um mecanismo oficial para solicitar a interrupção.
 
 # Objetivo
 

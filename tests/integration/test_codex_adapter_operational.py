@@ -33,7 +33,7 @@ def test_codex_cli_adapter_executes_real_launcher_with_fake_docker(
     tmp_path: Path,
     monkeypatch: pytest.MonkeyPatch,
 ) -> None:
-    adapters = import_module("aignt_os.adapters")
+    adapters = import_module("synapse_os.adapters")
     fake_docker_log = tmp_path / "docker.log"
 
     _install_fake_docker(
@@ -92,7 +92,7 @@ def test_codex_cli_adapter_classifies_real_launcher_failure_with_fake_docker(
     tmp_path: Path,
     monkeypatch: pytest.MonkeyPatch,
 ) -> None:
-    adapters = import_module("aignt_os.adapters")
+    adapters = import_module("synapse_os.adapters")
 
     _install_fake_docker(
         tmp_path,
@@ -128,7 +128,7 @@ def test_codex_cli_adapter_persists_breaker_between_instances_with_fake_docker(
     tmp_path: Path,
     monkeypatch: pytest.MonkeyPatch,
 ) -> None:
-    adapters = import_module("aignt_os.adapters")
+    adapters = import_module("synapse_os.adapters")
     fake_docker_log = tmp_path / "docker.log"
 
     _install_fake_docker(
@@ -154,10 +154,10 @@ exit 98
 
     monkeypatch.setenv("FAKE_DOCKER_LOG", str(fake_docker_log))
     monkeypatch.setenv("PATH", f"{tmp_path}{os.pathsep}{os.environ['PATH']}")
-    monkeypatch.setenv("AIGNT_OS_RUNTIME_STATE_DIR", str(tmp_path / "runtime"))
-    monkeypatch.setenv("AIGNT_OS_WORKSPACE_ROOT", str(tmp_path))
-    monkeypatch.setenv("AIGNT_OS_ADAPTER_CIRCUIT_BREAKER_FAILURE_THRESHOLD", "2")
-    monkeypatch.setenv("AIGNT_OS_ADAPTER_CIRCUIT_BREAKER_COOLDOWN_SECONDS", "60")
+    monkeypatch.setenv("SYNAPSE_OS_RUNTIME_STATE_DIR", str(tmp_path / "runtime"))
+    monkeypatch.setenv("SYNAPSE_OS_WORKSPACE_ROOT", str(tmp_path))
+    monkeypatch.setenv("SYNAPSE_OS_ADAPTER_CIRCUIT_BREAKER_FAILURE_THRESHOLD", "2")
+    monkeypatch.setenv("SYNAPSE_OS_ADAPTER_CIRCUIT_BREAKER_COOLDOWN_SECONDS", "60")
 
     first_result = asyncio.run(adapters.CodexCLIAdapter().execute("Implement the plan."))
     second_result = asyncio.run(adapters.CodexCLIAdapter().execute("Implement the plan."))

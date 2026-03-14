@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from aignt_os.cli.errors import (
+from synapse_os.cli.errors import (
     CLIExitCode,
     format_cli_error,
 )

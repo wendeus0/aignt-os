@@ -3,12 +3,12 @@
 ## Resumo executivo
 
 - A F28 foi implementada como um circuit breaker persistido para o adapter real atual.
-- O recorte ficou fechado em `G-09`, limitado ao `CodexCLIAdapter`, sem reabrir auth, SQLite, CLI publica ou coordenacao distribuida do AIgnt-Synapse-Flow, a engine propria de pipeline do AIgnt OS.
+- O recorte ficou fechado em `G-09`, limitado ao `CodexCLIAdapter`, sem reabrir auth, SQLite, CLI publica ou coordenacao distribuida do Synapse-Flow, a engine propria de pipeline do SynapseOS.
 - O breaker agora persiste estado local em arquivo, bloqueia spawns repetidos durante cooldown e volta a permitir probe apos expirar a janela.
 
 ## Escopo entregue
 
-- Novo store local em `src/aignt_os/runtime/circuit_breaker.py` com escrita atomica e permissoes restritas.
+- Novo store local em `src/synapse_os/runtime/circuit_breaker.py` com escrita atomica e permissoes restritas.
 - `AppSettings` estendido com threshold, cooldown e path derivado do arquivo do breaker.
 - `CodexCLIAdapter` endurecido para consultar o breaker antes do spawn e atualizar o estado apos classificar o resultado.
 - `CodexExecutionAssessment` ampliado com a categoria `circuit_open`.
@@ -19,8 +19,8 @@
 - Leitura e alinhamento com `CONTEXT.md`, `docs/architecture/SDD.md`, `docs/architecture/TDD.md` e `docs/architecture/SPEC_FORMAT.md`.
 - Validacao da SPEC com `validate_spec_file(Path('features/F28-adapter-circuit-breaker/SPEC.md'))`.
 - `uv run --no-sync python -m pytest tests/unit/test_config.py tests/unit/test_adapter_circuit_breaker.py tests/unit/test_cli_adapter.py tests/integration/test_codex_adapter_operational.py -q`
-- `uv run --no-sync ruff check src/aignt_os/adapters.py src/aignt_os/config.py src/aignt_os/contracts.py src/aignt_os/runtime/circuit_breaker.py tests/unit/test_config.py tests/unit/test_adapter_circuit_breaker.py tests/unit/test_cli_adapter.py tests/integration/test_codex_adapter_operational.py`
-- `uv run --no-sync python -m mypy src/aignt_os/adapters.py src/aignt_os/config.py src/aignt_os/contracts.py src/aignt_os/runtime/circuit_breaker.py`
+- `uv run --no-sync ruff check src/synapse_os/adapters.py src/synapse_os/config.py src/synapse_os/contracts.py src/synapse_os/runtime/circuit_breaker.py tests/unit/test_config.py tests/unit/test_adapter_circuit_breaker.py tests/unit/test_cli_adapter.py tests/integration/test_codex_adapter_operational.py`
+- `uv run --no-sync python -m mypy src/synapse_os/adapters.py src/synapse_os/config.py src/synapse_os/contracts.py src/synapse_os/runtime/circuit_breaker.py`
 
 ## Security review
 

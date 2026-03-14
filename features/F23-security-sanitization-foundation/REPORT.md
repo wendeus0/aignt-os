@@ -8,7 +8,7 @@
 
 ## Escopo entregue
 
-- Novo modulo compartilhado `src/aignt_os/security.py` concentrando strip de bidi controls, normalizacao Unicode NFKC, remocao opcional de ANSI e masking configuravel de segredos.
+- Novo modulo compartilhado `src/synapse_os/security.py` concentrando strip de bidi controls, normalizacao Unicode NFKC, remocao opcional de ANSI e masking configuravel de segredos.
 - Endurecimento de `BaseCLIAdapter` para sanitizar `stdout_clean` e `stderr_clean` sem tocar `stdout_raw` e `stderr_raw`.
 - Endurecimento do parsing para sanitizar `stdout_clean` sem quebrar a extracao de artifacts fenced.
 - Endurecimento de `ArtifactStore` para sanitizar `clean.txt`, named artifacts publicos e `RUN_REPORT.md`, preservando `raw.txt` intacto.
@@ -20,8 +20,8 @@
 - Leitura e alinhamento com `CONTEXT.md`, `docs/architecture/SDD.md`, `docs/architecture/TDD.md` e `docs/architecture/SPEC_FORMAT.md`.
 - Validacao da SPEC da feature com `validate_spec_file(Path('features/F23-security-sanitization-foundation/SPEC.md'))`.
 - `uv run --no-sync python -m pytest tests/unit/test_security.py tests/unit/test_config.py tests/unit/test_cli_adapter.py tests/unit/test_parsing_engine.py tests/unit/test_persistence.py tests/integration/test_runs_cli.py -q`
-- `uv run --no-sync ruff check src/aignt_os/security.py src/aignt_os/config.py src/aignt_os/adapters.py src/aignt_os/parsing.py src/aignt_os/persistence.py tests/unit/test_security.py tests/unit/test_config.py tests/unit/test_cli_adapter.py tests/unit/test_parsing_engine.py tests/unit/test_persistence.py tests/integration/test_runs_cli.py`
-- `uv run --no-sync mypy src/aignt_os/security.py src/aignt_os/config.py src/aignt_os/adapters.py src/aignt_os/parsing.py src/aignt_os/persistence.py`
+- `uv run --no-sync ruff check src/synapse_os/security.py src/synapse_os/config.py src/synapse_os/adapters.py src/synapse_os/parsing.py src/synapse_os/persistence.py tests/unit/test_security.py tests/unit/test_config.py tests/unit/test_cli_adapter.py tests/unit/test_parsing_engine.py tests/unit/test_persistence.py tests/integration/test_runs_cli.py`
+- `uv run --no-sync mypy src/synapse_os/security.py src/synapse_os/config.py src/synapse_os/adapters.py src/synapse_os/parsing.py src/synapse_os/persistence.py`
 - `./scripts/security-gate.sh`
 
 ## Security review

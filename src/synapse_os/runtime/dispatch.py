@@ -5,10 +5,10 @@ from dataclasses import dataclass
 from pathlib import Path
 from typing import Literal
 
-from aignt_os.persistence import PersistedPipelineRunner, RunRepository
-from aignt_os.runtime.state import RuntimeState
-from aignt_os.security import compute_file_sha256, resolve_path_within_root
-from aignt_os.specs import validate_spec_file
+from synapse_os.persistence import PersistedPipelineRunner, RunRepository
+from synapse_os.runtime.state import RuntimeState
+from synapse_os.security import compute_file_sha256, resolve_path_within_root
+from synapse_os.specs import validate_spec_file
 
 DispatchMode = Literal["sync", "async", "auto"]
 ResolvedDispatchMode = Literal["sync", "async"]

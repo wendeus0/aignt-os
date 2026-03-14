@@ -1,6 +1,6 @@
 ---
 name: explorer
-description: Explorador read-only da arquitetura do AIgnt OS. Mapeia arquivos afetados, ADRs, SPECs e dependências operacionais antes de qualquer edição de código.
+description: Explorador read-only da arquitetura do SynapseOS. Mapeia arquivos afetados, ADRs, SPECs e dependências operacionais antes de qualquer edição de código.
 model: claude-sonnet-4-6
 disallowedTools:
   - Write

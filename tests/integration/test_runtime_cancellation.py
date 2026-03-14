@@ -1,8 +1,8 @@
 from dataclasses import replace
 from unittest.mock import MagicMock
 
-from aignt_os.persistence import ArtifactStore, PersistedPipelineRunner, RunRepository
-from aignt_os.pipeline import PipelineCancelledError
+from synapse_os.persistence import ArtifactStore, PersistedPipelineRunner, RunRepository
+from synapse_os.pipeline import PipelineCancelledError
 
 
 def test_runtime_stops_on_cancellation(tmp_path):

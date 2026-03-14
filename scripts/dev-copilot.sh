@@ -8,7 +8,7 @@
 #   3. Executa `copilot` interativo dentro do container
 #
 # Uso:   ./scripts/dev-copilot.sh [--build] [-- <copilot-args>]
-# Alias: alias sonnet='cd ~/work/projects/aignt-os && ./scripts/dev-copilot.sh'
+# Alias: alias sonnet='cd ~/work/projects/synapse-os && ./scripts/dev-copilot.sh'
 set -euo pipefail
 
 ROOT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
@@ -18,8 +18,8 @@ COPILOT_BIN="${COPILOT_BIN:-${HOME}/.local/bin/copilot}"
 COPILOT_CONFIG="${COPILOT_CONFIG:-${HOME}/.copilot/config.json}"
 
 export DOCKER_CONFIG="${DOCKER_CONFIG:-${ROOT_DIR}/.cache/docker/config}"
-export AIGNT_DEV_UID="${AIGNT_DEV_UID:-$(id -u)}"
-export AIGNT_DEV_GID="${AIGNT_DEV_GID:-$(id -g)}"
+export SYNAPSE_DEV_UID="${SYNAPSE_DEV_UID:-$(id -u)}"
+export SYNAPSE_DEV_GID="${SYNAPSE_DEV_GID:-$(id -g)}"
 export COPILOT_BIN
 
 mkdir -p "${DOCKER_CONFIG}"
@@ -35,7 +35,7 @@ Opções:
   --help     Exibe esta mensagem.
 
 Alias sugerido (adicionar ao ~/.bashrc ou ~/.zshrc):
-  alias sonnet='cd ~/work/projects/aignt-os && ./scripts/dev-copilot.sh'
+  alias sonnet='cd ~/work/projects/synapse-os && ./scripts/dev-copilot.sh'
 EOF
 }
 

@@ -3,7 +3,7 @@
 ## Resumo executivo
 
 - A `F37-post-f36-g11-sync` realinha backlog e handoff ao estado real do baseline apos a `F36`.
-- A frente permaneceu doc-only: nao houve mudanca funcional de CLI, runtime, auth, persistencia nem do AIgnt-Synapse-Flow, a engine propria de pipeline do AIgnt OS.
+- A frente permaneceu doc-only: nao houve mudanca funcional de CLI, runtime, auth, persistencia nem do Synapse-Flow, a engine propria de pipeline do SynapseOS.
 - O backlog de `G-11` agora deixa explicito que a fundacao local e o bucket residente local ja foram absorvidos no baseline atual, mantendo apenas `remote_multi_host_auth` como pendencia aberta.
 
 ## Escopo alterado
@@ -16,10 +16,10 @@
 
 ## Validacoes executadas
 
-- `env PYTHONPATH=/tmp/aignt-os-worktrees/F37-post-f36-g11-sync/src /home/g0dsssp33d/work/projects/aignt-os/.venv-codex-runtime/bin/python - <<'PY' ... validate_spec_file(Path('features/F37-post-f36-g11-sync/SPEC.md')) ... PY`
-- `env PYTHONPATH=/tmp/aignt-os-worktrees/F37-post-f36-g11-sync/src /home/g0dsssp33d/work/projects/aignt-os/.venv-codex-runtime/bin/python -m pytest tests/unit/test_auth_registry_docs.py -q`
-- `env PYTHONPATH=/tmp/aignt-os-worktrees/F37-post-f36-g11-sync/src /home/g0dsssp33d/work/projects/aignt-os/.venv-codex-runtime/bin/python -m ruff check tests/unit/test_auth_registry_docs.py`
-- `env UV_PROJECT_ENVIRONMENT=/home/g0dsssp33d/work/projects/aignt-os/.venv-codex-runtime UV_CACHE_DIR=/tmp/aignt-os-worktrees/F37-post-f36-g11-sync/.cache/uv ./scripts/commit-check.sh --no-sync --skip-branch-validation --skip-docker --skip-security`
+- `env PYTHONPATH=/tmp/synapse-os-worktrees/F37-post-f36-g11-sync/src /home/g0dsssp33d/work/projects/synapse-os/.venv-codex-runtime/bin/python - <<'PY' ... validate_spec_file(Path('features/F37-post-f36-g11-sync/SPEC.md')) ... PY`
+- `env PYTHONPATH=/tmp/synapse-os-worktrees/F37-post-f36-g11-sync/src /home/g0dsssp33d/work/projects/synapse-os/.venv-codex-runtime/bin/python -m pytest tests/unit/test_auth_registry_docs.py -q`
+- `env PYTHONPATH=/tmp/synapse-os-worktrees/F37-post-f36-g11-sync/src /home/g0dsssp33d/work/projects/synapse-os/.venv-codex-runtime/bin/python -m ruff check tests/unit/test_auth_registry_docs.py`
+- `env UV_PROJECT_ENVIRONMENT=/home/g0dsssp33d/work/projects/synapse-os/.venv-codex-runtime UV_CACHE_DIR=/tmp/synapse-os-worktrees/F37-post-f36-g11-sync/.cache/uv ./scripts/commit-check.sh --no-sync --skip-branch-validation --skip-docker --skip-security`
 - `./scripts/security-gate.sh`
 
 ## Review de seguranca

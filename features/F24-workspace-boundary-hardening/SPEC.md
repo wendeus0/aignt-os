@@ -8,17 +8,17 @@ inputs:
   - docs/architecture/TDD.md
   - docs/architecture/SPEC_FORMAT.md
   - docs/IDEAS.md
-  - src/aignt_os/config.py
-  - src/aignt_os/runtime/dispatch.py
-  - src/aignt_os/cli/app.py
-  - src/aignt_os/persistence.py
-  - src/aignt_os/security.py
+  - src/synapse_os/config.py
+  - src/synapse_os/runtime/dispatch.py
+  - src/synapse_os/cli/app.py
+  - src/synapse_os/persistence.py
+  - src/synapse_os/security.py
 outputs:
   - workspace_boundary_guards
   - boundary_regression_tests
   - feature_notes
 constraints:
-  - "manter o AIgnt-Synapse-Flow como a engine propria de pipeline do AIgnt OS"
+  - "manter o Synapse-Flow como a engine propria de pipeline do SynapseOS"
   - "trabalhar apenas o recorte de G-05 + G-10 restante apos a F23"
   - "nao alterar schema SQLite ou adicionar migrations"
   - "nao alterar a superficie publica do CLI alem do endurecimento de erros de boundary"
@@ -51,7 +51,7 @@ dependencies:
 
 Depois da F23, o projeto passou a higienizar conteudo publico, mas ainda aceita e exibe caminhos com boundary parcial. `runs submit` hoje valida existencia e formato da SPEC, porem nao limita a origem do arquivo a uma raiz confiavel do workspace. `runs show --preview` ja canonicaliza alguns caminhos, mas a listagem publica de artifacts ainda pode anunciar entradas escapadas por symlink e a run continua aceitando `clean_output_path` persistido externamente ao diretório de artifacts.
 
-No MVP, o AIgnt-Synapse-Flow continua sendo a engine propria de pipeline do AIgnt OS e trabalha com um unico workspace local por run. A F24 fecha esse contrato de isolamento sem abrir migrations, auth ou runtime completo.
+No MVP, o Synapse-Flow continua sendo a engine propria de pipeline do SynapseOS e trabalha com um unico workspace local por run. A F24 fecha esse contrato de isolamento sem abrir migrations, auth ou runtime completo.
 
 # Objetivo
 

@@ -17,7 +17,7 @@ outputs:
   - post_f47_baseline_handoff_sync
   - updated_auth_and_tui_docs_for_current_main
 constraints:
-  - "manter o AIgnt-Synapse-Flow como a engine propria de pipeline do AIgnt OS"
+  - "manter o Synapse-Flow como a engine propria de pipeline do SynapseOS"
   - "restringir a frente a docs, handoff e testes documentais; sem alteracao funcional em src/"
   - "nao introduzir nova feature de produto, nova automacao operacional, Docker ou ADR"
   - "nao reabrir backlog local/residente de auth nem promover transporte remoto a requisito atual"
@@ -26,7 +26,7 @@ acceptance_criteria:
   - "Existe `features/chore-post-f47-baseline-handoff-sync/SPEC.md` valida descrevendo a frente como chore doc-only de alinhamento pos-`F47`."
   - "`memory.md` e `PENDING_LOG.md` deixam de tratar `F41`, `F43`, `F44`, `F45` e `F47` como apenas drafts/estado implícito e passam a refletir essas merges como baseline atual."
   - "`docs/IDEAS.md` passa a registrar que o recorte local de auth ja absorveu a fundacao (`F29`/`F30`), a abstracao de provider (`F44`), o bucket residente local (`F32`/`F34`/`F35`/`F36`) e o RBAC local (`F47`), mantendo somente `remote_multi_host_auth` como pendencia explicita."
-  - "`README.md` documenta o uso atual de `aignt auth init|issue --role ...` e os boundaries de `viewer`, `operator` e `admin` sem sugerir auth remota."
+  - "`README.md` documenta o uso atual de `synapse auth init|issue --role ...` e os boundaries de `viewer`, `operator` e `admin` sem sugerir auth remota."
   - "`CHANGELOG.md` ganha uma secao `Unreleased` curta e coerente com o baseline atual, cobrindo TUI, robustez de runtime e RBAC local."
   - "`tests/unit/test_auth_registry_docs.py` trava o novo estado de `docs/IDEAS.md` e `README.md`."
 non_goals:
@@ -49,7 +49,7 @@ e `F47`, mas o handoff duravel ainda para no estado pos-`F37`/`F39`. Isso deixa
 `memory.md`, `PENDING_LOG.md`, `docs/IDEAS.md`, `README.md` e `CHANGELOG.md`
 parcialmente desalinhados do que a CLI e o backlog realmente fazem hoje.
 
-Como o AIgnt-Synapse-Flow continua sendo a engine propria de pipeline do AIgnt OS e nao
+Como o Synapse-Flow continua sendo a engine propria de pipeline do SynapseOS e nao
 houve nova frente de produto aprovada, o menor recorte util agora e uma chore doc-only
 para consolidar esse baseline antes da proxima `technical-triage`.
 
@@ -110,7 +110,7 @@ comportamento de produto e sem reabrir backlog local/residente ja absorvido.
 
 - Dado `README.md` atualizado
 - Quando a secao `Auth Registry Local` for lida
-- Entao ela mostra `aignt auth init|issue --role ...`
+- Entao ela mostra `synapse auth init|issue --role ...`
 - E delimita `viewer`, `operator` e `admin` sem sugerir auth remota ou distribuida
 
 # Observacoes

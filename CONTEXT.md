@@ -1,8 +1,8 @@
 # CONTEXT.md
 
-## O que é o AIgnt OS
-AIgnt OS é um meta-orquestrador de agentes de IA via CLI.
-Ele não é o agente principal de raciocínio; seu papel é coordenar múltiplas ferramentas externas de IA por meio de subprocessos, parsing estruturado, handoffs controlados e do **AIgnt-Synapse-Flow**, a **engine própria de pipeline** do AIgnt OS.
+## O que é o SynapseOS
+SynapseOS é um meta-orquestrador de agentes de IA via CLI.
+Ele não é o agente principal de raciocínio; seu papel é coordenar múltiplas ferramentas externas de IA por meio de subprocessos, parsing estruturado, handoffs controlados e do **Synapse-Flow**, a **engine própria de pipeline** do SynapseOS.
 
 ## Objetivo do projeto
 Construir um runtime de desenvolvimento autônomo e controlado que:
@@ -34,8 +34,8 @@ SPEC
 → REPORT
 → COMMIT
 
-## Subetapas internas do AIgnt-Synapse-Flow
-Dentro do fluxo oficial, o AIgnt-Synapse-Flow pode decompor a execução em estados internos como:
+## Subetapas internas do Synapse-Flow
+Dentro do fluxo oficial, o Synapse-Flow pode decompor a execução em estados internos como:
 REQUEST
 → SPEC_DISCOVERY
 → SPEC_NORMALIZATION
@@ -52,7 +52,7 @@ No MVP, a implementação prática continua linear, mas o operador deve seguir p
 
 ## Componentes centrais
 - Orchestrator Engine
-- AIgnt-Synapse-Flow
+- Synapse-Flow
 - Pipeline Manager
 - State Machine Manager
 - CLI Adapter Layer
@@ -79,7 +79,7 @@ No MVP, a implementação prática continua linear, mas o operador deve seguir p
 - preflight completo de runtime: reservado para workflow dedicado ou pedido explícito em tarefas de boot/ciclo de vida/persistência/integração
 - `repo-preflight`: skill responsável pelo preflight operacional em Docker/container
 - `security-review`: gate de segurança antes de `REPORT` e `COMMIT`
-- AIgnt-Synapse-Flow: engine própria de pipeline interna ao projeto, state-driven, linear no MVP
+- Synapse-Flow: engine própria de pipeline interna ao projeto, state-driven, linear no MVP
 
 ## O que NÃO fazer no MVP
 - não implementar DAG distribuída completa
@@ -140,7 +140,7 @@ O repositório privilegia progresso incremental, commits pequenos e baixa ambigu
 
 ## Linguagem e terminologia
 Sempre usar:
-- `AIgnt-Synapse-Flow`, deixando explícito ao menos uma vez que ele é a engine própria de pipeline do AIgnt OS
+- `Synapse-Flow`, deixando explícito ao menos uma vez que ele é a engine própria de pipeline do SynapseOS
 
 Usar “SPEC” para o artefato formal da feature.
 Usar “run” para uma execução da pipeline.

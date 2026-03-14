@@ -7,7 +7,7 @@ import pytest
 
 
 def _adapters_module():
-    return import_module("aignt_os.adapters")
+    return import_module("synapse_os.adapters")
 
 
 class _FakeAdapterMixin:
@@ -459,7 +459,7 @@ def test_classify_codex_execution_result(
     expected_blocked: bool,
 ) -> None:
     adapters = _adapters_module()
-    contracts = import_module("aignt_os.contracts")
+    contracts = import_module("synapse_os.contracts")
 
     result = contracts.CLIExecutionResult(
         tool_name="codex",
@@ -481,12 +481,12 @@ def test_codex_cli_adapter_opens_circuit_breaker_after_two_operational_failures(
     tmp_path, monkeypatch
 ) -> None:  # type: ignore[no-untyped-def]
     adapters = _adapters_module()
-    circuit_breaker_module = import_module("aignt_os.runtime.circuit_breaker")
+    circuit_breaker_module = import_module("synapse_os.runtime.circuit_breaker")
 
-    monkeypatch.setenv("AIGNT_OS_RUNTIME_STATE_DIR", str(tmp_path / "runtime"))
-    monkeypatch.setenv("AIGNT_OS_WORKSPACE_ROOT", str(tmp_path))
-    monkeypatch.setenv("AIGNT_OS_ADAPTER_CIRCUIT_BREAKER_FAILURE_THRESHOLD", "2")
-    monkeypatch.setenv("AIGNT_OS_ADAPTER_CIRCUIT_BREAKER_COOLDOWN_SECONDS", "60")
+    monkeypatch.setenv("SYNAPSE_OS_RUNTIME_STATE_DIR", str(tmp_path / "runtime"))
+    monkeypatch.setenv("SYNAPSE_OS_WORKSPACE_ROOT", str(tmp_path))
+    monkeypatch.setenv("SYNAPSE_OS_ADAPTER_CIRCUIT_BREAKER_FAILURE_THRESHOLD", "2")
+    monkeypatch.setenv("SYNAPSE_OS_ADAPTER_CIRCUIT_BREAKER_COOLDOWN_SECONDS", "60")
 
     fake_process = _FakeProcess(
         stdout=b"",
@@ -517,12 +517,12 @@ def test_codex_cli_adapter_opens_circuit_breaker_after_two_operational_failures(
 
 def test_codex_cli_adapter_blocks_without_spawn_when_circuit_is_open(tmp_path, monkeypatch) -> None:  # type: ignore[no-untyped-def]
     adapters = _adapters_module()
-    circuit_breaker_module = import_module("aignt_os.runtime.circuit_breaker")
+    circuit_breaker_module = import_module("synapse_os.runtime.circuit_breaker")
 
-    monkeypatch.setenv("AIGNT_OS_RUNTIME_STATE_DIR", str(tmp_path / "runtime"))
-    monkeypatch.setenv("AIGNT_OS_WORKSPACE_ROOT", str(tmp_path))
-    monkeypatch.setenv("AIGNT_OS_ADAPTER_CIRCUIT_BREAKER_FAILURE_THRESHOLD", "2")
-    monkeypatch.setenv("AIGNT_OS_ADAPTER_CIRCUIT_BREAKER_COOLDOWN_SECONDS", "60")
+    monkeypatch.setenv("SYNAPSE_OS_RUNTIME_STATE_DIR", str(tmp_path / "runtime"))
+    monkeypatch.setenv("SYNAPSE_OS_WORKSPACE_ROOT", str(tmp_path))
+    monkeypatch.setenv("SYNAPSE_OS_ADAPTER_CIRCUIT_BREAKER_FAILURE_THRESHOLD", "2")
+    monkeypatch.setenv("SYNAPSE_OS_ADAPTER_CIRCUIT_BREAKER_COOLDOWN_SECONDS", "60")
 
     store = circuit_breaker_module.AdapterCircuitBreakerStore(
         tmp_path / "runtime" / "adapter-circuit-breakers.json"
@@ -549,12 +549,12 @@ def test_codex_cli_adapter_resets_breaker_after_non_operational_probe(
     tmp_path, monkeypatch
 ) -> None:  # type: ignore[no-untyped-def]
     adapters = _adapters_module()
-    circuit_breaker_module = import_module("aignt_os.runtime.circuit_breaker")
+    circuit_breaker_module = import_module("synapse_os.runtime.circuit_breaker")
 
-    monkeypatch.setenv("AIGNT_OS_RUNTIME_STATE_DIR", str(tmp_path / "runtime"))
-    monkeypatch.setenv("AIGNT_OS_WORKSPACE_ROOT", str(tmp_path))
-    monkeypatch.setenv("AIGNT_OS_ADAPTER_CIRCUIT_BREAKER_FAILURE_THRESHOLD", "2")
-    monkeypatch.setenv("AIGNT_OS_ADAPTER_CIRCUIT_BREAKER_COOLDOWN_SECONDS", "60")
+    monkeypatch.setenv("SYNAPSE_OS_RUNTIME_STATE_DIR", str(tmp_path / "runtime"))
+    monkeypatch.setenv("SYNAPSE_OS_WORKSPACE_ROOT", str(tmp_path))
+    monkeypatch.setenv("SYNAPSE_OS_ADAPTER_CIRCUIT_BREAKER_FAILURE_THRESHOLD", "2")
+    monkeypatch.setenv("SYNAPSE_OS_ADAPTER_CIRCUIT_BREAKER_COOLDOWN_SECONDS", "60")
 
     store = circuit_breaker_module.AdapterCircuitBreakerStore(
         tmp_path / "runtime" / "adapter-circuit-breakers.json"

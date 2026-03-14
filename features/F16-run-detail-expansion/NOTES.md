@@ -1,6 +1,6 @@
 # F16 Notes
 
-- A F16 aprofunda apenas `aignt runs show <run_id>`; nao abre novo comando nem preview de conteudo.
+- A F16 aprofunda apenas `synapse runs show <run_id>`; nao abre novo comando nem preview de conteudo.
 - O foco e reduzir o tempo ate o proximo passo de diagnostico usando somente dados ja persistidos.
 - O resumo de diagnostico deve ser derivado de `RunRecord`, `RunStepRecord`, `RunEventRecord` e paths do `ArtifactStore`.
 - `raw_output_path` e `clean_output_path` devem aparecer apenas como paths, sem leitura de arquivo.

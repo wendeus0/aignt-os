@@ -7,8 +7,8 @@ Added bounded log rendering for the dashboard log viewer so large persisted outp
 ## Changes
 
 - Added `tui_log_buffer_lines` to `AppSettings` with a default of `1000`.
-- Added `truncate_logs()` in `src/aignt_os/cli/rendering.py` to keep only the newest lines and prepend a truncation marker.
-- Updated `LogViewer` in `src/aignt_os/cli/dashboard.py` to optionally watch a log file, reload it when the file size changes, and render the truncated content.
+- Added `truncate_logs()` in `src/synapse_os/cli/rendering.py` to keep only the newest lines and prepend a truncation marker.
+- Updated `LogViewer` in `src/synapse_os/cli/dashboard.py` to optionally watch a log file, reload it when the file size changes, and render the truncated content.
 - Updated `RunDashboard.action_show_logs()` to pass the log file path into the viewer and truncate the initial payload before opening the modal.
 - Added unit coverage for truncation behavior and log viewer refresh handling.
 

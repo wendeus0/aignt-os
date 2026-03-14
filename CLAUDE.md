@@ -58,7 +58,7 @@ Use `--full-runtime` only when the change touches boot, lifecycle, persistence, 
 ```bash
 uv run --no-sync python -c "
 from pathlib import Path
-from aignt_os.specs.validator import validate_spec_file
+from synapse_os.specs.validator import validate_spec_file
 result = validate_spec_file(Path('features/<feature>/SPEC.md'))
 print(result)
 "
@@ -70,14 +70,14 @@ The public API is `validate_spec_file(path: Path) -> SpecDocument` — there is 
 
 ## Architecture overview
 
-AIgnt OS is a CLI-first meta-orchestrator for external AI tools (Gemini, Codex, Claude, etc.). Two flows exist and must not be confused:
+SynapseOS is a CLI-first meta-orchestrator for external AI tools (Gemini, Codex, Claude, etc.). Two flows exist and must not be confused:
 
 1. **Official feature development workflow** (humans/agents working in the repo):
    ```
    DOCKER_PREFLIGHT → SPEC → TEST_RED → CODE_GREEN → REFACTOR → QUALITY_GATE → SECURITY_REVIEW → REPORT → COMMIT
    ```
 
-2. **Internal runtime state flow** (AIgnt-Synapse-Flow, the repository's own pipeline engine):
+2. **Internal runtime state flow** (Synapse-Flow, the repository's own pipeline engine):
    ```
    REQUEST → SPEC_DISCOVERY → SPEC_NORMALIZATION → SPEC_VALIDATION → PLAN → TEST_RED → CODE_GREEN → REVIEW → SECURITY → DOCUMENT → COMPLETE
    ```
@@ -86,17 +86,17 @@ AIgnt OS is a CLI-first meta-orchestrator for external AI tools (Gemini, Codex, 
 
 | Module | Role |
 |---|---|
-| `src/aignt_os/cli/app.py` | Typer CLI entry point (`aignt` command) |
-| `src/aignt_os/state_machine.py` | `AIgntStateMachine` — linear state machine for AIgnt-Synapse-Flow |
-| `src/aignt_os/pipeline.py` | `PipelineEngine` — executes steps, coordinates `StepExecutor` impls |
-| `src/aignt_os/persistence.py` | `RunRepository` (SQLAlchemy/SQLite) + `ArtifactStore` (filesystem) + `PersistedPipelineRunner` |
-| `src/aignt_os/adapters.py` | `BaseCLIAdapter` — async subprocess execution with circuit breaker |
-| `src/aignt_os/supervisor.py` | Deterministic failure handling (retry / reroute / fail) |
-| `src/aignt_os/runtime/` | `RuntimeService`, `RuntimeWorker`, `RunDispatchService`, `RuntimeStateStore` |
-| `src/aignt_os/specs/validator.py` | SPEC validation engine |
-| `src/aignt_os/contracts.py` | Domain models via Pydantic v2 |
-| `src/aignt_os/config.py` | `AppSettings` (pydantic-settings, `AIGNT_OS_` env prefix) |
-| `src/aignt_os/reporting.py` | `RUN_REPORT.md` generation at `DOCUMENT` state |
+| `src/synapse_os/cli/app.py` | Typer CLI entry point (`synapse` command) |
+| `src/synapse_os/state_machine.py` | `SynapseStateMachine` — linear state machine for Synapse-Flow |
+| `src/synapse_os/pipeline.py` | `PipelineEngine` — executes steps, coordinates `StepExecutor` impls |
+| `src/synapse_os/persistence.py` | `RunRepository` (SQLAlchemy/SQLite) + `ArtifactStore` (filesystem) + `PersistedPipelineRunner` |
+| `src/synapse_os/adapters.py` | `BaseCLIAdapter` — async subprocess execution with circuit breaker |
+| `src/synapse_os/supervisor.py` | Deterministic failure handling (retry / reroute / fail) |
+| `src/synapse_os/runtime/` | `RuntimeService`, `RuntimeWorker`, `RunDispatchService`, `RuntimeStateStore` |
+| `src/synapse_os/specs/validator.py` | SPEC validation engine |
+| `src/synapse_os/contracts.py` | Domain models via Pydantic v2 |
+| `src/synapse_os/config.py` | `AppSettings` (pydantic-settings, `SYNAPSE_OS_` env prefix) |
+| `src/synapse_os/reporting.py` | `RUN_REPORT.md` generation at `DOCUMENT` state |
 
 ### Runtime modes
 
@@ -119,14 +119,14 @@ Feature directories: `features/F<NN>-<slug>/SPEC.md`
 
 ### Terminology
 
-- **AIgnt-Synapse-Flow** = the repository's own pipeline engine (always name it this way)
+- **Synapse-Flow** = the repository's own pipeline engine (always name it this way)
 - `SPEC` = the formal feature specification
 - `run` = one pipeline execution
 - `worker` / `runtime` = the resident long-lived mode
 
 ### Configuration
 
-All `AppSettings` fields use the `AIGNT_OS_` prefix. Never use `os.environ` directly — always go through `AppSettings`.
+All `AppSettings` fields use the `SYNAPSE_OS_` prefix. Never use `os.environ` directly — always go through `AppSettings`.
 
 ### Contracts
 

@@ -3,14 +3,14 @@ from unittest.mock import MagicMock, patch
 
 import pytest
 
-from aignt_os.config import AppSettings
-from aignt_os.pipeline import (
+from synapse_os.config import AppSettings
+from synapse_os.pipeline import (
     PipelineContext,
     PipelineEngine,
     PipelineStep,
     StepExecutionResult,
 )
-from aignt_os.supervisor import RetryableStepError
+from synapse_os.supervisor import RetryableStepError
 
 
 @pytest.fixture
