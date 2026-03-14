@@ -15,8 +15,6 @@ from __future__ import annotations
 
 from pathlib import Path
 
-import pytest
-
 _VALID_SPEC_CONTENT = """\
 ---
 id: F49-full-flow-fixture
@@ -131,9 +129,9 @@ def test_pipeline_full_flow_step_history_contains_code_green_through_document(
 
     # Verify linear order within the tail
     for i, state in enumerate(expected_tail[:-1]):
-        assert history.index(state) < history.index(
-            expected_tail[i + 1]
-        ), f"Expected '{state}' before '{expected_tail[i + 1]}' in step_history"
+        assert history.index(state) < history.index(expected_tail[i + 1]), (
+            f"Expected '{state}' before '{expected_tail[i + 1]}' in step_history"
+        )
 
 
 def test_pipeline_full_flow_step_history_starts_with_spec_validation_and_plan(
@@ -227,9 +225,9 @@ def test_pipeline_document_executor_artifacts_are_merged_with_prior_step_artifac
     pipeline = _pipeline_module()
     spec_path = _make_spec(tmp_path)
 
-    context = pipeline.PipelineEngine(
-        executors=_full_executors(run_report_md="# Report")
-    ).run(spec_path, stop_at="DOCUMENT")
+    context = pipeline.PipelineEngine(executors=_full_executors(run_report_md="# Report")).run(
+        spec_path, stop_at="DOCUMENT"
+    )
 
     # Artifacts from earlier steps must still be present
     assert "plan_md" in context.artifacts
@@ -261,9 +259,7 @@ def test_pipeline_review_rework_records_review_in_step_history_before_second_cod
         "DOCUMENT": _FakeExecutor(run_report_md="# Report"),
     }
 
-    context = pipeline.PipelineEngine(executors=executors).run(
-        spec_path, stop_at="DOCUMENT"
-    )
+    context = pipeline.PipelineEngine(executors=executors).run(spec_path, stop_at="DOCUMENT")
 
     history = context.step_history
     # REVIEW must appear at least once (the rework trigger)
@@ -324,9 +320,7 @@ def test_pipeline_review_rework_completes_successfully_after_single_rework_cycle
         "DOCUMENT": _FakeExecutor(run_report_md="# Report"),
     }
 
-    context = pipeline.PipelineEngine(executors=executors).run(
-        spec_path, stop_at="DOCUMENT"
-    )
+    context = pipeline.PipelineEngine(executors=executors).run(spec_path, stop_at="DOCUMENT")
 
     assert context.current_state == "DOCUMENT"
     assert "DOCUMENT" in context.step_history
