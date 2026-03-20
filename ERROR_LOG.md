@@ -1,5 +1,15 @@
 # ERROR_LOG
 
+## 2026-03-20 - PR `#98` abriu com `repo-checks` falhando por baseline de formatacao fora do delta funcional
+
+- Contexto: fechamento Git da onda `F51-runtime-boundaries-foundation` -> `F53-observability-runtime-events` e abertura da PR `#98`.
+- Ação/comando relacionado: `gh pr checks 98`, `gh run view 23332947262 --log-failed`, `./scripts/commit-check.sh --no-sync --skip-branch-validation --skip-docker --skip-security --allow-main`.
+- Erro observado: o job `repo-checks` falhou em `ruff format --check .` por tres arquivos fora do baseline esperado (`src/synapse_os/state_machine.py`, `tests/integration/test_gemini_adapter.py`, `tests/integration/test_spec_validation_gate.py`), embora o delta funcional de `F51` -> `F53` estivesse validado.
+- Causa identificada: resíduo de higiene de repositório fora do recorte funcional da frente, detectado apenas no gate amplo do CI.
+- Ação tomada: a branch da PR recebeu um commit operacional mínimo (`ci(repo): fix repo-checks formatting baseline`) com normalização de formatação e remoção de import não usado; a PR `#98` foi então revalidada e mergeada.
+- Status: resolvido e absorvido em `origin/main`.
+- Observação futura: antes de concluir o fluxo Git de frentes grandes, rodar o equivalente local do `repo-checks` no modo amplo para evitar que a PR abra verde no recorte funcional, mas vermelha por hygiene global da baseline.
+
 ## 2026-03-13 - PR `#87` da F40 entrou com delta misto alem do recorte funcional
 
 - Contexto: reavaliacao do baseline apos a merge da `F40-local-cancellation`.
