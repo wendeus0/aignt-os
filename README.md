@@ -35,6 +35,9 @@ O SynapseOS ja ultrapassou o recorte inicial de MVP e hoje expõe um baseline te
 - ownership local do runtime absorvida (`F32`, `F34`, `F35`, `F36`) para o recorte residente/local de auth
 - dashboard TUI local e observabilidade adicional absorvidos (`F40`, `F41`, `F42`, `F45`) com logs, artifacts, filtros e cancelamento local/gracioso
 - robustez de runtime absorvida (`F43`) com timeout global por step e retry simples para falhas transientes
+- boundaries internos de runtime absorvidos (`F51`) com `ToolSpec`, `WorkspaceProvider`, `RunContext` e lifecycle hooks explícitos
+- isolamento operacional de workspace por run absorvido (`F52`) com `workspace_path` auditável e provider `run-scoped` opcional
+- timeline local enriquecida (`F53`) com `run_context_initialized`, `step_started`, `state_transitioned` e `workspace_path` exposto em `runs show` e `RUN_REPORT.md`
 
 ### Fluxo oficial do repositório
 
@@ -64,6 +67,8 @@ O `DOCKER_PREFLIGHT` do projeto continua sendo gate operacional condicional. Por
 - watch, filtros e cancelamento continuam locais; nao ha scheduler, fila remota nem cancelamento multi-host
 - auth e RBAC continuam locais com provider `file`; auth remota e rotacao distribuida seguem fora de escopo
 - o runtime residente continua leve e local; sync e async coexistem no mesmo baseline
+- `workspace_path` agora faz parte do diagnostico persistido da run, mas o recorte continua em um workspace efetivo por run, sem `git worktree` obrigatorio nem diff por workspace
+- a observabilidade continua local e auditavel; nao ha tracing distribuido, telemetria remota nem backend externo de eventos
 
 ---
 
@@ -191,6 +196,8 @@ O caminho oficial atual da primeira run continua local e `sync-first`. Use esta 
 2. Se o doctor fechar sem falha bloqueante, envie a SPEC com `synapse runs submit <spec_path> --mode sync --stop-at SPEC_VALIDATION`.
 3. Capture o `run_id` retornado pelo submit.
 4. Inspecione o resultado com `synapse runs show <run_id>`.
+
+O detalhamento atual de `runs show` inclui `workspace path`, estado final, artifacts persistidos e a timeline local de eventos da run. Quando a execucao gerar `RUN_REPORT.md`, o mesmo contexto tambem aparece no relatorio persistido.
 
 ### Boundary operacional
 
